@@ -18,6 +18,9 @@ cd davis-bootstrap
 npm install
 NODE_ENV=production node index.js
 ```
+
+Note that in order to use Davis with Amazon Alexa Voice Service or with Slack http must be enabled using a fully qualified domain name. Follow the [instructions on the wiki](https://github.com/Dynatrace/davis-server/wiki/Getting%20Started#custom-deployment) instructions on the wiki to get started.
+
 # Running as a Service
 
 In order to have Davis continue to run when your session ends you will need to configure davis to run as a service.
