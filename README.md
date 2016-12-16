@@ -18,6 +18,17 @@ cd davis-bootstrap
 npm install
 NODE_ENV=production node index.js
 ```
+# Running as a Service
+
+In order to have Davis continue to run when your session ends you will need to configure davis to run as a service.
+One way to do this is to use [forever-service](https://github.com/zapty/forever-service) similar to the following:
+
+```bash
+npm install -g forever
+npm install -g forever-service
+forever-service install davis -s index.js -e "NODE_ENV=production"
+service davis start
+```
 
 ## Disclaimer
 This software is experimental and currently NOT SUPPORTED by Dynatrace.
