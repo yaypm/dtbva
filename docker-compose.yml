@@ -2,6 +2,8 @@ version: '2'
 services:
   mongo:
     image: mvertes/alpine-mongo
+    volumes:
+      - ./data/db:/data/db
     expose:
       - 27017
     command: "mongod --smallfiles --logpath=/dev/null"
