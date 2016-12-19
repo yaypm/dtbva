@@ -2,15 +2,25 @@ version: '2'
 services:
   mongo:
     image: mvertes/alpine-mongo
-    ports:
-      - "27017:27017"
+    expose:
+      - 27017
     command: "mongod --smallfiles --logpath=/dev/null"
-  node:
+  davis:
     build: .
-    ports:
-      - "3000:3000"
+    image: davis:production
+    expose:
+      - 3000
     links:
       - mongo
     environment:
       MONGODB_URI: mongodb://mongo/davis
-      PORT: 3000
+      NODE_ENV: production
+  nginx:
+    image: nginx:stable-alpine
+    volumes:
+      - ./davis.nginx.conf:/etc/nginx/nginx.conf
+    links:
+      - davis
+    ports:
+      - "80:80"
+      - "443:443"
