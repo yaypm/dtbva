@@ -10,6 +10,8 @@ const BbPromise = require('bluebird');
   const Davis = require('@dynatrace/davis'); // eslint-disable-line global-require
 
   const davis = new Davis({
+    // Valid log levels are error, warn, info, debug
+    // Removing this property with disable logging.
     logLevel: 'debug',
     // userPlugins: ['./davisWeather'], // uncomment this line to load the davisWeather plugin
   });
