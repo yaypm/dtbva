@@ -13,7 +13,7 @@ We've tried to make the process of setting up and configuring Davis as simple as
 # Getting Started
 
 ```bash
-git clone https://github.com/Dynatrace.com/davis-bootstrap.git davis
+git clone https://github.com/Dynatrace/davis-bootstrap.git davis
 cd davis
 npm install
 NODE_ENV=production node index.js
