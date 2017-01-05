@@ -10,7 +10,7 @@ const BbPromise = require('bluebird');
   const Davis = require('@dynatrace/davis'); // eslint-disable-line global-require
 
   const davis = new Davis({
-    logLevel: 'debug',
+    logLevel: 'info',
     // userPlugins: ['./davisWeather'], // uncomment this line to load the davisWeather plugin
   });
 
