@@ -51,3 +51,6 @@ jspm_packages
 
 .env
 data/
+
+.vscode
+.vagrant
