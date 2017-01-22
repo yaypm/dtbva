@@ -13,7 +13,7 @@ const BbPromise = require('bluebird');
     // Valid log levels are error, warn, info, debug
     // Removing this property with disable logging.
     logLevel: 'info',
-    // userPlugins: ['./davisWeather'], // uncomment this line to load the davisWeather plugin
+    // userPlugins: ['./plugins/weather'], // uncomment this line to load the davisWeather plugin
   });
 
   return davis.run();
