@@ -62,7 +62,7 @@ class DavisWeather {
         return rp(opts)
           .then(resp => {
             // Here we add the weather data to the context object. The conversation
-            // context survives accross multiple exchanges, making it useful for
+            // context survives across multiple exchanges, making it useful for
             // communicating data between hooks.
             exchange.addContext({
               weather: resp.current_observation,
