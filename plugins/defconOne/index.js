@@ -70,35 +70,17 @@ class defconOne {
 	});
 
 	
-	var post_data = '{"on":true, "sat":254, "bri":254,"hue":5000}';
+	//var post_data = '{"on":true, "sat":254, "bri":254,"hue":5000}';
+	var post_data = '{"on":true, "effect":"colorloop"}';
 	
 	// post the data
 	post_req.write(post_data);
 	post_req.end();	  
 	
-	function lightsRed() {
-		var post_data = '{"on":true, "sat":254, "bri":254,"hue":5000}';
-		post_req.write(post_data);
-		post_req.end();
-	}
-	
-	function lightsOff() {
-		var post_data = '{"on":false}';
-		post_req.write(post_data);
-		post_req.end();
-	}
-	
-	setTimeout(lightsOff, 500);
-	setTimeout(lightsRed, 500);
-	setTimeout(lightsOff, 500);
-	setTimeout(lightsRed, 500);
-	setTimeout(lightsOff, 500);
-	setTimeout(lightsRed, 500);
-	
 	},
 		
 	'defconOne:respond': (exchange, context) => {
-    const resp = 'Yes sir!';
+    	const resp = 'Yes sir!';
 	var linkUrl = "https://youtu.be/2a4gyJsY0mc?t=43";
 	this.davis.server.pushLinkToUser(exchange.user, linkUrl, true);
 		exchange
