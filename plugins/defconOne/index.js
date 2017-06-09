@@ -27,7 +27,7 @@ class defconOne {
         // Phrases that will trigger our intent. Note that they will not
         // need to be matched exactly in order for the intent to run.
         phrases: [
-          'Get the part started',
+          'Get the party started',
         ],
 
         // Lifecycle Events are friendly names for the steps that an intent
