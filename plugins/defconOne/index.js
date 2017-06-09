@@ -27,7 +27,7 @@ class defconOne {
         // Phrases that will trigger our intent. Note that they will not
         // need to be matched exactly in order for the intent to run.
         phrases: [
-          'Take us to defcon one',
+          'Get the part started',
         ],
 
         // Lifecycle Events are friendly names for the steps that an intent
@@ -75,12 +75,31 @@ class defconOne {
 	// post the data
 	post_req.write(post_data);
 	post_req.end();	  
-		  		  
+	
+	function lightsRed() {
+		var post_data = '{"on":true, "sat":254, "bri":254,"hue":5000}';
+		post_req.write(post_data);
+		post_req.end();
+	}
+	
+	function lightsOff() {
+		var post_data = '{"on":false}';
+		post_req.write(post_data);
+		post_req.end();
+	}
+	
+	setTimeout(lightsOff, 500);
+	setTimeout(lightsRed, 500);
+	setTimeout(lightsOff, 500);
+	setTimeout(lightsRed, 500);
+	setTimeout(lightsOff, 500);
+	setTimeout(lightsRed, 500);
+	
 	},
 		
 	'defconOne:respond': (exchange, context) => {
-    	const resp = 'Aye aye sir';
-	var linkUrl = "https://www.youtube.com/watch?v=2a4gyJsY0mc";
+    const resp = 'Yes sir!';
+	var linkUrl = "https://youtu.be/2a4gyJsY0mc?t=43";
 	this.davis.server.pushLinkToUser(exchange.user, linkUrl, true);
 		exchange
 			.response(resp) // respond to the user
