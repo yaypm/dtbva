@@ -1,5 +1,8 @@
 'use strict';
 
+const rp = require('request-promise');
+const API_KEY = 'your_api_key';
+
 /**
  * The DavisWeather class is the core of the plugin and an
  * instance of DavisWeather is what will be loaded into Davis
@@ -45,8 +48,30 @@ class defconOne {
     // interface between Davis, a user, and a plugin. The context
     // object holds any state carried over from previous exchanges.
     this.hooks = {
-      'defconOne:gatherData': (exchange, context) => null,
-      'defconOne:respond': (exchange, context) => {
+      'defconOne:gatherData': (exchange, context) => {
+	  
+		const opts = {
+			uri: `http://ec2-52-31-139-235.eu-west-1.compute.amazonaws.com/`,
+			html: true,
+		}
+
+		// Hooks can optionally return a promise. The next hook will not run until
+		// the returned promise is resolved or rejected.
+		
+		return rp(opts)
+			.then(resp => {
+				// Here we add the weather data to the context object. The conversation
+				// context survives accross multiple exchanges, making it useful for
+				// communicating data between hooks.
+				exchange.addContext({
+				weather: resp['current_observation'],
+			})
+		})	  
+		  
+		  
+		  
+		},
+		'defconOne:respond': (exchange, context) => {
         const resp = 'Aye aye sir';
 
         exchange
