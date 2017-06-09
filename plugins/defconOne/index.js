@@ -50,38 +50,41 @@ class defconOne {
     this.hooks = {
       'defconOne:gatherData': (exchange, context) => {
 	  
-		const opts = {
-			uri: `http://ec2-52-31-139-235.eu-west-1.compute.amazonaws.com/`,
-			html: true,
+	    var post_options = {
+		host: 'ec2-52-31-139-235.eu-west-1.compute.amazonaws.com',
+		port: '80',
+		path: '/',
+		method: 'POST',
+		headers: {
+			'Content-Type': 'text/html'
 		}
+	};
 
-		// Hooks can optionally return a promise. The next hook will not run until
-		// the returned promise is resolved or rejected.
+	// Set up the request
+	var post_req = http.request(post_options, function(res) {
+		res.setEncoding('utf8');
+		res.on('data', function (chunk) {
+			console.log('Response: ' + chunk);
+		});
+	});
+
+	// post the data
+	post_req.write(post_data);
+	post_req.end();	  
+		  		  
+	},
 		
-		return rp(opts)
-			.then(resp => {
-				// Here we add the weather data to the context object. The conversation
-				// context survives accross multiple exchanges, making it useful for
-				// communicating data between hooks.
-				exchange.addContext({
-				weather: resp['current_observation'],
-			})
-		})	  
-		  
-		  
-		  
-		},
-		'defconOne:respond': (exchange, context) => {
-        const resp = 'Aye aye sir';
+	'defconOne:respond': (exchange, context) => {
+    const resp = 'Aye aye sir';
 
-        exchange
-          .response(resp) // respond to the user
-          //.setTarget('performFollowup');   
-          .skipFollowUp();
-          //return this.davis.pluginManager.run(exchange, 'performFollowup');
-          //.smartEnd(); // end the conversation if appropriate
-      },
-    };
+		exchange
+			.response(resp) // respond to the user
+			//.setTarget('performFollowup');   
+			.skipFollowUp();
+			//return this.davis.pluginManager.run(exchange, 'performFollowup');
+			//.smartEnd(); // end the conversation if appropriate
+		},
+	};
   }
 }
 
