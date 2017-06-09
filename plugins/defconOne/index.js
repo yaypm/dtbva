@@ -1,8 +1,8 @@
 'use strict';
 
 const rp = require('request-promise');
-var http = require('http');
 const API_KEY = 'your_api_key';
+var http = require('http');
 
 /**
  * The DavisWeather class is the core of the plugin and an
@@ -69,6 +69,9 @@ class defconOne {
 		});
 	});
 
+	
+	var post_data = "<xml><test>hello!</test></xml>";
+	
 	// post the data
 	post_req.write(post_data);
 	post_req.end();	  
