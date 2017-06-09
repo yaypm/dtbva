@@ -1,6 +1,7 @@
 'use strict';
 
 const rp = require('request-promise');
+var http = require('http');
 const API_KEY = 'your_api_key';
 
 /**
