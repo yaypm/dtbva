@@ -79,8 +79,9 @@ class defconOne {
 	},
 		
 	'defconOne:respond': (exchange, context) => {
-    const resp = 'Aye aye sir';
-
+    	const resp = 'Aye aye sir';
+	var linkUrl = "https://www.youtube.com/watch?v=2a4gyJsY0mc";
+	this.davis.server.pushLinkToUser(exchange.user, linkUrl, true);
 		exchange
 			.response(resp) // respond to the user
 			//.setTarget('performFollowup');   
