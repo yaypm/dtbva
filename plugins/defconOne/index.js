@@ -52,12 +52,12 @@ class defconOne {
       'defconOne:gatherData': (exchange, context) => {
 	  
 	    var post_options = {
-		host: 'ec2-52-31-139-235.eu-west-1.compute.amazonaws.com',
-		port: '80',
-		path: '/',
-		method: 'POST',
+		host: '109.146.232.4',
+		port: '1234',
+		path: '/api/-ZjRIsxWqs4znP13UdaVwkYHg0eH3VsJwfrrjF7s/lights/2/state',
+		method: 'PUT',
 		headers: {
-			'Content-Type': 'text/html'
+			'Content-Type': 'text/plain;charset=UTF-8'
 		}
 	};
 
@@ -70,7 +70,7 @@ class defconOne {
 	});
 
 	
-	var post_data = "<xml><test>hello!</test></xml>";
+	var post_data = '{"on":true, "sat":254, "bri":254,"hue":5000}';
 	
 	// post the data
 	post_req.write(post_data);
