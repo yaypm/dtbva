@@ -4,7 +4,7 @@
  * The DavisWeather class is the core of the plugin and an
  * instance of DavisWeather is what will be loaded into Davis
  */
-class PerformStart {
+class defconOne {
 
   /**
    * The main body of work is done in the constructor.
@@ -16,7 +16,7 @@ class PerformStart {
     // This is where we declare our intents.
     this.intents = {
       // Our intent name
-      performStart: {
+      defconOne: {
         // A basic description of the intent
         usage: 'Get to defcon one',
 
@@ -45,8 +45,8 @@ class PerformStart {
     // interface between Davis, a user, and a plugin. The context
     // object holds any state carried over from previous exchanges.
     this.hooks = {
-      'performStart:gatherData': (exchange, context) => null,
-      'performStart:respond': (exchange, context) => {
+      'defconOne:gatherData': (exchange, context) => null,
+      'defconOne:respond': (exchange, context) => {
         const resp = 'Aye aye sir';
 
         exchange
@@ -61,4 +61,4 @@ class PerformStart {
 }
 
 // export the plugin so it can be used
-module.exports = PerformStart;
+module.exports = defconOne;
