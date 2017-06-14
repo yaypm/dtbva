@@ -18,12 +18,12 @@ class PerformSignOff {
       // Our intent name
       performSignOff: {
         // A basic description of the intent
-        usage: 'Ask about the day so far',
+        usage: 'End the show',
 
         // Phrases that will trigger our intent. Note that they will not
         // need to be matched exactly in order for the intent to run.
         phrases: [
-          'How have you enjoyed the day so far',
+          'Thanks for your help Davis',
         ],
 
         // Lifecycle Events are friendly names for the steps that an intent
@@ -47,8 +47,11 @@ class PerformSignOff {
     this.hooks = {
       'performSignOff:gatherData': (exchange, context) => null,
       'performSignOff:respond': (exchange, context) => {
-        const resp = 'Great sessions so far from Travis Perkins and AWS, I am looking forward to hearing from Mr Lindberg next!';
+        const resp = 'My pleasure! As you can see I am quite brilliant, I hope you enjoyed the session and I look forward to hearing from Mr Lindberg next.';
 
+        var linkUrl = "https://i.ytimg.com/vi/bdBgJlZGkq4/hq720.jpg";
+	      this.davis.server.pushLinkToUser(exchange.user, linkUrl, true);
+        
         exchange
           .response(resp) // respond to the user  
           .smartEnd() // end the conversation if appropriate
