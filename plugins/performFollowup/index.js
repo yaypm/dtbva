@@ -51,7 +51,7 @@ class PerformFollowup {
 
         exchange
           .response(resp) // respond to the user  
-          //.smartEnd(); // end the conversation if appropriate
+          .smartEnd() // end the conversation if appropriate
           .skipFollowUp();
       },
     };
