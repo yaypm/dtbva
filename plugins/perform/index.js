@@ -23,7 +23,7 @@ class PerformStart {
         // Phrases that will trigger our intent. Note that they will not
         // need to be matched exactly in order for the intent to run.
         phrases: [
-          'Welcome to Perform',
+          'Give her a warm welcome to Perform',
         ],
 
         // Lifecycle Events are friendly names for the steps that an intent
