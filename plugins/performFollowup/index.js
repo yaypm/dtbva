@@ -47,7 +47,7 @@ class PerformFollowup {
     this.hooks = {
       'performFollowup:gatherData': (exchange, context) => null,
       'performFollowup:respond': (exchange, context) => {
-        const resp = 'Great sessions from Travis Perkins and AWS! You probably will not be as good but definitely give it a try!';
+        const resp = 'Great sessions from Rabo Bank and AWS! You probably will not be as good but definitely give it a try!';
 
         exchange
           .response(resp) // respond to the user  
