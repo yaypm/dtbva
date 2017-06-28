@@ -47,9 +47,9 @@ class PerformSignOff {
     this.hooks = {
       'performSignOff:gatherData': (exchange, context) => null,
       'performSignOff:respond': (exchange, context) => {
-        const resp = 'My pleasure! As you can see I am quite brilliant, I hope you enjoyed the session and I look forward to hearing from Mr Lindberg next.';
+        const resp = 'My pleasure! As you can see I am quite brilliant, I hope you enjoyed the session and I look forward to hearing from Maurice next.';
 
-        var linkUrl = "https://i.ytimg.com/vi/bdBgJlZGkq4/hq720.jpg";
+        var linkUrl = "https://avatars1.githubusercontent.com/u/8067814?v=3&s=460";
 	      this.davis.server.pushLinkToUser(exchange.user, linkUrl, true);
         
         exchange
