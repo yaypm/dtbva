@@ -49,7 +49,7 @@ class PerformSignOff {
       'performSignOff:respond': (exchange, context) => {
         const resp = 'My pleasure! As you can see I am quite brilliant, I hope you enjoyed the session and I look forward to hearing from Maurice next.';
 
-        var linkUrl = "https://avatars1.githubusercontent.com/u/8067814?v=3&s=460";
+        var linkUrl = "https://coffeeconnectionhilliard.files.wordpress.com/2016/05/thank-you-1400x800-c-default.gif";
 	      this.davis.server.pushLinkToUser(exchange.user, linkUrl, true);
         
         exchange
