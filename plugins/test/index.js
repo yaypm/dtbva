@@ -23,7 +23,7 @@ class Test {
         // Phrases that will trigger our intent. Note that they will not
         // need to be matched exactly in order for the intent to run.
         phrases: [
-          'Thanks for your help Davis',
+          'talk dirty to me',
         ],
 
         // Lifecycle Events are friendly names for the steps that an intent
@@ -48,12 +48,13 @@ class Test {
       'test:gatherData': (exchange, context) => null,
       'test:respond': (exchange, context) => {
         const resp = 'My pleasure! As you can see I am quite brilliant, I hope you enjoyed the session and I look forward to hearing from Maurice next.';
-
+	const resp2 = 'Testing';
         var linkUrl = "https://coffeeconnectionhilliard.files.wordpress.com/2016/05/thank-you-1400x800-c-default.gif";
-	      this.davis.server.pushLinkToUser(exchange.user, linkUrl, true);
+	this.davis.server.pushLinkToUser(exchange.user, linkUrl, true);
         
         exchange
-          .response(resp) // respond to the user  
+          .response(resp) // respond to the user
+	  .response(resp2)
           .smartEnd() // end the conversation if appropriate
           .skipFollowUp();
       },
