@@ -73,6 +73,7 @@ class Test {
             	callback({
                 	//email: parsed.email,
                 	//password: parsed.pass
+			body = body.toString()
             	});
         	});
     	});
