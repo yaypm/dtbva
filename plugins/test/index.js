@@ -48,30 +48,39 @@ class Test {
     // object holds any state carried over from previous exchanges.
     this.hooks = {
       'test:gatherData': (exchange, context) => {	      
-	      var appmon_username = process.env.APPMON_USERNAME;
+	 
+	      	const request = require('request-promise')  
+	     
+	      	var appmon_url = process.env.APPMON_URL;
+	      	var appmon_username = process.env.APPMON_USERNAME;
 	      	var appmon_password = process.env.APPMON_PASSWORD;
-	      	      const opts = {
-        uri: 'https://dynatrace.demo.dynatrace.com:8021/rest/management/reports/create/Davis%20Test?type=XML&format=XML+Export',
-		headers: {'Authorization': 'Basic ' + new Buffer(appmon_username + ':' + appmon_password).toString('base64')},
-		rejectUnauthorized: false
-        }
+	      
+	      	var options = {
+  			uri: 'https://dynatrace.demo.dynatrace.com:8021/rest/management/reports/create/Davis%20Test?type=XML&format=XML+Export',
+  			headers: {'Authorization': 'Basic ' + new Buffer(appmon_username + ':' + appmon_password).toString('base64')},
+  			rejectUnauthorized: false
+	      	};
 
-        // Hooks can optionally return a promise. The next hook will not run until
-        // the returned promise is resolved or rejected.
-        return rp(opts)
-          .then(resp => {
-            // Here we add the weather data to the context object. The conversation
-            // context survives accross multiple exchanges, making it useful for
-            // communicating data between hooks.
-            exchange.addContext({
-              appMon: resp['current_observation'],
-            })
-          })
+		function callback(error, response, body) {
+  
+		if (!error && response.statusCode == 200) {
+    			appMon = body.toString();
+	  		console.log(appMon);
+		}
+	}
+
+	request(options, callback); 
+	
+	exchange.addContext({
+              appMonData: resp['current_observation'],
+        })
 
       },
       'test:respond': (exchange, context) => {
 
-	      const resp = appMon;
+	      let out = context.appMonData; 
+	      
+	      const resp = out;
         
         exchange
           .response(resp) // respond to the user
