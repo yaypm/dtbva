@@ -48,7 +48,7 @@ class Test {
     // object holds any state carried over from previous exchanges.
     this.hooks = {
       'test:gatherData': (exchange, context) => {	      
-	      
+	      console.log('at least here');
 
       },
       'test:respond': (exchange, context) => {
