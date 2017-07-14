@@ -67,21 +67,27 @@ class Test {
   
 		if (!error && response.statusCode == 200) {
     			appMon = body.toString();
-	  		console.log(appMon);
+	  		//console.log(appMon);
 			appMonData.value = appMon;
-			console.log(appMonData.value);
+			//console.log(appMonData.value);
 		}
 	}
 
 	request(options, callback);  
-
+	
+	exchange.addContext({
+              appMonTest: appMonData,
+            })      
+	
+	console.log('here it comes');      
+	console.log(context.appMonTest);
       },
       'test:respond': (exchange, context, appMonData) => {
 
-		console.log(appMonData.value);   
+		//console.log(appMonData.value);   
 	
 	exchange
-          			.response(appMonData.value) // respond to the user
+          			.response(context.appMonTest) // respond to the user
           			.smartEnd() // end the conversation if appropriate
           			.skipFollowUp();
 	      
