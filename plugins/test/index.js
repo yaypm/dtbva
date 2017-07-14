@@ -1,7 +1,6 @@
 'use strict';
 
 var https = require('https');
- var appMon;
 
 /**
  * The DavisWeather class is the core of the plugin and an
@@ -50,27 +49,23 @@ class Test {
     this.hooks = {
       'test:gatherData': (exchange, context) => {	      
 	      
-	      	      const request = require('request-promise')  
-	     
-	      	      	var appmon_url = process.env.APPMON_URL;
-	      	var appmon_username = process.env.APPMON_USERNAME;
-	      	var appmon_password = process.env.APPMON_PASSWORD;
-	      
-		var options = {
-  uri: 'https://dynatrace.demo.dynatrace.com:8021/rest/management/reports/create/Davis%20Test?type=XML&format=XML+Export',
-  headers: {'Authorization': 'Basic ' + new Buffer(appmon_username + ':' + appmon_password).toString('base64')},
-  rejectUnauthorized: false
-};
+	      	      const opts = {
+        uri: 'https://dynatrace.demo.dynatrace.com:8021/rest/management/reports/create/Davis%20Test?type=XML&format=XML+Export',
+		headers: {'Authorization': 'Basic ' + new Buffer(appmon_username + ':' + appmon_password).toString('base64')},
+		rejectUnauthorized: false
+        }
 
-function callback(error, response, body) {
-  if (!error && response.statusCode == 200) {
-    appMon = body.toString();
-	  console.log(appMon);
-	 
-  }
-}
-
-request(options, callback); 
+        // Hooks can optionally return a promise. The next hook will not run until
+        // the returned promise is resolved or rejected.
+        return rp(opts)
+          .then(resp => {
+            // Here we add the weather data to the context object. The conversation
+            // context survives accross multiple exchanges, making it useful for
+            // communicating data between hooks.
+            exchange.addContext({
+              appMon: resp['current_observation'],
+            })
+          })
 
       },
       'test:respond': (exchange, context) => {
