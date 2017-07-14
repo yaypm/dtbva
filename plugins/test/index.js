@@ -45,16 +45,17 @@ class Test {
     // interface between Davis, a user, and a plugin. The context
     // object holds any state carried over from previous exchanges.
     this.hooks = {
-      'test:gatherData': (exchange, context) => null,
+      'test:gatherData': (exchange, context) => {
+	      
+      },
       'test:respond': (exchange, context) => {
-        const resp = 'My pleasure! As you can see I am quite brilliant, I hope you enjoyed the session and I look forward to hearing from Maurice next.';
-	const resp2 = 'Testing';
-        var linkUrl = "https://coffeeconnectionhilliard.files.wordpress.com/2016/05/thank-you-1400x800-c-default.gif";
-	this.davis.server.pushLinkToUser(exchange.user, linkUrl, true);
+	      
+	var test;
+	test = process.env.TEST;
+        const resp = test;
         
         exchange
           .response(resp) // respond to the user
-	  .response(resp2)
           .smartEnd() // end the conversation if appropriate
           .skipFollowUp();
       },
