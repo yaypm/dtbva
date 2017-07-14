@@ -52,25 +52,49 @@ class Test {
 	      	var appmon_username = process.env.APPMON_USERNAME;
 	      	var appmon_password = process.env.APPMON_PASSWORD;
 	      
-	      	var options = {
-  			host: 'dynatrace.demo.dynatrace.com',
+	      	//var options = {
+  		//	host: 'dynatrace.demo.dynatrace.com',
+  		//	port: 8021,
+  		//	path: '/rest/management/reports/create/Davis%20Test?type=XML&format=XML+Export',
+		//	headers: {
+		//		'Authorization': 'Basic ' + new Buffer(appmon_username + ':' + appmon_password).toString('base64')
+		//	}
+		//};
+
+		//https.get(options, function(res) {
+  		//	console.log("Got response: " + res.statusCode);
+		//}).on('error', function(e) {
+  		//	console.log("Got error: " + e.message);
+		//});
+	      
+	      	return https.get({
+        		host: 'dynatrace.demo.dynatrace.com',
   			port: 8021,
   			path: '/rest/management/reports/create/Davis%20Test?type=XML&format=XML+Export',
 			headers: {
 				'Authorization': 'Basic ' + new Buffer(appmon_username + ':' + appmon_password).toString('base64')
-
 			}
-		};
+    		}, function(response) {
+        		// Continuously update stream with data
+        		var body = '';
+        		response.on('data', function(d) {
+            		body += d;
+        	});
+        	
+		response.on('end', function() {
 
-		https.get(options, function(res) {
-  			console.log("Got response: " + res.statusCode);
-		}).on('error', function(e) {
-  			console.log("Got error: " + e.message);
-		});
+            	// Data reception is done, do whatever with it!
+            	//var parsed = JSON.parse(body);
+            	//callback({
+                //	email: parsed.email,
+                //	password: parsed.pass
+            	//});
+        	//});
+    	});
       },
       'test:respond': (exchange, context) => {
 	     
-        const resp = 'ok';
+        const resp = body;
         
         exchange
           .response(resp) // respond to the user
