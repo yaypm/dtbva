@@ -2,7 +2,7 @@
 
 var https = require('https');
 const request = require('request-promise');
-var appMonData = {value:"Notchanged", head:"fucked"}
+appMonData = {value:"Notchanged", head:"fucked"}
 
 /**
  * The DavisWeather class is the core of the plugin and an
