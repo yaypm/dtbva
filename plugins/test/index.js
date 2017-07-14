@@ -48,7 +48,8 @@ class Test {
     // object holds any state carried over from previous exchanges.
     this.hooks = {
       'test:gatherData': (exchange, context) => {	      
-	      
+	      var appmon_username = process.env.APPMON_USERNAME;
+	      	var appmon_password = process.env.APPMON_PASSWORD;
 	      	      const opts = {
         uri: 'https://dynatrace.demo.dynatrace.com:8021/rest/management/reports/create/Davis%20Test?type=XML&format=XML+Export',
 		headers: {'Authorization': 'Basic ' + new Buffer(appmon_username + ':' + appmon_password).toString('base64')},
