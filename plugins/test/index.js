@@ -48,9 +48,12 @@ class Test {
     // object holds any state carried over from previous exchanges.
     this.hooks = {
       'test:gatherData': (exchange, context) => {	      
-	 
-	      	
-	     	
+	
+	
+
+      },
+      'test:respond': (exchange, context) => {
+
 		var appMon;
 	      	var appmon_url = process.env.APPMON_URL;
 	      	var appmon_username = process.env.APPMON_USERNAME;
@@ -67,22 +70,18 @@ class Test {
 		if (!error && response.statusCode == 200) {
     			appMon = body.toString();
 	  		console.log(appMon);
-			exchange.addContext({
-              			appMonData: appMon,
-        		})
+			const resp = AppMon;
 		}
 	}
 
-	request(options, callback); 
-	
-	
-
-      },
-      'test:respond': (exchange, context) => {
-
-	      var out = context.appMonData; 
-		console.log(appMon);	      
-	      const resp = out;
+	request(options, callback);     
+	      
+	      
+	      
+	      
+	      
+	      
+	      
         
         exchange
           .response(resp) // respond to the user
