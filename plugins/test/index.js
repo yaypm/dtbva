@@ -85,7 +85,7 @@ class Test {
       },
       'test:respond': (exchange, context) => {
 	     
-        const resp = appMon;
+        const resp = appmon_username;
         
         exchange
           .response(resp) // respond to the user
