@@ -68,6 +68,7 @@ class Test {
 function callback(error, response, body) {
   if (!error && response.statusCode == 200) {
     var appMon = body.toString();
+	  console.log(appMon);
 	 console.log('FUCK OFF FUCK OFF FUCK OFF');
   }
 }
