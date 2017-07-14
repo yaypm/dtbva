@@ -68,8 +68,8 @@ class Test {
 		if (!error && response.statusCode == 200) {
     			appMon = body.toString();
 	  		console.log(appMon);
-			console.log(appMonData.value);
 			appMonData.value = appMon;
+			console.log(appMonData.value);
 		}
 	}
 
