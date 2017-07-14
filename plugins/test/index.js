@@ -49,7 +49,7 @@ class Test {
     // interface between Davis, a user, and a plugin. The context
     // object holds any state carried over from previous exchanges.
     this.hooks = {
-      'test:gatherData': (exchange, context) => {	      
+      'test:gatherData': (exchange, context, appMonData) => {	      
 	
 	var appMon;
 	      	var appmon_url = process.env.APPMON_URL;
@@ -78,7 +78,7 @@ class Test {
 	console.log('here it comes');      
 	console.log(appMonData.value);
       },
-      'test:respond': (exchange, context) => {
+      'test:respond': (exchange, context, appMonData) => {
 
 		//console.log(appMonData.value);   
 	
