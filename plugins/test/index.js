@@ -48,7 +48,7 @@ class Test {
     // object holds any state carried over from previous exchanges.
     this.hooks = {
       'test:gatherData': (exchange, context) => {	      
-	      console.log('at least here');
+	      
 
       },
       'test:respond': (exchange, context) => {
@@ -67,9 +67,9 @@ class Test {
 
 function callback(error, response, body) {
   if (!error && response.statusCode == 200) {
-    var appMon = body.toString();
+    appMon = body.toString();
 	  console.log(appMon);
-	 console.log('FUCK OFF FUCK OFF FUCK OFF');
+	 
   }
 }
 
