@@ -54,7 +54,7 @@ class Test {
       'test:respond': (exchange, context) => {
 
 	      const request = require('request-promise')  
-	      
+	      var appMon;
 	      	      	var appmon_url = process.env.APPMON_URL;
 	      	var appmon_username = process.env.APPMON_USERNAME;
 	      	var appmon_password = process.env.APPMON_PASSWORD;
