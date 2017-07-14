@@ -57,34 +57,21 @@ class Test {
 	      	var appmon_username = process.env.APPMON_USERNAME;
 	      	var appmon_password = process.env.APPMON_PASSWORD;
 	      
-	//function getAppMonStuff(callback) {
+	const options = {  
+  		host: 'dynatrace.demo.dynatrace.com',
+		port: 8021,
+        	path: '/rest/management/reports/create/Davis%20Test?type=XML&format=XML+Export',
+		headers: {'Authorization': 'Basic ' + new Buffer(appmon_username + ':' + appmon_password).toString('base64')},
+		rejectUnauthorized: false
+	}
 
-    			return https.get({
-        		host: 'dynatrace.demo.dynatrace.com',
-			port: 8021,
-        		path: '/rest/management/reports/create/Davis%20Test?type=XML&format=XML+Export',
-			headers: {'Authorization': 'Basic ' + new Buffer(appmon_username + ':' + appmon_password).toString('base64')},
-			rejectUnauthorized: false	
-    		}, function(response) {
-        	// Continuously update stream with data
-        	var body = '';
-        	response.on('data', function(d) {
-        	    body += d;
-        	});
-        	response.on('end', function() {
-
-        	// Data reception is done, do whatever with it!
-            	var appMon = body.toString();
-            	//callback({
-                	//email: parsed.email,
-                	//password: parsed.pass
-			
-            	//});
-        	});
-    	});
-
-	
-//}
+	request(options)  
+  	.then(function (response) {
+    	// Request was successful, use the response object at will
+  	})
+  	.catch(function (err) {
+    	// Something bad happened, handle the error
+  	})
 	      
 	      
 	      
