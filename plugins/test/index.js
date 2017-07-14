@@ -49,11 +49,7 @@ class Test {
     this.hooks = {
       'test:gatherData': (exchange, context) => {	      
 	      
-
-      },
-      'test:respond': (exchange, context) => {
-
-	      const request = require('request-promise')  
+	      	      const request = require('request-promise')  
 	      var appMon;
 	      	      	var appmon_url = process.env.APPMON_URL;
 	      	var appmon_username = process.env.APPMON_USERNAME;
@@ -74,12 +70,11 @@ function callback(error, response, body) {
 }
 
 request(options, callback); 
-	      
-	      
-	      
-	      
-	      
-        const resp = appMon;
+
+      },
+      'test:respond': (exchange, context) => {
+
+	      const resp = appMon;
         
         exchange
           .response(resp) // respond to the user
