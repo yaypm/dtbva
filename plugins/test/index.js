@@ -59,9 +59,21 @@ class Test {
 	      	var appmon_username = process.env.APPMON_USERNAME;
 	      	var appmon_password = process.env.APPMON_PASSWORD;
 	      
-		request.get('https://dynatrace.demo.dynatrace.com:8021/rest/management/reports/create/Davis%20Test?type=XML&format=XML+Export').auth(appmon_username, appmon_password, false),function (error, response, body) {
-  			console.log(body); // Do more stuff with 'body' here
-		};    
+		var options = {
+  host: 'dynatrace.demo.dynatrace.com',
+  port: 8021,
+  path: '/rest/management/reports/create/Davis%20Test?type=XML&format=XML+Export',
+  headers: {'Authorization': 'Basic ' + new Buffer(appmon_username + ':' + appmon_password).toString('base64')},
+  rejectUnauthorized: false
+};
+
+function callback(error, response, body) {
+  if (!error && response.statusCode == 200) {
+    console.log(body);
+  }
+}
+
+request(options, callback); 
 	      
 	      
 	      
