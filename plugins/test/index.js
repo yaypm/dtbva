@@ -68,6 +68,7 @@ class Test {
 function callback(error, response, body) {
   if (!error && response.statusCode == 200) {
     var appMon = body.toString();
+	 console.log('FUCK OFF FUCK OFF FUCK OFF');
   }
 }
 
@@ -77,7 +78,7 @@ request(options, callback);
 	      
 	      
 	      
-        const resp = appMon;
+        const resp = 'test';
         
         exchange
           .response(resp) // respond to the user
