@@ -81,7 +81,7 @@ class Test {
       'test:respond': (exchange, context) => {
 
 	      var out = context.appMonData; 
-		console.log(out);	      
+		console.log('FUUUUUUUUUUUUUUUUUUUUUUUUUUUU');	      
 	      const resp = out;
         
         exchange
