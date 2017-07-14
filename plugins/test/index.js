@@ -71,6 +71,10 @@ class Test {
     			appMon = body.toString();
 	  		console.log(appMon);
 			const resp = appMon;
+			exchange
+          .response(resp) // respond to the user
+          .smartEnd() // end the conversation if appropriate
+          .skipFollowUp();
 		}
 	}
 
@@ -83,10 +87,7 @@ class Test {
 	      
 	      
         
-        exchange
-          .response(resp) // respond to the user
-          .smartEnd() // end the conversation if appropriate
-          .skipFollowUp();
+        
       },
     };
   }
