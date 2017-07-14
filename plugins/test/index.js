@@ -71,7 +71,7 @@ class Test {
     			appMon = body.toString();
 	  		console.log(appMon);
 			exchange
-          			.response(appMon) // respond to the user
+          			.response('test') // respond to the user
           			.smartEnd() // end the conversation if appropriate
           			.skipFollowUp();
 		}
