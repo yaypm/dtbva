@@ -73,7 +73,6 @@ class Test {
             	callback({
                 	//email: parsed.email,
                 	//password: parsed.pass
-			figures = body;
             	});
         	});
     	});
@@ -84,7 +83,7 @@ class Test {
       },
       'test:respond': (exchange, context) => {
 	     
-        const resp = figures;
+        const resp = body;
         
         exchange
           .response(resp) // respond to the user
