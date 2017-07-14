@@ -45,14 +45,30 @@ class Test {
     // interface between Davis, a user, and a plugin. The context
     // object holds any state carried over from previous exchanges.
     this.hooks = {
-      'test:gatherData': (exchange, context) => {
+      'test:gatherData': (exchange, context) => {	      
+	      	var appmon_url = process.env.APPMON_URL;
+	      	var appmon_username = process.env.APPMON_USERNAME;
+	      	var appmon_password = process.env.APPMON_PASSWORD;
 	      
+	      	var options = {
+  			host: 'dynatrace.demo.dynatrace.com',
+  			port: 8021,
+  			path: '/rest/management/reports/create/Davis%20Test?type=XML&format=XML+Export',
+			headers: {
+				'Authorization': 'Basic ' + new Buffer(appmon_username + ':' + appmon_password).toString('base64');
+
+			}
+		};
+
+		https.get(options, function(res) {
+  			console.log("Got response: " + res.statusCode);
+		}).on('error', function(e) {
+  			console.log("Got error: " + e.message);
+		});
       },
       'test:respond': (exchange, context) => {
-	      
-	var test;
-	test = process.env.TEST;
-        const resp = test;
+	     
+        const resp = 'ok';
         
         exchange
           .response(resp) // respond to the user
