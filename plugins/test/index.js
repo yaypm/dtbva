@@ -67,23 +67,7 @@ class Test {
   		//	console.log("Got error: " + e.message);
 		//});
 	      
-	      	return https.get({
-        		host: 'dynatrace.demo.dynatrace.com',
-  			port: 8021,
-  			path: '/rest/management/reports/create/Davis%20Test?type=XML&format=XML+Export',
-			headers: {
-				'Authorization': 'Basic ' + new Buffer(appmon_username + ':' + appmon_password).toString('base64')
-			}
-    		}, function(response) {
-        		// Continuously update stream with data
-        		var body = '';
-        		response.on('data', function(d) {
-            		body += d;
-        	    });
-        	
-		response.on('end', function() {
 
-    		});
       },
       'test:respond': (exchange, context) => {
 	     
