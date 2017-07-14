@@ -69,14 +69,14 @@ class Test {
     			appMon = body.toString();
 	  		//console.log(appMon);
 			global.appMon = appMon;
-			//console.log(appMonData.value);
+			console.log(global.appMon);
 		}
 	}
 
 	request(options, callback);        
 	
 	//console.log('here it comes');      
-	console.log(global.appMon);
+	//console.log(global.appMon);
       },
       'test:respond': (exchange, context, appMonData) => {
 
