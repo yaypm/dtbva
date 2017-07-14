@@ -52,7 +52,7 @@ class Test {
 	      	var appmon_username = process.env.APPMON_USERNAME;
 	      	var appmon_password = process.env.APPMON_PASSWORD;
 	      
-	return http.get({
+	return https.get({
         host: 'dynatrace.demo.dynatrace.com',
         path: '/rest/management/reports/create/Davis%20Test?type=XML&format=XML+Export',
 	port: 8021,
