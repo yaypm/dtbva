@@ -2,6 +2,8 @@
 
 var https = require('https');
 const request = require('request-promise');
+var appMonData = {value:"Notchanged", head:"fucked"}
+
 /**
  * The DavisWeather class is the core of the plugin and an
  * instance of DavisWeather is what will be loaded into Davis
@@ -51,7 +53,7 @@ class Test {
 	
 	var appMon;
 	      	var appmon_url = process.env.APPMON_URL;
-	        var appMonData = {value:"Notchanged", head:"fucked"}
+	        
 	      	var appmon_username = process.env.APPMON_USERNAME;
 	      	var appmon_password = process.env.APPMON_PASSWORD;
 	      
@@ -73,9 +75,9 @@ class Test {
 	request(options, callback);  
 
       },
-      'test:respond': (exchange, context, appMon) => {
+      'test:respond': (exchange, context) => {
 
-		console.   
+		console.log(appMonData.value);   
 	
 	exchange
           			.response(appMon) // respond to the user
