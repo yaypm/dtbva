@@ -78,7 +78,7 @@ class Test {
 	console.log('here it comes');      
 	console.log(appMonData.value);
       },
-      'test:respond': (exchange, context, appMonData) => {
+      'test:respond': (exchange, context) => {
 
 		//console.log(appMonData.value);   
 	
