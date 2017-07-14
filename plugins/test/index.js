@@ -51,6 +51,7 @@ class Test {
 	
 	var appMon;
 	      	var appmon_url = process.env.APPMON_URL;
+	        var appMonData = {value:"Notchanged", head:"fucked"}
 	      	var appmon_username = process.env.APPMON_USERNAME;
 	      	var appmon_password = process.env.APPMON_PASSWORD;
 	      
@@ -65,6 +66,7 @@ class Test {
 		if (!error && response.statusCode == 200) {
     			appMon = body.toString();
 	  		console.log(appMon);
+			console.log(appMonData.value);
 		}
 	}
 
@@ -73,7 +75,7 @@ class Test {
       },
       'test:respond': (exchange, context, appMon) => {
 
-		   
+		console.   
 	
 	exchange
           			.response(appMon) // respond to the user
