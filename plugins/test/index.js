@@ -25,7 +25,7 @@ class Test {
         // Phrases that will trigger our intent. Note that they will not
         // need to be matched exactly in order for the intent to run.
         phrases: [
-          'talk dirty to me',
+          'talk to me',
         ],
 
         // Lifecycle Events are friendly names for the steps that an intent
@@ -79,7 +79,7 @@ class Test {
       },
       'test:respond': (exchange, context) => {
 
-	      let out = context.appMonData; 
+	      var out = context.appMonData; 
 	      
 	      const resp = out;
         
