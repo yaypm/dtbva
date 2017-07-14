@@ -76,11 +76,11 @@ class Test {
 	request(options, callback);        
 	
 	//console.log('here it comes');      
-	//console.log(global.appMon);
+	console.log(global.appMon);
       },
       'test:respond': (exchange, context, appMonData) => {
 
-		console.log(global.appMon);   
+		//console.log(global.appMon);   
 	
 	exchange
           			.response(global.appMon) // respond to the user
