@@ -2,7 +2,7 @@
 
 var https = require('https');
 const request = require('request-promise');
-appMonData = {value:"Notchanged", head:"fucked"}
+global.appMon = 'not changed';
 
 /**
  * The DavisWeather class is the core of the plugin and an
@@ -68,22 +68,22 @@ class Test {
 		if (!error && response.statusCode == 200) {
     			appMon = body.toString();
 	  		//console.log(appMon);
-			appMonData.value = appMon;
+			global.appMon = appMon;
 			//console.log(appMonData.value);
 		}
 	}
 
 	request(options, callback);        
 	
-	console.log('here it comes');      
-	console.log(appMonData.value);
+	//console.log('here it comes');      
+	//console.log(global.appMon);
       },
       'test:respond': (exchange, context, appMonData) => {
 
 		//console.log(appMonData.value);   
 	
 	exchange
-          			.response(appMonData.value) // respond to the user
+          			.response(global.appMon) // respond to the user
           			.smartEnd() // end the conversation if appropriate
           			.skipFollowUp();
 	      
