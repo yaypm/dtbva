@@ -69,7 +69,7 @@ class Test {
 
 function callback(error, response, body) {
   if (!error && response.statusCode == 200) {
-    console.log(body);
+    var appMon = body.toString();
   }
 }
 
@@ -79,7 +79,7 @@ request(options, callback);
 	      
 	      
 	      
-        const resp = body;
+        const resp = appMon;
         
         exchange
           .response(resp) // respond to the user
