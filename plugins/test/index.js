@@ -57,7 +57,7 @@ class Test {
 	      	var appmon_username = process.env.APPMON_USERNAME;
 	      	var appmon_password = process.env.APPMON_PASSWORD;
 	      
-	function getAppMonStuff(callback) {
+	//function getAppMonStuff(callback) {
 
     			return https.get({
         		host: 'dynatrace.demo.dynatrace.com',
@@ -84,11 +84,11 @@ class Test {
     	});
 
 	
-}
+//}
 	      
 	      
 	      
-	 getAppMonStuff();     
+	 //getAppMonStuff();     
 	      
 	      
 	      
