@@ -49,12 +49,7 @@ class Test {
     this.hooks = {
       'test:gatherData': (exchange, context) => {	      
 	
-	
-
-      },
-      'test:respond': (exchange, context) => {
-
-		var appMon;
+	var appMon;
 	      	var appmon_url = process.env.APPMON_URL;
 	      	var appmon_username = process.env.APPMON_USERNAME;
 	      	var appmon_password = process.env.APPMON_PASSWORD;
@@ -70,11 +65,20 @@ class Test {
 		if (!error && response.statusCode == 200) {
     			appMon = body.toString();
 	  		console.log(appMon);
-			
+			exchange.addContext({
+              			appMonData: appMon,
+            		})
+			var appMonData = context.appMonData;
+			console.log(appMonData);
 		}
 	}
 
-	request(options, callback);     
+	request(options, callback);  
+
+      },
+      'test:respond': (exchange, context) => {
+
+		   
 	
 	exchange
           			.response('test') // respond to the user
