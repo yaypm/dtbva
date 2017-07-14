@@ -70,11 +70,10 @@ class Test {
 		if (!error && response.statusCode == 200) {
     			appMon = body.toString();
 	  		console.log(appMon);
-			const resp = appMon;
 			exchange
-          .response(resp) // respond to the user
-          .smartEnd() // end the conversation if appropriate
-          .skipFollowUp();
+          			.response(appMon) // respond to the user
+          			.smartEnd() // end the conversation if appropriate
+          			.skipFollowUp();
 		}
 	}
 
