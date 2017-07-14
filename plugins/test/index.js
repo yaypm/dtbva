@@ -79,18 +79,11 @@ class Test {
         		var body = '';
         		response.on('data', function(d) {
             		body += d;
-        	});
+        	    });
         	
 		response.on('end', function() {
 
-            	// Data reception is done, do whatever with it!
-            	//var parsed = JSON.parse(body);
-            	//callback({
-                //	email: parsed.email,
-                //	password: parsed.pass
-            	//});
-        	//});
-    	});
+    		});
       },
       'test:respond': (exchange, context) => {
 	     
