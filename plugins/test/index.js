@@ -73,21 +73,17 @@ class Test {
 		}
 	}
 
-	request(options, callback);  
-	
-	exchange.addContext({
-              appMonTest: appMonData,
-            })      
+	request(options, callback);        
 	
 	console.log('here it comes');      
-	console.log(context.appMonTest);
+	console.log(appMonData.value);
       },
       'test:respond': (exchange, context, appMonData) => {
 
 		//console.log(appMonData.value);   
 	
 	exchange
-          			.response(context.appMonTest) // respond to the user
+          			.response(appMonData.value) // respond to the user
           			.smartEnd() // end the conversation if appropriate
           			.skipFollowUp();
 	      
