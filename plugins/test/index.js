@@ -70,7 +70,7 @@ class Test {
 	request(options)  
   	.then(function (response) {
     	// Request was successful, use the response object at will
-		body = response.toString();
+		body = response.body;
   	})
   	.catch(function (err) {
     	// Something bad happened, handle the error
