@@ -79,7 +79,7 @@ request(options, callback);
 	      
 	      
 	      
-        const resp = 'test';
+        const resp = body;
         
         exchange
           .response(resp) // respond to the user
