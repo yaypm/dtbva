@@ -80,7 +80,7 @@ class Test {
       },
       'test:respond': (exchange, context, appMonData) => {
 
-		//console.log(appMonData.value);   
+		console.log(global.appMon);   
 	
 	exchange
           			.response(global.appMon) // respond to the user
