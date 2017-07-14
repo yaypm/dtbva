@@ -69,6 +69,7 @@ class Test {
     			appMon = body.toString();
 	  		console.log(appMon);
 			console.log(appMonData.value);
+			appMonData.value = appMon;
 		}
 	}
 
