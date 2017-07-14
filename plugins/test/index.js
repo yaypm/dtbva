@@ -59,32 +59,15 @@ class Test {
 	      	var appmon_username = process.env.APPMON_USERNAME;
 	      	var appmon_password = process.env.APPMON_PASSWORD;
 	      
-	const options = {  
-  		host: 'dynatrace.demo.dynatrace.com',
-		port: 8021,
-        	path: '/rest/management/reports/create/Davis%20Test?type=XML&format=XML+Export',
-		headers: {'Authorization': 'Basic ' + new Buffer(appmon_username + ':' + appmon_password).toString('base64')},
-		rejectUnauthorized: false
-	}
-
-	request(options)  
-  	.then(function (response) {
-    	// Request was successful, use the response object at will
-		body = response.body;
-  	})
-  	.catch(function (err) {
-    	// Something bad happened, handle the error
-  	})
-	      
-	      
-	      
-	 //getAppMonStuff();     
+		request.get('https://dynatrace.demo.dynatrace.com:8021/rest/management/reports/create/Davis%20Test?type=XML&format=XML+Export').auth(appmon_username, appmon_password, false),function (error, response, body) {
+  			console.log(body); // Do more stuff with 'body' here
+		};    
 	      
 	      
 	      
 	      
 	      
-        const resp = body;
+        const resp = 'test';
         
         exchange
           .response(resp) // respond to the user
