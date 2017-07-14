@@ -1,7 +1,7 @@
 'use strict';
 
 var https = require('https');
-
+const request = require('request-promise');
 /**
  * The DavisWeather class is the core of the plugin and an
  * instance of DavisWeather is what will be loaded into Davis
@@ -49,7 +49,7 @@ class Test {
     this.hooks = {
       'test:gatherData': (exchange, context) => {	      
 	 
-	      	const request = require('request-promise')  
+	      	
 	     	
 		var appMon;
 	      	var appmon_url = process.env.APPMON_URL;
@@ -81,7 +81,7 @@ class Test {
       'test:respond': (exchange, context) => {
 
 	      var out = context.appMonData; 
-	      
+		console.log(out);	      
 	      const resp = out;
         
         exchange
