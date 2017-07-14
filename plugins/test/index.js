@@ -56,6 +56,7 @@ class Test {
         host: 'dynatrace.demo.dynatrace.com',
         path: '/rest/management/reports/create/Davis%20Test?type=XML&format=XML+Export',
 	port: 8021,
+	rejectUnauthorized: false,
 	headers: {'Authorization': 'Basic ' + new Buffer(appmon_username + ':' + appmon_password).toString('base64')}	
     }, function(response) {
         // Continuously update stream with data
