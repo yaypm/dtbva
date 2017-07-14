@@ -70,7 +70,7 @@ class Test {
 		if (!error && response.statusCode == 200) {
     			appMon = body.toString();
 	  		console.log(appMon);
-			const resp = AppMon;
+			const resp = appMon;
 		}
 	}
 
