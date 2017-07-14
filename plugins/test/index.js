@@ -84,7 +84,7 @@ class Test {
 	      
 	      
 	      
-        const resp = 'done';
+        const resp = body;
         
         exchange
           .response(resp) // respond to the user
