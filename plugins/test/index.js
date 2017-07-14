@@ -60,9 +60,7 @@ class Test {
 	      	var appmon_password = process.env.APPMON_PASSWORD;
 	      
 		var options = {
-  uri: 'https://dynatrace.demo.dynatrace.com',
-  port: 8021,
-  path: '/rest/management/reports/create/Davis%20Test?type=XML&format=XML+Export',
+  uri: 'https://dynatrace.demo.dynatrace.com:8021/rest/management/reports/create/Davis%20Test?type=XML&format=XML+Export',
   headers: {'Authorization': 'Basic ' + new Buffer(appmon_username + ':' + appmon_password).toString('base64')},
   rejectUnauthorized: false
 };
