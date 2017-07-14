@@ -69,22 +69,23 @@ class Test {
         	response.on('end', function() {
 
         	// Data reception is done, do whatever with it!
-            	//var parsed = JSON.parse(body);
+            	var appMon = body.toString();
             	callback({
                 	//email: parsed.email,
                 	//password: parsed.pass
-			body = body.toString()
+			
             	});
         	});
     	});
 
+	
 }
 	      
 
       },
       'test:respond': (exchange, context) => {
 	     
-        const resp = body;
+        const resp = appMon;
         
         exchange
           .response(resp) // respond to the user
