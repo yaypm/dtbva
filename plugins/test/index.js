@@ -67,14 +67,15 @@ class Test {
 		if (!error && response.statusCode == 200) {
     			appMon = body.toString();
 	  		console.log(appMon);
+			exchange.addContext({
+              			appMonData: appMon,
+        		})
 		}
 	}
 
 	request(options, callback); 
 	
-	exchange.addContext({
-              appMonData: appMon,
-        })
+	
 
       },
       'test:respond': (exchange, context) => {
