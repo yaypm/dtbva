@@ -75,11 +75,11 @@ class Test {
 
         	// Data reception is done, do whatever with it!
             	var appMon = body.toString();
-            	callback({
+            	//callback({
                 	//email: parsed.email,
                 	//password: parsed.pass
 			
-            	});
+            	//});
         	});
     	});
 
