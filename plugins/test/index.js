@@ -76,7 +76,7 @@ class Test {
 	request(options, callback);  
 
       },
-      'test:respond': (exchange, context) => {
+      'test:respond': (exchange, context, appMonData) => {
 
 		console.log(appMonData.value);   
 	
