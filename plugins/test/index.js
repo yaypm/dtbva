@@ -81,7 +81,7 @@ class Test {
 	      
 	      
 	      
-        const resp = appMon;
+        const resp = 'done';
         
         exchange
           .response(resp) // respond to the user
