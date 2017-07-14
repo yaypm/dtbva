@@ -49,7 +49,7 @@ class Test {
     this.hooks = {
       'test:gatherData': (exchange, context) => {	      
 	      	var appmon_url = process.env.APPMON_URL;
-	      	var appmon_username = process.env.APPMON_USERNAME;
+	      	appmon_username = process.env.APPMON_USERNAME;
 	      	var appmon_password = process.env.APPMON_PASSWORD;
 	      
 	function getAppMonStuff(callback) {
