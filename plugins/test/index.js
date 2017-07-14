@@ -80,7 +80,7 @@ class Test {
 		console.log(appMonData.value);   
 	
 	exchange
-          			.response(appMon) // respond to the user
+          			.response(appMonData.value) // respond to the user
           			.smartEnd() // end the conversation if appropriate
           			.skipFollowUp();
 	      
