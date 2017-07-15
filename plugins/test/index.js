@@ -85,7 +85,7 @@ class Test {
   	
 	return request(opts)
     		.then(resp => {
-      		test = body.toString();
+      		test = resp.toString();
     	})
 	      
       },
