@@ -79,14 +79,19 @@ class Test {
 	      
 	//appMon = JSON.stringify(test);     
 	     
-	console.log(test);
-	
-	var parser = new xml2js.Parser();
-	var result = '';
-	      
-	parser.parseString(test, function (err, result) {
-    		console.dir(result['data']['textandmeasure'][0]['textandmeasurecontent']);
-	});    
+	//console.log(test);
+
+	var XML = et.XML;
+	var ElementTree = et.ElementTree;
+	var element = et.Element;
+	var subElement = et.SubElement;
+ 
+	var data, etree;
+ 
+	data = test;
+	etree = et.parse(data);
+
+	console.log(etree.findall('./data/textandmeasure')[2].get('textmeasurecontent')); 
 	      
 	exchange
           	.response(test) // respond to the user
