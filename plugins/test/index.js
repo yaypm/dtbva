@@ -91,7 +91,7 @@ class Test {
 	data = test;
 	etree = et.parse(data);
 
-	console.log(etree.findall('./data/textandmeasure/textmeasurecontent')[2].get('text')); 
+	console.log(etree.findall('./data/textandmeasure/textmeasurecontent')[2]); 
 	      
 	exchange
           	.response(test) // respond to the user
