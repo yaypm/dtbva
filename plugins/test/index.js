@@ -80,7 +80,7 @@ class Test {
 	var parser = new xml2js.Parser();
 	parser.parseString(test, function(err,result){
   
-  	appMon = result['dashboardreport']['data']['textandmeasure']['textmeasurecontent'];
+  	appMon = result;
   		
 	});      
 	     
