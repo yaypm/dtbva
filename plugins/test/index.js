@@ -3,8 +3,8 @@
 var https = require('https');
 const request = require('request-promise');
 //global.appMonTest = 'not changed';
-process.env.APPMONTEST = 'not channged';
-
+//process.env.APPMONTEST = 'not channged';
+var test = "ballsack";
 /**
  * The DavisWeather class is the core of the plugin and an
  * instance of DavisWeather is what will be loaded into Davis
@@ -70,6 +70,7 @@ class Test {
 	  		//console.log(appMon);
 			process.env.APPMONTEST = appMon;
 			//console.log(process.env.APPMONTEST);
+			test = "penis";
 		
 	}
 
@@ -81,6 +82,7 @@ class Test {
       'test:respond': (exchange, context) => {
 
 		//console.log(global.appMon);   
+	      console.log(test);
 	
 	exchange
           			.response(process.env.APPMONTEST) // respond to the user
