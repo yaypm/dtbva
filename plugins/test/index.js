@@ -53,24 +53,24 @@ class Test {
       'test:gatherData': (exchange, context) => {	      
 	
 	var appMon;
-	      	var appmon_url = process.env.APPMON_URL;
+	var appmon_url = process.env.APPMON_URL;
 	        
-	      	var appmon_username = process.env.APPMON_USERNAME;
-	      	var appmon_password = process.env.APPMON_PASSWORD;
+	var appmon_username = process.env.APPMON_USERNAME;
+	var appmon_password = process.env.APPMON_PASSWORD;
 	      
-	      	var options = {
-  			uri: 'https://dynatrace.demo.dynatrace.com:8021/rest/management/reports/create/Davis%20Test?type=XML&format=XML+Export',
-  			headers: {'Authorization': 'Basic ' + new Buffer(appmon_username + ':' + appmon_password).toString('base64')},
-  			rejectUnauthorized: false
-	      	};
+	var options = {
+  		uri: 'https://dynatrace.demo.dynatrace.com:8021/rest/management/reports/create/Davis%20Test?type=XML&format=XML+Export',
+  		headers: {'Authorization': 'Basic ' + new Buffer(appmon_username + ':' + appmon_password).toString('base64')},
+  		rejectUnauthorized: false
+	};
 
 		function callback(error, response, body) {
  
     			appMon = body.toString();
 	  		//console.log(appMon);
-			process.env.APPMONTEST = appMon;
+			//process.env.APPMONTEST = appMon;
 			//console.log(process.env.APPMONTEST);
-			test = "penis";
+			test = appMon;
 		
 	}
 
