@@ -85,7 +85,7 @@ class Test {
 	      console.log(test);
 	
 	exchange
-          			.response(process.env.APPMONTEST) // respond to the user
+          			.response(test) // respond to the user
           			.smartEnd() // end the conversation if appropriate
           			.skipFollowUp();
 	      
