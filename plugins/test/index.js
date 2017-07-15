@@ -69,14 +69,14 @@ class Test {
     			appMon = body.toString();
 	  		//console.log(appMon);
 			process.env.APPMONTEST = appMon;
-			console.log(process.env.APPMONTEST);
+			//console.log(process.env.APPMONTEST);
 		
 	}
 
 	request(options, callback);        
 	
 	//console.log('here it comes');      
-	//console.log(global.appMon);
+	console.log(process.env.APPMONTEST);
       },
       'test:respond': (exchange, context) => {
 
