@@ -67,7 +67,8 @@ class Test {
   	
 	return request(opts)
     		.then(resp => {
-      		test = resp.toString();
+      		//test = resp.toString();
+		test = resp;
 		//console.log(test);
     	})
 	      
@@ -76,7 +77,7 @@ class Test {
 	      
 	//appMon = JSON.stringify(test);     
 	     
-	//console.log(test);
+	console.log(test);
 	
 	var parser = new xml2js.Parser();
 	var result = '';
