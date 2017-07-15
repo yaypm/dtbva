@@ -81,7 +81,7 @@ class Test {
 	var parser = new xml2js.Parser();
 	var result = '';
 	      
-	parser.parseString(xml, function (err, result) {
+	parser.parseString(test, function (err, result) {
     		console.dir(result['data']['textandmeasure']);
 	});    
 	      
