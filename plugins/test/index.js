@@ -74,17 +74,11 @@ class Test {
       },
       'test:respond': (exchange, context) => {
 
-	console.log(test);      
+	//console.log(test);      
 	      
-	var extractedData = "";
-	var parser = new xml2js.Parser();
-	parser.parseString(test, function(err,result){
-  
-  	appMon = result;
-  		
-	});      
+	appMon = JSON.stringify(test);     
 	     
-	//console.log(appMon);
+	console.log(appMon);
 	
 	exchange
           	.response(appMon) // respond to the user
