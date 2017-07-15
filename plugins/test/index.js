@@ -79,14 +79,12 @@ class Test {
 	//console.log(test);
 	
 	var parser = new xml2js.Parser();
+	var result = '';
 	      
 	parser.parseString(test, function (err, result) {
-        	console.dir(result);
+        	console.log(util.inspect(result, false, null));
         	console.log('Done');
     	});      
-	
-	test2 = JSON.stringify(result);
-	console.log(test2);
 	      
 	exchange
           	.response(test) // respond to the user
