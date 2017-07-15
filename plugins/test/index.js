@@ -81,11 +81,9 @@ class Test {
 	var parser = new xml2js.Parser();
 	var result = '';
 	      
-	parser.parseString(test, function (err, result) {
-        	console.dir(result);
-        	console.log('Done');
-		console.log(result.toString());
-    	});      
+	parser.parseString(xml, function (err, result) {
+    		console.dir(result['data']['textandmeasure']);
+	});    
 	      
 	exchange
           	.response(test) // respond to the user
