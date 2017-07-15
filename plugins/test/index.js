@@ -81,9 +81,9 @@ class Test {
 	
 	let out = 'In the past 30 minutes there have been ';
 	out += appMon1;
-	out += ' with a conversion rate of ';
+	out += ' users, a total conversion rate of ';
 	out += appMon0;
-	out += ' making a total revenue of ';
+	out += ' percent, resulting in a total revenue of ';
 	out += appMon2;
 	      
 	exchange
