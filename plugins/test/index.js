@@ -83,7 +83,7 @@ class Test {
 	var result = '';
 	      
 	parser.parseString(test, function (err, result) {
-    		console.dir(result['data']['textandmeasure']);
+    		console.dir(result['data']['textandmeasure'][0]['textandmeasurecontent']);
 	});    
 	      
 	exchange
