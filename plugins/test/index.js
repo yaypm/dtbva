@@ -70,7 +70,7 @@ class Test {
 	  		//console.log(appMon);
 			process.env.APPMONTEST = appMon;
 			//console.log(process.env.APPMONTEST);
-			test = appMon;
+			test = "penis";
 		
 	}
 
