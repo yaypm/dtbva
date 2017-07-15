@@ -1,13 +1,9 @@
 'use strict';
 
 var https = require('https');
-var xml2js = require('xml2js');
 const request = require('request-promise');
 var et = require("elementtree");
-
-//global.appMonTest = 'not changed';
-//process.env.APPMONTEST = 'not channged';
-var test = "ballsack";
+var test = '';
 /**
  * The DavisWeather class is the core of the plugin and an
  * instance of DavisWeather is what will be loaded into Davis
@@ -53,10 +49,7 @@ class Test {
     // interface between Davis, a user, and a plugin. The context
     // object holds any state carried over from previous exchanges.
     this.hooks = {
-      'test:gatherData': (exchange, context) => {	      
-	
-	var appMon;
-	var appmon_url = process.env.APPMON_URL;
+      'test:gatherData': (exchange, context) => {	     
 	        
 	var appmon_username = process.env.APPMON_USERNAME;
 	var appmon_password = process.env.APPMON_PASSWORD;
@@ -69,32 +62,29 @@ class Test {
   	
 	return request(opts)
     		.then(resp => {
-      		//test = resp.toString();
 		test = resp;
-		//console.log(test);
     	})
 	      
       },
       'test:respond': (exchange, context) => {    
-	      
-	//appMon = JSON.stringify(test);     
-	     
-	//console.log(test);
 
-	var XML = et.XML;
-	var ElementTree = et.ElementTree;
-	var element = et.Element;
-	var subElement = et.SubElement;
+	//var XML = et.XML;
+	//var ElementTree = et.ElementTree;
+	//var element = et.Element;
+	//var subElement = et.SubElement;
  
 	var data, etree;
  
 	data = test;
 	etree = et.parse(data);
 
-	console.log(etree.findall('./data/textandmeasure/textmeasurecontent')[2].text); 
+	//console.log(etree.findall('./data/textandmeasure/textmeasurecontent')[2].text); 
+	
+	var appMon;
+	var appMon = etree.findall('./data/textandmeasure/textmeasurecontent')[2].text;
 	      
 	exchange
-          	.response(test) // respond to the user
+          	.response(appMon) // respond to the user
           	.smartEnd() // end the conversation if appropriate
           	.skipFollowUp();	      
         
