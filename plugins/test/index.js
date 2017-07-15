@@ -70,14 +70,14 @@ class Test {
 	  		//console.log(appMon);
 			process.env.APPMONTEST = appMon;
 			//console.log(process.env.APPMONTEST);
-			test = "penis";
+			test = appMon;
 		
 	}
 
 	request(options, callback);        
 	
 	//console.log('here it comes');      
-	console.log(process.env.APPMONTEST);
+	//console.log(process.env.APPMONTEST);
       },
       'test:respond': (exchange, context) => {
 
