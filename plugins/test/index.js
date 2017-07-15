@@ -72,14 +72,19 @@ class Test {
     	})
 	      
       },
-      'test:respond': (exchange, context) => {
-
-	//console.log(test);      
+      'test:respond': (exchange, context) => {    
 	      
 	//appMon = JSON.stringify(test);     
 	     
-	console.log(test);
+	//console.log(test);
 	
+	var parser = new xml2js.Parser();
+	      
+	parser.parseString(test, function (err, result) {
+        	console.dir(result);
+        	console.log('Done');
+    	});      
+	      
 	exchange
           	.response(test) // respond to the user
           	.smartEnd() // end the conversation if appropriate
