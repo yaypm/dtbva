@@ -76,12 +76,12 @@ class Test {
 
 	//console.log(test);      
 	      
-	appMon = JSON.stringify(test);     
+	//appMon = JSON.stringify(test);     
 	     
-	console.log(appMon);
+	console.log(test);
 	
 	exchange
-          	.response(appMon) // respond to the user
+          	.response(test) // respond to the user
           	.smartEnd() // end the conversation if appropriate
           	.skipFollowUp();	      
         
