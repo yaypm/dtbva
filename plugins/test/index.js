@@ -1,4 +1,4 @@
-//'use strict';
+'use strict';
 
 var https = require('https');
 const request = require('request-promise');
