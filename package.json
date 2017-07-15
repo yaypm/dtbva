@@ -16,7 +16,8 @@
     "bluebird": "^3.4.6",
     "request": "^2.75.0",
     "request-promise": "^4.1.1",
-    "xml2js": "^0.4.17"
+    "xml2js": "^0.4.17",
+    "elementtree": "^0.1.7"
   },
   "devDependencies": {
     "gulp": "^3.9.1"
