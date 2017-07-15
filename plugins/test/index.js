@@ -2,7 +2,7 @@
 
 var https = require('https');
 const request = require('request-promise');
-var appMonTest = 'not changed';
+global.appMonTest = 'not changed';
 
 /**
  * The DavisWeather class is the core of the plugin and an
@@ -49,7 +49,7 @@ class Test {
     // interface between Davis, a user, and a plugin. The context
     // object holds any state carried over from previous exchanges.
     this.hooks = {
-      'test:gatherData': (exchange, context, appMonTest) => {	      
+      'test:gatherData': (exchange, context) => {	      
 	
 	var appMon;
 	      	var appmon_url = process.env.APPMON_URL;
@@ -68,8 +68,8 @@ class Test {
 		if (!error && response.statusCode == 200) {
     			appMon = body.toString();
 	  		//console.log(appMon);
-			appMonTest = appMon;
-			console.log(appMonTest);
+			global.appMonTest = appMon;
+			console.log(global.appMonTest);
 		}
 	}
 
@@ -78,12 +78,12 @@ class Test {
 	//console.log('here it comes');      
 	//console.log(global.appMon);
       },
-      'test:respond': (exchange, context, appMonTest) => {
+      'test:respond': (exchange, context) => {
 
 		//console.log(global.appMon);   
 	
 	exchange
-          			.response(appMonTest) // respond to the user
+          			.response(global.appMonTest) // respond to the user
           			.smartEnd() // end the conversation if appropriate
           			.skipFollowUp();
 	      
