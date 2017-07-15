@@ -1,6 +1,7 @@
 'use strict';
 
 var https = require('https');
+var xml2js = require('xml2js');
 const request = require('request-promise');
 //global.appMonTest = 'not changed';
 //process.env.APPMONTEST = 'not channged';
@@ -67,25 +68,26 @@ class Test {
 	return request(opts)
     		.then(resp => {
       		test = resp.toString();
-		console.log(test);
+		//console.log(test);
     	})
 	      
       },
       'test:respond': (exchange, context) => {
 
-		//console.log(global.appMon);   
-	      console.log(test);
+	var extractedData = "";
+	var parser = new xml2js.Parser();
+	parser.parseString(xml, function(err,result){
+  
+  	appMon = result['dashboardreport']['data']['textandmeasure']['textmeasurecontent'];
+  		
+	});      
+	     
+	console.log(appMon);
 	
 	exchange
-          			.response(test) // respond to the user
-          			.smartEnd() // end the conversation if appropriate
-          			.skipFollowUp();
-	      
-	      
-	      
-	      
-	      
-	      
+          	.response(appMon) // respond to the user
+          	.smartEnd() // end the conversation if appropriate
+          	.skipFollowUp();	      
         
         
       },
