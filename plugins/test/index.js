@@ -84,6 +84,9 @@ class Test {
         	console.dir(result);
         	console.log('Done');
     	});      
+	
+	test2 = JSON.stringify(result);
+	console.log(test2);
 	      
 	exchange
           	.response(test) // respond to the user
