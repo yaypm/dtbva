@@ -67,24 +67,27 @@ class Test {
 	      
       },
       'test:respond': (exchange, context) => {    
-
-	//var XML = et.XML;
-	//var ElementTree = et.ElementTree;
-	//var element = et.Element;
-	//var subElement = et.SubElement;
  
 	var data, etree;
  
 	data = test;
 	etree = et.parse(data);
-
-	//console.log(etree.findall('./data/textandmeasure/textmeasurecontent')[2].text); 
 	
-	var appMon;
-	var appMon = etree.findall('./data/textandmeasure/textmeasurecontent')[2].text;
+	var appMon0, appMon1, appMon2;
+	
+	var appMon0 = etree.findall('./data/textandmeasure/textmeasurecontent')[0].text;     
+	var appMon1 = etree.findall('./data/textandmeasure/textmeasurecontent')[1].text;
+	var appMon2 = etree.findall('./data/textandmeasure/textmeasurecontent')[2].text;
+	
+	let out = 'In the past 30 minutes there have been ';
+	out += appMon1;
+	out += ' with a conversion rate of ';
+	out += appMon0;
+	out += ' making a total revenue of ';
+	out += appMon2;
 	      
 	exchange
-          	.response(appMon) // respond to the user
+          	.response(out) // respond to the user
           	.smartEnd() // end the conversation if appropriate
           	.skipFollowUp();	      
         
