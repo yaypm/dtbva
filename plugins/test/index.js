@@ -82,8 +82,9 @@ class Test {
 	var result = '';
 	      
 	parser.parseString(test, function (err, result) {
-        	console.log(util.inspect(result, false, null));
+        	console.dir(result);
         	console.log('Done');
+		console.log(result.toString());
     	});      
 	      
 	exchange
