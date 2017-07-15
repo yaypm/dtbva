@@ -76,7 +76,7 @@ class Test {
 
 	var extractedData = "";
 	var parser = new xml2js.Parser();
-	parser.parseString(xml, function(err,result){
+	parser.parseString(test, function(err,result){
   
   	appMon = result['dashboardreport']['data']['textandmeasure']['textmeasurecontent'];
   		
