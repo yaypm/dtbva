@@ -65,13 +65,12 @@ class Test {
 	      	};
 
 		function callback(error, response, body) {
-  
-		if (!error && response.statusCode == 200) {
+ 
     			appMon = body.toString();
 	  		//console.log(appMon);
 			process.env.APPMONTEST = appMon;
 			console.log(process.env.APPMONTEST);
-		}
+		
 	}
 
 	request(options, callback);        
