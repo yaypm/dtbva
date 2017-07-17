@@ -78,9 +78,9 @@ class TechnicalBriefing {
 	techDashboard()
     		.then(resp => {
 		test = resp;})
-	        .then(alertAmount)
-	        .then(resp2 => {
-		test2 = resp2;});
+	        //.then(alertAmount)
+	        //.then(resp2 => {
+		//test2 = resp2;});
     		
       },
       'technicalBriefing:respond': (exchange, context) => {    
