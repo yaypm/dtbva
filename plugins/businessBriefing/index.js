@@ -78,11 +78,35 @@ class BusinessBriefing {
 	var appMon0 = etree.findall('./data/textandmeasure/textmeasurecontent')[0].text;     
 	var appMon1 = etree.findall('./data/textandmeasure/textmeasurecontent')[1].text;
 	var appMon2 = etree.findall('./data/textandmeasure/textmeasurecontent')[2].text;
+	var appMon3 = etree.findall('./data/textandmeasure/textmeasurecontent')[3].text;
 	
+	var seconds = Math.floor(appMon3 / 1000);
+
+	if(seconds > 60) {
+		var minutes = Math.floor(seconds / 60);
+	
+		if(minutes > 1) {
+			text = " minutes"
+		}
+		
+		else {
+			text = " minute"
+		}
+	
+		var andSeconds = seconds - 60 * minutes;
+		var speech = "who typically spent " + minutes + text + " and " + andSeconds + " seconds on the site.";
+	}
+
+	else {
+		var speech = "who typically spent " + seconds + " seconds on the site.";
+	}
+  
+	      
 	let out = 'In the past hour there have been ';
 	out += appMon1;
-	out += ' users, a total conversion rate of ';
-	out += appMon0;
+	out += ' users, ';
+	out += speech;
+	out += ' Overall conversion rate was ';      
 	out += ' percent, resulting in a total revenue of ';
 	out += appMon2;
 	out += ' pounds';
