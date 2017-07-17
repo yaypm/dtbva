@@ -85,45 +85,53 @@ class TechnicalBriefing {
 	data = test;
 	etree = et.parse(data);
 	
-	var appMon0, appMon1, appMon2;
+	var appMon0, appMon1, appMon2, appMon3, appMon4, appMon5, appMon6, appMon7, appMon8, appMon9, appMon10, appMon11, appMon12, appMon13;
 	
 	var appMon0 = etree.findall('./data/textandmeasure/textmeasurecontent')[0].text;     
 	var appMon1 = etree.findall('./data/textandmeasure/textmeasurecontent')[1].text;
 	var appMon2 = etree.findall('./data/textandmeasure/textmeasurecontent')[2].text;
 	var appMon3 = etree.findall('./data/textandmeasure/textmeasurecontent')[3].text;
-	
-	var seconds = Math.floor(appMon3 / 1000);
-
-	if(seconds > 60) {
-		var minutes = Math.floor(seconds / 60);
-	
-		if(minutes > 1) {
-			text = " minutes"
-		}
-		
-		else {
-			text = " minute"
-		}
-	
-		var andSeconds = seconds - 60 * minutes;
-		var speech = "who typically spent " + minutes + text + " and " + andSeconds + " seconds on the site.";
-	}
-
-	else {
-		var speech = "who typically spent " + seconds + " seconds on the site.";
-	}
-  
+	var appMon4 = etree.findall('./data/textandmeasure/textmeasurecontent')[4].text;     
+	var appMon5 = etree.findall('./data/textandmeasure/textmeasurecontent')[5].text;
+	var appMon6 = etree.findall('./data/textandmeasure/textmeasurecontent')[6].text;
+	var appMon7 = etree.findall('./data/textandmeasure/textmeasurecontent')[7].text;
+	var appMon8 = etree.findall('./data/textandmeasure/textmeasurecontent')[8].text;
+	var appMon9 = etree.findall('./data/textandmeasure/textmeasurecontent')[9].text;
+	var appMon10 = etree.findall('./data/textandmeasure/textmeasurecontent')[10].text;
+	var appMon11 = etree.findall('./data/textandmeasure/textmeasurecontent')[11].text;     
+	var appMon12 = etree.findall('./data/textandmeasure/textmeasurecontent')[12].text;
+	var appMon13 = etree.findall('./data/textandmeasure/textmeasurecontent')[13].text;
 	      
-	let out = 'Good morning Alistair, here is your business briefing. On your application yesterday, there were ';
+	let out = 'OK here is your technical briefing. Today, ';
+	out += appMon8;
+	out += ' percent of users were frustrated, compared to ';
+	out += appMon9;
+	out += ' percent yesterday. Performance of your key transactions is as follows, login took '; 
+	out += appMon2;      
+	out += ' seconds, up from ';
+	out += appMon3;
+	out += ' seconds yesterday. Today login has a failure rate of ';
 	out += appMon1;
-	out += ' users, ';
-	out += speech;
-	out += ' Overall conversion rate was '; 
-	out += appMon0;      
-	out += ' percent, resulting in a total revenue of ';
-	out += appMon2;
-	out += ' pounds';
-	 
+	out += ' percent, compared to ';
+	out += appMon0;
+	out += ' percent yesterday. Search is currently taking ';
+	out += appMon13;
+	out += ' seconds, up from ';
+	out += appMon11;
+	out += ' seconds yesterday. So far today, search has had a ';
+	out += appMon10;
+	out += ' percent failure rate, down from ';
+	out += appMon12;
+	out += ' percent yesterday. Finally, payments are currently taking ';
+	out += appMon6;
+	out += ' seconds, up from ';      
+	out += appMon7;    
+	out += ' yesterday, and are failing ';
+	out += appMon5;
+	out += ' percent of the time, compared to ';
+	out += appMon4;
+	out += ' percent yesterday.';      
+	      
 	var linkUrl = "https://dynatrace.demo.dynatrace.com:9911/index.jsp#dashboard;db=97e1a4f4-a524-4648-a4cd-beecc474c31a";
 	this.davis.server.pushLinkToUser(exchange.user, linkUrl, true);      
 	      
