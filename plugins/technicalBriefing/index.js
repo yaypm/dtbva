@@ -21,7 +21,7 @@ class TechnicalBriefing {
     // This is where we declare our intents.
     this.intents = {
       // Our intent name
-      TechnicalBriefing: {
+      technicalBriefing: {
         // A basic description of the intent
         usage: 'Get your technical briefing',
 
