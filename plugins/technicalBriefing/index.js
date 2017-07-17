@@ -77,7 +77,8 @@ class TechnicalBriefing {
       },
       'technicalBriefing:respond': (exchange, context) => {    
  
-	console.log('respond');      
+	console.log('respond');  
+	console.log(test2);
 	      
 	var data, etree;
  
