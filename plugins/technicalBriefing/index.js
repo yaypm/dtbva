@@ -90,17 +90,23 @@ class TechnicalBriefing {
 	var appMon0 = etree.findall('./data/textandmeasure/textmeasurecontent')[0].text;     
 	var appMon1 = etree.findall('./data/textandmeasure/textmeasurecontent')[1].text;
 	var appMon2 = etree.findall('./data/textandmeasure/textmeasurecontent')[2].text;
+	      var appMon2 = appMon2 / 1000;
 	var appMon3 = etree.findall('./data/textandmeasure/textmeasurecontent')[3].text;
+	      var appMon3 = appMon3 / 1000;
 	var appMon4 = etree.findall('./data/textandmeasure/textmeasurecontent')[4].text;     
 	var appMon5 = etree.findall('./data/textandmeasure/textmeasurecontent')[5].text;
 	var appMon6 = etree.findall('./data/textandmeasure/textmeasurecontent')[6].text;
+	      var appMon6 = appMon6 / 1000;
 	var appMon7 = etree.findall('./data/textandmeasure/textmeasurecontent')[7].text;
+	      var appMon7 = appMon7 / 1000;
 	var appMon8 = etree.findall('./data/textandmeasure/textmeasurecontent')[8].text;
 	var appMon9 = etree.findall('./data/textandmeasure/textmeasurecontent')[9].text;
 	var appMon10 = etree.findall('./data/textandmeasure/textmeasurecontent')[10].text;
-	var appMon11 = etree.findall('./data/textandmeasure/textmeasurecontent')[11].text;     
+	var appMon11 = etree.findall('./data/textandmeasure/textmeasurecontent')[11].text;
+	      var appMon11 = appMon11 / 1000;
 	var appMon12 = etree.findall('./data/textandmeasure/textmeasurecontent')[12].text;
 	var appMon13 = etree.findall('./data/textandmeasure/textmeasurecontent')[13].text;
+	      var appMon13 = appMon13 / 1000;
 	      
 	let out = 'OK here is your technical briefing. Today, ';
 	out += appMon8;
