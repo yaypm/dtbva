@@ -147,7 +147,7 @@ class TechnicalBriefing {
 	var appMon9 = etree.findall('./data/textandmeasure/textmeasurecontent')[9].text;
 	
 	//Frustrated Trend      
-	var frustratedTrend = appMon13 / appMon11;      
+	var frustratedTrend = appMon8 / appMon9;      
 	      
 	if(frustratedTrend > 1) {
 		var frustrated = 'up';
