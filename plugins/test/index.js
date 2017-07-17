@@ -86,6 +86,9 @@ class Test {
 	out += ' percent, resulting in a total revenue of ';
 	out += appMon2;
 	out += ' pounds';
+	 
+	var linkUrl = "https://dynatrace.demo.dynatrace.com:9911/index.jsp#dashboard;db=97e1a4f4-a524-4648-a4cd-beecc474c31a";
+	this.davis.server.pushLinkToUser(exchange.user, linkUrl, true);      
 	      
 	exchange
           	.response(out) // respond to the user
