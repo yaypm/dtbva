@@ -67,7 +67,7 @@ class TechnicalBriefing {
 	
 	var alertAmount = function() {
 		const opts2 = {
-    			uri: 'https://localhost:8021/api/v2/alerts?systemprofile=easyTravel&state=Created&from=2017-07-16T00%3A00%3A01%2B00%3A00&to=2017-07-17T00%3A00%3A01%2B00%3A00',
+    			uri: 'https://dynatrace.demo.dynatrace.com:8021/api/v2/alerts?systemprofile=easyTravel&state=Created&from=2017-07-16T00%3A00%3A01%2B00%3A00&to=2017-07-17T00%3A00%3A01%2B00%3A00',
   			headers: {'Authorization': 'Basic ' + new Buffer(appmon_username + ':' + appmon_password).toString('base64')},
   			rejectUnauthorized: false
   		}
