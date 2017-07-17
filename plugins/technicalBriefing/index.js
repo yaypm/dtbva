@@ -70,7 +70,9 @@ class TechnicalBriefing {
 	return request(opts)
     		.then(resp => {
 		test = resp;})
-	        .then(request(opts2))
+	        .then(function() {
+     			return request(opts2);
+		})
 	        .then(resp => {
 		test2 = resp;});
     		
