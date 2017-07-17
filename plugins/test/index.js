@@ -8,7 +8,7 @@ var test = '';
  * The DavisWeather class is the core of the plugin and an
  * instance of DavisWeather is what will be loaded into Davis
  */
-class Test {
+class BusinessBriefing {
 
   /**
    * The main body of work is done in the constructor.
@@ -20,14 +20,14 @@ class Test {
     // This is where we declare our intents.
     this.intents = {
       // Our intent name
-      test: {
+      businessBriefing: {
         // A basic description of the intent
-        usage: 'End the show',
+        usage: 'Get your business briefing',
 
         // Phrases that will trigger our intent. Note that they will not
         // need to be matched exactly in order for the intent to run.
         phrases: [
-          'talk to me',
+          'morning business briefing',
         ],
 
         // Lifecycle Events are friendly names for the steps that an intent
@@ -49,7 +49,7 @@ class Test {
     // interface between Davis, a user, and a plugin. The context
     // object holds any state carried over from previous exchanges.
     this.hooks = {
-      'test:gatherData': (exchange, context) => {	     
+      'businessBriefing:gatherData': (exchange, context) => {	     
 	        
 	var appmon_username = process.env.APPMON_USERNAME;
 	var appmon_password = process.env.APPMON_PASSWORD;
@@ -66,7 +66,7 @@ class Test {
     	})
 	      
       },
-      'test:respond': (exchange, context) => {    
+      'businessBriefing:respond': (exchange, context) => {    
  
 	var data, etree;
  
@@ -102,4 +102,4 @@ class Test {
 }
 
 // export the plugin so it can be used
-module.exports = Test;
+module.exports = BusinessBriefing;
