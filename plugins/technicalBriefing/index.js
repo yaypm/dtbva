@@ -55,7 +55,7 @@ class TechnicalBriefing {
 	var appmon_password = process.env.APPMON_PASSWORD;
 	      
 	const opts = {
-    		uri: 'https://dynatrace.demo.dynatrace.com:8021/rest/management/reports/create/Davis%20Test?type=XML&format=XML+Export',
+    		uri: 'https://dynatrace.demo.dynatrace.com:8021/rest/management/reports/create/Davis%20Test%20Technical?type=XML&format=XML+Export',
   		headers: {'Authorization': 'Basic ' + new Buffer(appmon_username + ':' + appmon_password).toString('base64')},
   		rejectUnauthorized: false
   	}
