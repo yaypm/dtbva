@@ -4,6 +4,7 @@ var https = require('https');
 const request = require('request-promise');
 var et = require("elementtree");
 var test = '';
+var test2 = '';
 /**
  * The DavisWeather class is the core of the plugin and an
  * instance of DavisWeather is what will be loaded into Davis
@@ -65,6 +66,17 @@ class TechnicalBriefing {
 		test = resp;
     	})
 	      
+	const opts = {
+    		uri: 'https://localhost:8021/api/v2/alerts?systemprofile=easyTravel&state=Created&from=2017-07-16T00%3A00%3A01%2B00%3A00&to=2017-07-17T00%3A00%3A01%2B00%3A00',
+  		headers: {'Authorization': 'Basic ' + new Buffer(appmon_username + ':' + appmon_password).toString('base64')},
+  		rejectUnauthorized: false
+  	}
+  	
+	return request(opts)
+    		.then(resp => {
+		test2 = resp;
+    	})
+	      console.log(test2);
       },
       'technicalBriefing:respond': (exchange, context) => {    
  
