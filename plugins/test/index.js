@@ -85,6 +85,7 @@ class Test {
 	out += appMon0;
 	out += ' percent, resulting in a total revenue of ';
 	out += appMon2;
+	out += ' pounds';
 	      
 	exchange
           	.response(out) // respond to the user
