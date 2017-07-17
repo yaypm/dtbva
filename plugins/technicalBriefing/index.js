@@ -73,13 +73,15 @@ class TechnicalBriefing {
   	}
   	
 	return request(opts2)
-    		.then(resp => {
-		test2 = resp;
+    		.then(resp2 => {
+		test2 = resp2;
     	})
 	      console.log('balls');
       },
       'technicalBriefing:respond': (exchange, context) => {    
  
+	console.log('respond');      
+	      
 	var data, etree;
  
 	data = test;
