@@ -106,7 +106,8 @@ class BusinessBriefing {
 	out += appMon1;
 	out += ' users, ';
 	out += speech;
-	out += ' Overall conversion rate was ';      
+	out += ' Overall conversion rate was '; 
+	out += appMon0;      
 	out += ' percent, resulting in a total revenue of ';
 	out += appMon2;
 	out += ' pounds';
