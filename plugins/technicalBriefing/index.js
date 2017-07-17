@@ -80,7 +80,11 @@ class TechnicalBriefing {
       'technicalBriefing:respond': (exchange, context) => {    
  
 	console.log('respond');  
-	console.log(test2);
+	//console.log(test2);
+	
+	obj = JSON.parse(test2);
+	alertsLen = Object.keys(obj.alerts[0]).length;
+	console.log(alertsLen);   
 	      
 	var data, etree;
  
