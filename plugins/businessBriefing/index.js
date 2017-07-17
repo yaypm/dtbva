@@ -112,7 +112,7 @@ class BusinessBriefing {
 	out += appMon2;
 	out += ' pounds';
 	 
-	var linkUrl = "https://dynatrace.demo.dynatrace.com:9911/index.jsp#dashboard;db=97e1a4f4-a524-4648-a4cd-beecc474c31a";
+	var linkUrl = "https://dynatrace.demo.dynatrace.com:9911/index.jsp#dashboard;db=61db94c9-08a4-4f37-8cd4-b7007d8e31b0";
 	this.davis.server.pushLinkToUser(exchange.user, linkUrl, true);      
 	      
 	exchange
