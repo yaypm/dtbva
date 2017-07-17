@@ -22,12 +22,12 @@ class TechnicalBriefing {
       // Our intent name
       TechnicalBriefing: {
         // A basic description of the intent
-        usage: 'Get your business briefing',
+        usage: 'Get your technical briefing',
 
         // Phrases that will trigger our intent. Note that they will not
         // need to be matched exactly in order for the intent to run.
         phrases: [
-          'morning business briefing',
+          'morning technical briefing',
         ],
 
         // Lifecycle Events are friendly names for the steps that an intent
