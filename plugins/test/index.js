@@ -79,7 +79,7 @@ class Test {
 	var appMon1 = etree.findall('./data/textandmeasure/textmeasurecontent')[1].text;
 	var appMon2 = etree.findall('./data/textandmeasure/textmeasurecontent')[2].text;
 	
-	let out = 'In the past 30 minutes there have been ';
+	let out = 'In the past hour there have been ';
 	out += appMon1;
 	out += ' users, a total conversion rate of ';
 	out += appMon0;
