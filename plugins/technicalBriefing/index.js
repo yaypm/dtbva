@@ -139,4 +139,4 @@ class TechnicalBriefing {
 }
 
 // export the plugin so it can be used
-module.exports = TechhnicalBriefing;
+module.exports = TechnicalBriefing;
