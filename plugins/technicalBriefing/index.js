@@ -84,7 +84,7 @@ class TechnicalBriefing {
 	
 	var obj;      
 	obj = JSON.parse(test2);
-	var alertsLen = Object.keys(obj.alerts[0]).length;
+	var alertsLen = Object.keys(obj.alerts).length;
 	console.log(alertsLen);   
 	      
 	var data, etree;
