@@ -69,8 +69,8 @@ class TechnicalBriefing {
 	
 	return request(opts)
     		.then(resp => {
-		test = resp;
-    	})
+		test = resp;})
+	        .then(return request(opts2));
     		
       },
       'technicalBriefing:respond': (exchange, context) => {    
