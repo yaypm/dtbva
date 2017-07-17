@@ -102,7 +102,7 @@ class BusinessBriefing {
 	}
   
 	      
-	let out = 'In the past hour there have been ';
+	let out = 'Good morning Alistair, here is your business briefing. On your application yesterday, there were ';
 	out += appMon1;
 	out += ' users, ';
 	out += speech;
