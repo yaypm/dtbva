@@ -89,24 +89,99 @@ class TechnicalBriefing {
 	
 	var appMon0 = etree.findall('./data/textandmeasure/textmeasurecontent')[0].text;     
 	var appMon1 = etree.findall('./data/textandmeasure/textmeasurecontent')[1].text;
+	
+	//Login Failure Trend
+	var loginFailureTrend = appMon1 / appMon0;
+	      
+	if(loginFailureTrend > 1) {
+		var loginFailure = 'up';
+	}
+	else {
+		var loginFailure = 'down';
+	}	
+	      
 	var appMon2 = etree.findall('./data/textandmeasure/textmeasurecontent')[2].text;
 	      var appMon2 = appMon2 / 1000;
 	var appMon3 = etree.findall('./data/textandmeasure/textmeasurecontent')[3].text;
 	      var appMon3 = appMon3 / 1000;
+	
+	// Login Response Trend      
+	var loginResponseTrend = appMon2 / appMon3;
+	
+	if(loginResponseTrend > 1) {
+		var loginResponse = 'up';
+	}
+	else {
+		var loginResponse = 'down';
+	}
+	      
 	var appMon4 = etree.findall('./data/textandmeasure/textmeasurecontent')[4].text;     
 	var appMon5 = etree.findall('./data/textandmeasure/textmeasurecontent')[5].text;
+	
+	//Payment Failure Trend      
+	var paymentFailureTrend = appMon5 / appMon4;      
+	      
+	if(paymentFailureTrend > 1) {
+		var paymentFailure = 'up';
+	}
+	else {
+		var paymentFailure = 'down';
+	}        
+	      
 	var appMon6 = etree.findall('./data/textandmeasure/textmeasurecontent')[6].text;
 	      var appMon6 = appMon6 / 1000;
 	var appMon7 = etree.findall('./data/textandmeasure/textmeasurecontent')[7].text;
 	      var appMon7 = appMon7 / 1000;
+	      
+	//Payment Response Trend      
+	var paymentResponseTrend = appMon6 / appMon7;      
+	      
+	if(paymentResponseTrend > 1) {
+		var paymentResponse = 'up';
+	}
+	else {
+		var paymentResponse = 'down';
+	}     
+	      
 	var appMon8 = etree.findall('./data/textandmeasure/textmeasurecontent')[8].text;
 	var appMon9 = etree.findall('./data/textandmeasure/textmeasurecontent')[9].text;
+	
+	//Frustrated Trend      
+	var frustratedTrend = appMon13 / appMon11;      
+	      
+	if(frustratedTrend > 1) {
+		var frustrated = 'up';
+	}
+	else {
+		var frustrated = 'down';
+	}  	      
+	      
 	var appMon10 = etree.findall('./data/textandmeasure/textmeasurecontent')[10].text;
 	var appMon11 = etree.findall('./data/textandmeasure/textmeasurecontent')[11].text;
 	      var appMon11 = appMon11 / 1000;
 	var appMon12 = etree.findall('./data/textandmeasure/textmeasurecontent')[12].text;
 	var appMon13 = etree.findall('./data/textandmeasure/textmeasurecontent')[13].text;
 	      var appMon13 = appMon13 / 1000;
+	
+	//Search Response Trend      
+	var searchResponseTrend = appMon13 / appMon11;      
+	      
+	if(searchResponseTrend > 1) {
+		var searchResponse = 'up';
+	}
+	else {
+		var searchResponse = 'down';
+	}    
+	      
+	//Search Failure Trend      
+	var searchFailureTrend = appMon10 / appMon12;      
+	      
+	if(searchFailureTrend > 1) {
+		var searchFailure = 'up';
+	}
+	else {
+		var searchFailure = 'down';
+	}          
 	      
 	let out = 'OK here is your technical briefing. Today, ';
 	out += appMon8;
