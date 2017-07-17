@@ -55,16 +55,32 @@ class TechnicalBriefing {
 	var appmon_username = process.env.APPMON_USERNAME;
 	var appmon_password = process.env.APPMON_PASSWORD;
 	
-	const opts = {
-    		uri: 'https://dynatrace.demo.dynatrace.com:8021/rest/management/reports/create/Davis%20Test%20Technical?type=XML&format=XML+Export',
-  		headers: {'Authorization': 'Basic ' + new Buffer(appmon_username + ':' + appmon_password).toString('base64')},
-  		rejectUnauthorized: false
-  	}
-  	
-	return request(opts)
+	var techDashboard = function() {
+		const opts = {
+    			uri: 'https://dynatrace.demo.dynatrace.com:8021/rest/management/reports/create/Davis%20Test%20Technical?type=XML&format=XML+Export',
+  			headers: {'Authorization': 'Basic ' + new Buffer(appmon_username + ':' + appmon_password).toString('base64')},
+  			rejectUnauthorized: false
+  		}
+		
+		return request(opts)
+	}
+	
+	var alertAmount = function() {
+		const opts2 = {
+    			uri: 'https://dynatrace.demo.dynatrace.com:8021/api/v2/alerts?systemprofile=easyTravel&state=Created&from=2017-07-16T00%3A00%3A01%2B00%3A00&to=2017-07-17T00%3A00%3A01%2B00%3A00',
+  			headers: {'Authorization': 'Basic ' + new Buffer(appmon_username + ':' + appmon_password).toString('base64')},
+  			rejectUnauthorized: false
+  		}
+		
+		return request(opts2)	
+	}
+	
+	techDashboard()
     		.then(resp => {
-		test = resp;
-    	})
+		test = resp;})
+	        //.then(alertAmount)
+	        //.then(resp2 => {
+		//test2 = resp2;});
     		
       },
       'technicalBriefing:respond': (exchange, context) => {    
