@@ -95,13 +95,13 @@ class TechnicalBriefing {
 	var obj;      
 	obj = JSON.parse(test2);
 	var alertsLen = Object.keys(obj.alerts).length;
-	var alertsToday = alertsLen / 3;      
+	var alertsToday = Math.floor(alertsLen / 3);      
 	console.log(alertsLen);  
 	      
 	var obj2;
 	obj2 = JSON.parse(test3);
 	var alertsLen2 = Object.keys(obj2.alerts).length;
-	var alertsYest = alertsLen2 / 3;      
+	var alertsYest = Math.floor(alertsLen2 / 3);      
 	console.log(alertsYest); 
 	
 	var alertTrend = alertsToday / alertsYest;
