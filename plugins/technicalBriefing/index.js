@@ -76,7 +76,7 @@ class TechnicalBriefing {
     		.then(resp => {
 		test2 = resp;
     	})
-	      console.log(test2);
+	      console.log('balls');
       },
       'technicalBriefing:respond': (exchange, context) => {    
  
