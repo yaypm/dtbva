@@ -267,7 +267,7 @@ class TechnicalBriefing {
 	out += appMon4;
 	out += ' percent yesterday.';      
 	      
-	var linkUrl = "https://dynatrace.demo.dynatrace.com:9911/index.jsp#dashboard;db=97e1a4f4-a524-4648-a4cd-beecc474c31a";
+	var linkUrl = "https://dynatrace.demo.dynatrace.com:9911/index.jsp#applications";
 	this.davis.server.pushLinkToUser(exchange.user, linkUrl, true);      
 	      
 	exchange
