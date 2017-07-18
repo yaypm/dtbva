@@ -222,9 +222,9 @@ class TechnicalBriefing {
 	out += frustrated;
 	out += ' from ';      
 	out += appMon9;
-	out += ' percent yesterday and there were ';
+	out += ' percent yesterday, and there were ';
 	out += alertsToday;
-	out += ' alerts yesterday, ';
+	out += ' alerts today, ';
 	out += alertChange;
 	out += ' from ';
 	out += alertsYest;
@@ -235,7 +235,7 @@ class TechnicalBriefing {
 	out += loginResponse;
 	out += ' from ';        
 	out += appMon3;
-	out += ' seconds yesterday. Today login has a failure rate of ';
+	out += ' seconds yesterday. Today, login has a failure rate of ';
 	out += appMon1;
 	out += ' percent ';
 	out += loginFailure;
