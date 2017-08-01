@@ -27,7 +27,7 @@ class test {
         // Phrases that will trigger our intent. Note that they will not
         // need to be matched exactly in order for the intent to run.
         phrases: [
-          'tell me a joke',
+          'what the future holds',
         ],
 
         // Lifecycle Events are friendly names for the steps that an intent
@@ -54,7 +54,7 @@ class test {
       },
       'test:respond': (exchange, context) => {    
  
-	const resp = "here at App Dynamics, we still believe that transaction snapshotting delivers value to the enterprise";
+	const resp = "in the future, I will have the ability to give you a morning business briefing. How much money did you make? Where are users abandoning? As if that was not enough, I will be predicting the future to tell you what performance will be like and where business metrics will be.";
 	 
 	var linkUrl = "https://www.dynatrace.com";
 	this.davis.server.pushLinkToUser(exchange.user, linkUrl, true);      
