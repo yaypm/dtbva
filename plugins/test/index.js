@@ -3,7 +3,7 @@
 var https = require('https');
 const request = require('request-promise');
 var et = require("elementtree");
-var test = '';
+
 /**
  * The DavisWeather class is the core of the plugin and an
  * instance of DavisWeather is what will be loaded into Davis
