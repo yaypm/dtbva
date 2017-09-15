@@ -1,42 +1,56 @@
 <html>
 <head>
-<link rel="stylesheet" type="text/css" href='/static/main.css' />
+<link rel="stylesheet" type="text/css" href='/stylesheets/main.css' />
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <link rel="icon" href="https://dt-cdn.net/assets/images/brand/favicon-63e287af7c.ico">
 <script>
 function switchSubNav(divId) {
 	menu = document.getElementById("fullroi");
 	i = 0;
+
 	while(menu.children[i] != undefined) {
+
 		if(menu.children[i].id == divId) {
 			$( '#' + menu.children[i].id ).addClass("is-current");
 			$("#c_" + menu.children[i].id).fadeIn();
+
 			if(menu.children[i].id == "fullroi_input") {
 				$( '#fullroi_input_prod_cont' ).fadeIn;
 			}
 		}
+
 		else {
 			$( '#' + menu.children[i].id ).removeClass("is-current");
 			$("#c_" + menu.children[i].id).fadeOut();
 		}
+
 		i++;
 	}
+
 }
+
 function switchTab (divId) {
 	menu = document.getElementById("c_fullroi_input");
 	i = 1;
+
 	while(menu.children[i] != undefined) {
+
 		if(menu.children[i].id == divId + "_cont") {
 			$( '#' + menu.children[i].id ).addClass("is-active");
 			$( '#' + menu.children[i].id).fadeIn();
 		}
+
 		else {
 			$( '#' + menu.children[i].id ).removeClass("is-active");
 			$( '#' + menu.children[i].id).css("display", "none");
 		}
+
 		i++;
 	}
+
+
 }
+
 </script>
 </head>
 
@@ -137,7 +151,7 @@ function switchTab (divId) {
 				<label for="i2" class="label">How many hours per day does the average IT resource work?</label><input type="text" class="inputfield" placeholder="7.5" id="i2"/>
 				<br /><br />
 				<label for="i3" class="label">What is the average salary for an IT staff member?
-</label><input type="text" class="inputfield" placeholder="65000" id="i3"/>
+</label><input class="slider" id="i0" type="range" min="0" max="100000" value="65000">
 				<p class="hint" id="i3">Gartner recommends £65,000</p>
 				<br /><br />
 				<label for="i4" class="label">Favourite UK grime artist</label><input type="text" class="inputfield" id="i4"/>
@@ -235,7 +249,7 @@ function switchTab (divId) {
 <!--end of content-->
 
 
-<script src="/static/main.js"></script>
+<script src="/assets/main.js"></script>
 </body>
 
 
