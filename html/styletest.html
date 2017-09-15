@@ -1,0 +1,249 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href='/stylesheets/main.css' />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<link rel="icon" href="https://dt-cdn.net/assets/images/brand/favicon-63e287af7c.ico">
+<script>
+function switchSubNav(divId) {
+	menu = document.getElementById("fullroi");
+	i = 0;
+
+	while(menu.children[i] != undefined) {
+		
+		if(menu.children[i].id == divId) {
+			$( '#' + menu.children[i].id ).addClass("is-current");
+			$("#c_" + menu.children[i].id).fadeIn();
+			
+			if(menu.children[i].id == "fullroi_input") {
+				$( '#fullroi_input_prod_cont' ).fadeIn;
+			}
+		}
+		
+		else {
+			$( '#' + menu.children[i].id ).removeClass("is-current");
+			$("#c_" + menu.children[i].id).fadeOut();
+		}
+		
+		i++;
+	}
+	
+}
+
+function switchTab (divId) {
+	menu = document.getElementById("c_fullroi_input");
+	i = 1;
+		
+	while(menu.children[i] != undefined) {
+		
+		if(menu.children[i].id == divId + "_cont") {
+			$( '#' + menu.children[i].id ).addClass("is-active");
+			$( '#' + menu.children[i].id).fadeIn();
+		}
+		
+		else {
+			$( '#' + menu.children[i].id ).removeClass("is-active");
+			$( '#' + menu.children[i].id).css("display", "none");
+		}
+	
+		i++;
+	}
+	
+	
+}
+
+</script>
+</head>
+
+<body>
+<!--start of nav bar-->
+<div>
+
+<div class="nav" style="margin-bottom: 20px;">
+  <a class="nav__brand" href="/">
+    <img class="nav__logo" src="http://assets.dynatrace.com/global/logos/dynatrace-logo.svg" alt="dynatrace logo"/>
+  </a>
+  <div class="nav__buttongroup">
+   
+    <a class="nav__btn nav__btn--cta" href="https://www.dynatrace.com/trial/">Free trial</a>
+    <button data-target="#nav-bar-example3" class="nav__btn nav__btn--menutoggle">Menu</button>
+  </div>
+  <nav id="nav-bar-example3" class="nav__bar">
+    <ul class="nav__list nav__list--primary">
+      <li class="nav__item expandable expandable--nav">
+        <a class="nav__link expandable__trigger" href="#noop">Short ROI calculator</a>
+        <ul class="nav__list nav__list--secondary expandable__content">
+          <li class="nav__item">
+            <a class="nav__link " href="#noop">Introduction</a>
+          </li>
+          <li class="nav__item">
+            <a class="nav__link" href="#noop">Data input</a>
+          </li>
+          <li class="nav__item">
+            <a class="nav__link" href="#noop">Report overview</a>
+          </li>
+        </ul>
+      </li>
+      <li class="nav__item expandable expandable--nav is-current">
+        <a class="nav__link expandable__trigger" onclick="openFullRoi()" href="#noop">Full ROI calculator</a>
+        <ul id="fullroi" class="nav__list nav__list--secondary expandable__content">
+          <li id="fullroi_intro" class="nav__item is-current" onclick="switchSubNav(this.id)">
+            <a class="nav__link" href="#noop">Introduction</a>
+          </li>
+          <li id="fullroi_input" class="nav__item" onclick="switchSubNav(this.id)">
+            <a class="nav__link" href="#noop">Data input</a>
+          </li>
+          <li id="fullroi_report" class="nav__item" onclick="switchSubNav(this.id)">
+            <a class="nav__link" href="#noop">Report overview</a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="nav__item nav__item--right">
+        <a class="nav__link" href="#noop">Login</a>
+      </li>
+    </ul>
+  </nav>
+</div>
+
+
+
+</div>
+<!--end of nav bar-->
+
+<!--start of content-->
+<div style="position: relative; width: 100%; ">
+
+	<!--full roi-->
+		
+		<!--introduction-->
+		<div id="c_fullroi_intro" style="position: absolute;">
+		
+		<div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+		<div class="loading">
+		<svg class="loading__distractor" width="30px" height="30px" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
+		<circle class="loading__path" cx="15" cy="15" r="12"></circle>
+		</svg>
+		<p class="loading__text">Loading...</p>
+		</div>
+		</div>
+		
+		</div>
+
+		<!--data input-->
+		<div id="c_fullroi_input" class="non-primary" style="position: absolute; width: 100%;">
+		
+		
+		<div class="tabs" style="width: 100%; ">
+		<button id="fullroi_input_org" class="tab is-active" onclick="switchTab(this.id)">Organisation information</button>
+		<button id="fullroi_input_prod" class="tab" onclick="switchTab(this.id)">Product cost</button>
+		<button id="fullroi_input_bus" class="tab" onclick="switchTab(this.id)">Business impact</button>
+		</div>
+		
+			<!--organisation information-->
+			<div id="fullroi_input_org_cont">
+				<div style="width: 500px; margin-left: 50px; margin-top: 50px;">
+				Tell us about your organisation:
+				<br /><br />
+				<label for="i0" class="label">Name</label><input type="text" class="inputfield" id="i0"/>
+				<br /><br />
+				<label for="i1" class="label">Favourite UK grime artist</label><input type="text" class="inputfield" id="i1"/>
+				<br /><br />
+				<button role="button" type="button" class="btn btn--primary">Get hyper</button>
+				</div>
+			</div>
+			<!--product cost-->
+			<div id="fullroi_input_prod_cont" class="non-primary">
+				<div style="width: 500px; margin-left: 50px; margin-top: 50px;">
+				<label for="s1" class="label">Have you ever?</label>
+					<select class="select" id="s1">
+					  <option value="Banana" selected="selected">Told on a fella</option>
+					  <option value="Ananas">Squeezed a trigga</option>
+					  <option value="Papaya">Set a fella up</option>
+					  <option value="Kiwi">Helped a fella out when he was down on his luck</option>
+					</select>
+				</div>
+			</div>
+			<!--business impact-->
+			<div id="fullroi_input_bus_cont" class="non-primary">
+				<div style="width: 500px; margin-left: 50px; margin-top: 50px;">
+					<label for="i1" class="label">Thoughts and feelings</label><textarea rows="4" cols="50" class="textarea" placeholder="Tell me about your day..." id="i1"></textarea>
+				</div>
+			</div>
+		
+		</div>
+
+		<!--report-->
+		<div id="c_fullroi_report" class="non-primary" style="position: absolute; width: 100%;" >
+		<div style="width: 800px; margin-left: 50px; margin-top: 50px;">
+		
+		<table class="table table--expandable" data-behavior="accordion">
+			  <thead>
+				<tr>
+				  <th>Application</th>
+				  <th>Number of users</th>
+				  <th>Reponse time</th>
+				  <th>Details</th>
+				</tr>
+			  </thead>
+			  <tbody class="expandable">
+				<tr>
+				  <td>Dynatrace Website</td>
+				  <td>1,670</td>
+				  <td>3.2s</td>
+				  <td><a href="#" class="expandable__trigger"></a></td>
+				</tr>
+				<tr class="expandable__content">
+				  <td colspan="5">
+					Some expandable content...
+				  </td>
+				</tr>
+			  </tbody>
+			  <tbody class="expandable is-active">
+				<tr>
+				  <td>Dynatrace Community</td>
+				  <td>5,678</td>
+				  <td>5.6s</td>
+				  <td><a href="#" class="expandable__trigger"></a></td>
+				</tr>
+				<tr class="expandable__content">
+				  <td colspan="5">
+					More expandable content...
+				  </td>
+				</tr>
+			  </tbody>
+			  <tbody>
+				<tr>
+				  <td>Dynatrace Support</td>
+				  <td>2,480</td>
+				  <td>4.6s</td>
+				  <td><a href="#" class="expandable__trigger"></a></td>
+				</tr>
+			  </tbody>
+			  <tbody class="expandable">
+				<tr>
+				  <td>Dynatrace Eservices</td>
+				  <td>509</td>
+				  <td>1.2s</td>
+				  <td><a href="#" class="expandable__trigger"></a></td>
+				</tr>
+				<tr class="expandable__content">
+				  <td colspan="5">
+					More expandable content...
+				  </td>
+				</tr>
+			  </tbody>
+			</table>
+		
+		</div>
+		</div>
+
+</div>
+<!--end of content-->
+
+
+<script src="/assets/main.js"></script>
+</body>
+
+
+
+</html>
