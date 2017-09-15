@@ -1,0 +1,24 @@
+{
+  "name": "dtbva",
+  "version": "1.0.0",
+  "description": "Discover the business value to your Dynatrace relationship",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yaypm/dtbva.git"
+  },
+  "keywords": [
+    "dynatrace",
+    "bva"
+  ],
+  "author": "Alistair Emslie and Nick Ross",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yaypm/dtbva/issues"
+  },
+  "homepage": "https://github.com/yaypm/dtbva#readme"
+}
