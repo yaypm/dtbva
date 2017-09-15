@@ -9,46 +9,46 @@ function switchSubNav(divId) {
 	i = 0;
 
 	while(menu.children[i] != undefined) {
-		
+
 		if(menu.children[i].id == divId) {
 			$( '#' + menu.children[i].id ).addClass("is-current");
 			$("#c_" + menu.children[i].id).fadeIn();
-			
+
 			if(menu.children[i].id == "fullroi_input") {
 				$( '#fullroi_input_prod_cont' ).fadeIn;
 			}
 		}
-		
+
 		else {
 			$( '#' + menu.children[i].id ).removeClass("is-current");
 			$("#c_" + menu.children[i].id).fadeOut();
 		}
-		
+
 		i++;
 	}
-	
+
 }
 
 function switchTab (divId) {
 	menu = document.getElementById("c_fullroi_input");
 	i = 1;
-		
+
 	while(menu.children[i] != undefined) {
-		
+
 		if(menu.children[i].id == divId + "_cont") {
 			$( '#' + menu.children[i].id ).addClass("is-active");
 			$( '#' + menu.children[i].id).fadeIn();
 		}
-		
+
 		else {
 			$( '#' + menu.children[i].id ).removeClass("is-active");
 			$( '#' + menu.children[i].id).css("display", "none");
 		}
-	
+
 		i++;
 	}
-	
-	
+
+
 }
 
 </script>
@@ -63,14 +63,14 @@ function switchTab (divId) {
     <img class="nav__logo" src="http://assets.dynatrace.com/global/logos/dynatrace-logo.svg" alt="dynatrace logo"/>
   </a>
   <div class="nav__buttongroup">
-   
+
     <a class="nav__btn nav__btn--cta" href="https://www.dynatrace.com/trial/">Free trial</a>
     <button data-target="#nav-bar-example3" class="nav__btn nav__btn--menutoggle">Menu</button>
   </div>
   <nav id="nav-bar-example3" class="nav__bar">
     <ul class="nav__list nav__list--primary">
       <li class="nav__item expandable expandable--nav">
-        <a class="nav__link expandable__trigger" href="#noop">Short ROI calculator</a>
+        <a class="nav__link expandable__trigger" href="#noop">Simple Business Value Analysis</a>
         <ul class="nav__list nav__list--secondary expandable__content">
           <li class="nav__item">
             <a class="nav__link " href="#noop">Introduction</a>
@@ -84,7 +84,7 @@ function switchTab (divId) {
         </ul>
       </li>
       <li class="nav__item expandable expandable--nav is-current">
-        <a class="nav__link expandable__trigger" onclick="openFullRoi()" href="#noop">Full ROI calculator</a>
+        <a class="nav__link expandable__trigger" onclick="openFullRoi()" href="#noop">Detailed Business Value Analysis</a>
         <ul id="fullroi" class="nav__list nav__list--secondary expandable__content">
           <li id="fullroi_intro" class="nav__item is-current" onclick="switchSubNav(this.id)">
             <a class="nav__link" href="#noop">Introduction</a>
@@ -114,10 +114,10 @@ function switchTab (divId) {
 <div style="position: relative; width: 100%; ">
 
 	<!--full roi-->
-		
+
 		<!--introduction-->
 		<div id="c_fullroi_intro" style="position: absolute;">
-		
+
 		<div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);">
 		<div class="loading">
 		<svg class="loading__distractor" width="30px" height="30px" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
@@ -126,19 +126,19 @@ function switchTab (divId) {
 		<p class="loading__text">Loading...</p>
 		</div>
 		</div>
-		
+
 		</div>
 
 		<!--data input-->
 		<div id="c_fullroi_input" class="non-primary" style="position: absolute; width: 100%;">
-		
-		
+
+
 		<div class="tabs" style="width: 100%; ">
 		<button id="fullroi_input_org" class="tab is-active" onclick="switchTab(this.id)">Organisation information</button>
 		<button id="fullroi_input_prod" class="tab" onclick="switchTab(this.id)">Product cost</button>
 		<button id="fullroi_input_bus" class="tab" onclick="switchTab(this.id)">Business impact</button>
 		</div>
-		
+
 			<!--organisation information-->
 			<div id="fullroi_input_org_cont">
 				<div style="width: 500px; margin-left: 50px; margin-top: 50px;">
@@ -146,7 +146,15 @@ function switchTab (divId) {
 				<br /><br />
 				<label for="i0" class="label">Name</label><input type="text" class="inputfield" id="i0"/>
 				<br /><br />
-				<label for="i1" class="label">Favourite UK grime artist</label><input type="text" class="inputfield" id="i1"/>
+				<label for="i1" class="label">How many business days does the typical business user or IT resource work per year?</label><input type="text" class="inputfield" placeholder="220" id="i1"/>
+				<br /><br />
+				<label for="i2" class="label">How many hours per day does the average IT resource work?</label><input type="text" class="inputfield" placeholder="7.5" id="i2"/>
+				<br /><br />
+				<label for="i3" class="label">What is the average salary for an IT staff member?
+</label><input type="text" class="inputfield" placeholder="65000" id="i3"/>
+				<p class="hint" id="i3">Gartner recommends £65,000</p>
+				<br /><br />
+				<label for="i4" class="label">Favourite UK grime artist</label><input type="text" class="inputfield" id="i4"/>
 				<br /><br />
 				<button role="button" type="button" class="btn btn--primary">Get hyper</button>
 				</div>
@@ -169,13 +177,13 @@ function switchTab (divId) {
 					<label for="i1" class="label">Thoughts and feelings</label><textarea rows="4" cols="50" class="textarea" placeholder="Tell me about your day..." id="i1"></textarea>
 				</div>
 			</div>
-		
+
 		</div>
 
 		<!--report-->
 		<div id="c_fullroi_report" class="non-primary" style="position: absolute; width: 100%;" >
 		<div style="width: 800px; margin-left: 50px; margin-top: 50px;">
-		
+
 		<table class="table table--expandable" data-behavior="accordion">
 			  <thead>
 				<tr>
@@ -233,7 +241,7 @@ function switchTab (divId) {
 				</tr>
 			  </tbody>
 			</table>
-		
+
 		</div>
 		</div>
 
