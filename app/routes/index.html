@@ -51,6 +51,10 @@ function switchTab (divId) {
 
 }
 
+function updateSalary() {
+	document.getElementById("itest").value = document.getElementsByClassName("slider").value;
+}
+
 </script>
 </head>
 
@@ -151,8 +155,10 @@ function switchTab (divId) {
 				<label for="i2" class="label">How many hours per day does the average IT resource work?</label><input type="text" class="inputfield" placeholder="7.5" id="i2"/>
 				<br /><br />
 				<label for="i3" class="label">What is the average salary for an IT staff member?
-</label><input class="slider" id="i0" type="range" min="0" max="100000" value="65000">
+</label><input class="slider" id="i0" type="range" min="0" max="100000" value="65000" onchange="updateSalary();">
 				<p class="hint" id="i3">Gartner recommends £65,000</p>
+				<br /><br />
+				<label for="itest" class="label">Salary</label><input type="text" class="inputfield" id="itest"/>
 				<br /><br />
 				<label for="i4" class="label">Favourite UK grime artist</label><input type="text" class="inputfield" id="i4"/>
 				<br /><br />
