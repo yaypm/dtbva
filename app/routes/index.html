@@ -145,25 +145,142 @@ function updateSalary() {
 
 			<!--organisation information-->
 			<div id="fullroi_input_org_cont">
-				<div style="width: 500px; margin-left: 50px; margin-top: 50px;">
-				Tell us about your organisation:
-				<br /><br />
+			<div class="section">
+				<!--first column-->
+				<div class="column--1-of-3">
+				<div style="margin-left: 30px; margin-right: 30px; margin-top: 30px; margin-bottom: 30px;">
+				
+				<h3>Tell us about your organisation</h3>
+				<br />
+			
 				<label for="i0" class="label">Name</label><input type="text" class="inputfield" id="i0"/>
 				<br /><br />
-				<label for="i1" class="label">How many business days does the typical business user or IT resource work per year?</label><input type="text" class="inputfield" placeholder="220" id="i1"/>
+				<label for="i1" class="label">How many business days does the typical business user or IT resource work per year?</label><input type="number" class="inputfield" placeholder="220" id="i1"/>
 				<br /><br />
-				<label for="i2" class="label">How many hours per day does the average IT resource work?</label><input type="text" class="inputfield" placeholder="7.5" id="i2"/>
+				<label for="i2" class="label">How many hours per day does the average IT resource work?</label><input type="number" class="inputfield" placeholder="7.5" id="i2"/>
 				<br /><br />
-				<label for="i3" class="label">What is the average salary for an IT staff member?
-</label><input class="slider" id="i0" type="range" min="0" max="100000" value="65000" onchange="updateSalary();">
+				<label for="i3" class="label">What is the average salary of an IT staff member?</label><input type="number" class="inputfield" placeholder="7.5" id="i3"/>
 				<p class="hint" id="i3">Gartner recommends £65,000</p>
+				<label for="i4" class="label">What is the cost of a service desk call?</label><input type="number" class="inputfield" placeholder="7.5" id="i4"/>
 				<br /><br />
-				<label for="itest" class="label">Salary</label><input type="text" class="inputfield" id="itest"/>
+				<label for="i5" class="label">What is the expected cost of Dynatrace administration?</label><input type="number" class="inputfield" placeholder="20000" id="i5"/>
 				<br /><br />
-				<label for="i4" class="label">Favourite UK grime artist</label><input type="text" class="inputfield" id="i4"/>
+				<label for="i6" class="label">How many employees will be managing Dynatrace</label><input type="number" class="inputfield" placeholder="1" id="i6"/>
 				<br /><br />
-				<button role="button" type="button" class="btn btn--primary">Get hyper</button>
+				<label for="s1" class="label">How confident are you in the numbers provided?</label>
+					<select class="select" id="s1">
+					  <option value="10">10%</option>
+					  <option value="20">20%</option>
+					  <option value="30">30%</option>
+					  <option value="40">40%</option>
+					  <option value="50">50%</option>
+					  <option value="60">60%</option>
+					  <option value="70" selected = "selected">70%</option>
+					  <option value="80">80%</option>
+					  <option value="90">90%</option>
+					  <option value="100">100%</option>					  
+					</select>
+				<br /><br />				
+				
+				
 				</div>
+				</div>
+				
+				<!--second column-->
+				<div class="column--1-of-3">
+				<div style="margin-left: 30px; margin-right: 30px; margin-top: 30px; margin-bottom: 30px;">
+				
+				<h3>Tell us about the study</h3>
+				<br />
+				
+				<label for="i7" class="label">Expected revenue growth (%)</label><input type="text" class="inputfield" placeholder="3" id="i7"/>
+				<br /><br />
+				
+				<!--<label for="s2" class="label">Currency</label>
+				<select class="select" id="s2">
+				  <option value="GBP" selected="selected">GBP (£)</option>
+				  <option value="EUR">EUR (€)</option>
+				  <option value="USD">USD ($)</option>
+				</select>
+				<br /><br />-->
+				
+				<label for="s3" class="label">Study timeframe</label>
+				<select class="select" id="s3">
+				  <option value="1" selected="selected">1 year</option>
+				  <option value="2">2 year</option>
+				  <option value="3">3 year</option>
+				  <option value="4">4 year</option>
+				  <option value="5">5 year</option>				  
+				</select>				
+				<br /><br />
+				
+				<label for="i8" class="label">Start year of study</label><input type="text" class="inputfield" placeholder="2017" id="i8"/>
+				<br /><br />
+				
+				</div>
+				</div>
+				
+				<!--third column-->
+				<div class="column--1-of-3">
+				<div style="margin-left: 30px; margin-right: 50px; margin-top: 30px; margin-bottom: 30px;">				
+				
+				<h3>Detail the expected benefits</h3>
+				<br />
+								
+				<table class="table">
+				  <thead>
+					<tr>
+					  <th>Expected benefit</th>
+					  <th>Estimate (%)</th>
+					</tr>
+				  </thead>
+				  <tbody>
+					<tr>
+					  <td>Decrease in number of events that affect revenue</td>
+					  <td><input type="number" class="inputfield" placeholder="50" id="i9"/></td>
+					</tr>
+					<tr>
+					  <td>Reduced time to isolate and resolve incidents</td>
+					  <td><input type="text" class="inputfield" placeholder="40" id="i10"/></td>
+					</tr>
+					<tr>
+					  <td>Increased employee productivity</td>
+					  <td><input type="text" class="inputfield" placeholder="15" id="i11"/></td>
+					</tr>
+					<tr>
+					  <td>Decrease in the number of incidents that affect end users</td>
+					  <td><input type="text" class="inputfield" placeholder="50" id="i12"/></td>
+					</tr>
+					<tr>
+					  <td>Reduced time to resolve incidents</td>
+					  <td><input type="text" class="inputfield" placeholder="50" id="i13"/></td>
+					</tr>					
+					<tr>
+					  <td>Reduced service desk costs</td>
+					  <td><input type="text" class="inputfield" placeholder="50" id="i14"/></td>
+					</tr>
+					<tr>
+					  <td>Reduced server costs</td>
+					  <td><input type="text" class="inputfield" placeholder="10" id="i15"/></td>
+					</tr>
+					<tr>
+					  <td>Reduced costs of SLA penalties</td>
+					  <td><input type="text" class="inputfield" placeholder="25" id="i16"/></td>
+					</tr>
+					<tr>
+					  <td>Reduced costs of manual SLA report creation</td>
+					  <td><input type="text" class="inputfield" placeholder="50" id="i17"/></td>
+					</tr>					
+				  </tbody>
+				</table>
+				<br /><br />
+				<button role="button" type="button" class="btn btn--primary">Save</button>
+				
+				</div>
+				</div>				
+				
+				
+			</div>	
 			</div>
 			<!--product cost-->
 			<div id="fullroi_input_prod_cont" class="non-primary">
