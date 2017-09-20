@@ -6,6 +6,8 @@
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
 <script>
+document.cookie='application=hoaApJ2XUl';
+
 function switchSubNav(divId) {
 	menu = document.getElementById("fullroi");
 	i = 0;
@@ -177,6 +179,93 @@ $(function () {
 
 }
 
+function getUserId() {
+	var reg = /(application=)(.{10})/;
+	match = document.cookie.match(new RegExp(reg));
+	if (match) {
+		var userId = match[2];
+		return userId;
+	}
+	else {
+		console.log("no ID found");
+	}
+}
+
+function retrieveOptions() {
+	userId = document.getElementById("userId").value;
+	document.getElementById("displayBvaId").innerHTML=userId;
+	document.cookie='application=' + userId;	
+	
+	var myHeaders = new Headers();
+	myHeaders.append("Content-Type", "application/json");
+	myHeaders.append("Accept", "application/json");
+	myHeaders.append("userId", userId);
+	
+	var myInit = { method: 'GET',
+        headers: myHeaders,
+        cache: 'default'
+	};
+	
+	fetch('/getOptions', myInit)
+
+	.then(function(response) {	
+		return response.json();
+	})
+	
+	.then(function(jsonResponse) {	
+		document.getElementById("it_downtime").checked = jsonResponse.it_downtime;
+		document.getElementById("employee_productivity").checked = jsonResponse.employee_productivity;
+		document.getElementById("incident_frequency").checked = jsonResponse.incident_frequency;
+		document.getElementById("service_desk").checked = jsonResponse.service_desk;
+		document.getElementById("sla_compliance").checked = jsonResponse.sla_compliance;
+		document.getElementById("revenue_channels").checked = jsonResponse.revenue_channels;
+		document.getElementById("cloud_bill").checked = jsonResponse.cloud_bill;
+		document.getElementById("speed_market").checked = jsonResponse.speed_market;
+		
+		document.getElementById("company_name").value = jsonResponse.company_name;
+		document.getElementById("study_period").value = jsonResponse.study_period;
+		document.getElementById("dynatrace_cost").checked = jsonResponse.dynatrace_cost;
+		document.getElementById("competitive_analysis").checked = jsonResponse.competitive_analysis;
+	})
+	
+}
+
+function introductionSave() {
+	var userId = getUserId();
+	var it_downtime = document.getElementById("it_downtime").checked;
+	var employee_productivity = document.getElementById("employee_productivity").checked;
+	var incident_frequency = document.getElementById("incident_frequency").checked;
+	var service_desk = document.getElementById("service_desk").checked;
+	var sla_compliance = document.getElementById("sla_compliance").checked;
+	var revenue_channels = document.getElementById("revenue_channels").checked;
+	var cloud_bill = document.getElementById("cloud_bill").checked;
+	var speed_market = document.getElementById("speed_market").checked;
+	
+	var company_name = document.getElementById("company_name").value;
+	var study_period = document.getElementById("study_period").value;
+	var dynatrace_cost = document.getElementById("dynatrace_cost").checked;
+	var competitive_analysis = document.getElementById("competitive_analysis").checked;
+	
+	var myHeaders = new Headers();
+	myHeaders.append("Content-Type", "application/json");
+	myHeaders.append("Accept", "application/json");
+	
+	var myInit = { method: 'POST',
+        headers: myHeaders,
+        cache: 'default',
+		body: JSON.stringify({"userId":userId, "it_downtime": it_downtime, "employee_productivity": employee_productivity, "incident_frequency":incident_frequency, "service_desk": service_desk, "sla_compliance": sla_compliance, "revenue_channels": revenue_channels, "cloud_bill": cloud_bill, "speed_market": speed_market, "company_name": company_name, "study_period": study_period, "dynatrace_cost": dynatrace_cost, "competitive_analysis": competitive_analysis})
+	};
+	
+	fetch('/insertOptions', myInit)
+		
+	.then(function(response) {	
+			return response;
+			console.log(response);
+	})
+}
+
+
+
 </script>
 </head>
 
@@ -189,7 +278,7 @@ $(function () {
     <img class="nav__logo" src="http://assets.dynatrace.com/global/logos/dynatrace-logo.svg" alt="dynatrace logo"/>
   </a>
   <div class="nav__buttongroup">
-
+	<div style="color: white; margin-right: 20px; margin-top: 10px">Business value assessment ID:</div> <div id="displayBvaId" style="color: white; margin-top: 10px; margin-right: 20px;"/>&lt;none&gt;</div>
     <a class="nav__btn nav__btn--cta" href="https://www.dynatrace.com/trial/">Free trial</a>
     <button data-target="#nav-bar-example3" class="nav__btn nav__btn--menutoggle">Menu</button>
   </div>
@@ -208,7 +297,7 @@ $(function () {
             <a class="nav__link" href="#noop">Report overview</a>
           </li>
         </ul>
-      </li>
+		</li>
       <li class="nav__item expandable expandable--nav is-current">
         <a class="nav__link expandable__trigger" onclick="openFullRoi()" href="#noop">Detailed Business Value Analysis</a>
         <ul id="fullroi" class="nav__list nav__list--secondary expandable__content">
@@ -242,15 +331,159 @@ $(function () {
 	<!--full roi-->
 
 		<!--introduction-->
-		<div id="c_fullroi_intro" style="position: absolute;">
+		<div id="c_fullroi_intro" style="position: absolute; width: 100%;">
 
-		<div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-		<div class="loading">
-		<svg class="loading__distractor" width="30px" height="30px" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
-		<circle class="loading__path" cx="15" cy="15" r="12"></circle>
-		</svg>
-		<p class="loading__text">Loading...</p>
-		</div>
+		<div class="section">
+			<div class="column--1-of-2">
+			<div style="margin-left: 50px; margin-right: 50px; margin-bottom: 30px;">
+			<h2>Welcome to the Dynatrace business value assessment!</h2>
+			<br />
+			<p>Dynatrace is number 1 in the market not just because of the amazing product that we offer, but because of
+			the value you can bring to the ENTIRE business. By providing information about your current process and the costs
+			associated with them, you will be presented with a report that details (in money, where relevant!), the benefits
+			that the business will gain from working with us.</p>
+			<br />
+			<table style="width: 100%">
+			<tr>
+			<td style="vertical-align: top; width: 50%;">
+			
+			<h3>New users</h3>
+			<label class="label" style="width: 250px;">Please fill in the information below and hit the button to generate an ID that will be used to retrieve your BVA in the future.</label>
+			<br />
+			<label for="newId" class="label">Email</label><input type="text" class="inputfield" id="newId" style="width: 250px;"/>
+			<br /><br />
+			<button role="button" type="button" class="btn btn--primary">Generate</button>
+	
+			</td>
+			<td style="vertical-align: top; width: 50%;">
+			
+			<h3>Returning users</h3>
+			<label class="label" style="width: 250px;">If you are coming back to finish a previous BVA, please enter your ID below to load up your details and continue!</label>
+			<br />
+			<label for="newId" class="label" >ID</label><input type="text" class="inputfield" id="userId" style="width: 250px;"/>
+			<br /><br />
+			<button role="button" type="button" class="btn btn--primary" onclick="retrieveOptions();">Load</button>
+			
+			</td>
+			</tr>
+			</table>
+			
+			</div>
+			</div>
+		
+			<div class="column--1-of-2">
+			<div style="margin-left: 50px; margin-right: 50px; margin-bottom: 30px; margin-top: 10px;">
+			<h3>Let's get started!</h3>
+			
+			<p>In order to make this BVA as relevant as possible, please select areas below that you would like to focus on and include some initial details.</p>
+			<br />
+			
+			<table style="width: 100%;">
+				<tr>
+					<th style="text-align: left;">General info <label class="label" style="width: 250px;">Choose the areas you want to focus on in this business value assessment.</label> <br /></th>
+					<th style="text-align: left;">Focus areas <label class="label" style="width: 250px;">Enter some initial details about yourself and the study.</label> <br /> </th>
+				</tr>
+				
+				<tr>
+				<td>
+				<div style="margin-right: 0px;">
+				
+				<input type="checkbox" class="switch" id="it_downtime"/>
+				<label for="it_downtime" class="switch__label">
+				<span class="switch__caption">Lost revenue from IT downtime</span>
+				</label>
+			
+				<br /><br />
+			
+				<input type="checkbox" class="switch" id="employee_productivity"/>
+				<label for="employee_productivity" class="switch__label">
+				<span class="switch__caption">Increase employee productivity</span>
+				</label>	
+				
+				<br /><br />
+				
+				<input type="checkbox" class="switch" id="incident_frequency"/>
+				<label for="incident_frequency" class="switch__label">
+				<span class="switch__caption">Reduce the frequency and cost of incidents</span>
+				</label>
+			
+				<br /><br />
+				
+				<input type="checkbox" class="switch" id="service_desk"/>
+				<label for="service_desk" class="switch__label">
+				<span class="switch__caption">Reduce service desk costs</span>
+				</label>
+			
+				<br /><br />
+			
+				<input type="checkbox" class="switch" id="sla_compliance"/>
+				<label for="sla_compliance" class="switch__label">
+				<span class="switch__caption">Improve SLA compliance</span>
+				</label>	
+				
+				<br /><br />
+				
+				<input type="checkbox" class="switch" id="revenue_channels"/>
+				<label for="revenue_channels" class="switch__label">
+				<span class="switch__caption">Increase new revenue channels</span>
+				</label>
+			
+				<br /><br />
+
+				<input type="checkbox" class="switch" id="cloud_bill"/>
+				<label for="cloud_bill" class="switch__label">
+				<span class="switch__caption">Reduce your cloud bill</span>
+				</label>	
+				
+				<br /><br />
+				
+				<input type="checkbox" class="switch" id="speed_market"/>
+				<label for="speed_market" class="switch__label">
+				<span class="switch__caption">Increase speed to market</span>
+				</label>
+			
+				<br /><br />
+				</div>
+				</td>
+				
+				<td style="vertical-align: top;">
+				<label for="company_name" class="label">Company name</label><input type="text" class="inputfield" id="company_name" style="width: 250px;"/>
+				
+				<br /><br />
+				
+				<label for="study_period" class="label">Study timeframe</label>
+				<select class="select" id="study_period" style="width: 250px;">
+				  <option value="1" selected="selected">1 year</option>
+				  <option value="2">2 year</option>
+				  <option value="3">3 year</option>
+				  <option value="4">4 year</option>
+				  <option value="5">5 year</option>				  
+				</select>	
+				
+				<br /><br /><br />
+				
+				<input type="checkbox" class="checkbox" id="dynatrace_cost"/>
+				<label for="dynatrace_cost" class="checkbox__label">
+				<span class="checkbox__caption">Factor in Dynatrace investment?</span>
+				</label>
+
+				<br /><br />
+				
+				<input type="checkbox" class="checkbox" id="competitive_analysis"/>
+				<label for="competitive_analysis" class="checkbox__label">
+				<span class="checkbox__caption">Include competitive analysis?</span>
+				</label>
+				
+				<br /><br /><br /><br />
+				
+				<button role="button" type="button" class="btn btn--primary" onclick="introductionSave();">Save</button>
+				
+				</td>
+				
+				</tr>
+				</table>
+			</div>
+			</div>
 		</div>
 
 		</div>
