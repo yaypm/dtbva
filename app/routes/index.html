@@ -284,22 +284,9 @@ function introductionSave() {
   </div>
   <nav id="nav-bar-example3" class="nav__bar">
     <ul class="nav__list nav__list--primary">
-      <li class="nav__item expandable expandable--nav">
-        <a class="nav__link expandable__trigger" href="#noop">Simple Business Value Analysis</a>
-        <ul class="nav__list nav__list--secondary expandable__content">
-          <li class="nav__item">
-            <a class="nav__link " href="#noop">Introduction</a>
-          </li>
-          <li class="nav__item">
-            <a class="nav__link" href="#noop">Data input</a>
-          </li>
-          <li class="nav__item">
-            <a class="nav__link" href="#noop">Report overview</a>
-          </li>
-        </ul>
-		</li>
+
       <li class="nav__item expandable expandable--nav is-current">
-        <a class="nav__link expandable__trigger" onclick="openFullRoi()" href="#noop">Detailed Business Value Analysis</a>
+        <a class="nav__link expandable__trigger" onclick="openFullRoi()" href="#noop">Business Value Analysis</a>
         <ul id="fullroi" class="nav__list nav__list--secondary expandable__content">
           <li id="fullroi_intro" class="nav__item is-current" onclick="switchSubNav(this.id)">
             <a class="nav__link" href="#noop">Introduction</a>
@@ -499,143 +486,188 @@ function introductionSave() {
 		</div>
 
 			<!--organisation information-->
-			<div id="fullroi_input_org_cont">
-			<div class="section">
-				<!--first column-->
-				<div class="column--1-of-3">
-				<div style="margin-left: 30px; margin-right: 30px; margin-top: 30px; margin-bottom: 30px;">
-				
-				<h3>Tell us about your organisation</h3>
+			<div id="fullroi_input_org_cont" style="margin-top: 30px; margin-left: 50px; margin-right: 30px;" >
+
+		<div class="section"> 
+
+
+			<div class="column--1-of-3">
+		
+		  
+				<h3>Expected benefits</h3>
 				<br />
+				
+				<table class="table" style="font-size:0.9em;">
+	
+				<tr>
+				<th>Benefit</th>
+				<th>Expected value (%)</th>
+				</tr>
+	
+				<tr>
+				<td style="padding-top: 5px; padding-bottom: 5px;">
+					Decrease in revenue affecting incidents 
+				</td>
+				<td align="middle" style="width: 125px; padding-top: 5px; padding-bottom: 5px;">
+					<input type="text" class="inputfield" id="dec_rev_incidents" style="width: 75px;"/>
+				</td>
+				</tr>
+				
+				<tr>
+				<td style="padding-top: 5px; padding-bottom: 5px;">
+					Reduced MTTR
+				</td>
+				<td align="middle" style="width: 125px; padding-top: 5px; padding-bottom: 5px;">
+					<input type="text" class="inputfield" id="reduce_mttr" style="width: 75px;"/>
+				</td>
+				</tr>
+				
+				<tr>
+				<td style="padding-top: 5px; padding-bottom: 5px;">
+					Increase employee productivity
+				</td>
+				<td align="middle" style="width: 125px; padding-top: 5px; padding-bottom: 5px;">
+					<input type="text" class="inputfield" id="increase_employee_prod" style="width: 75px;"/>
+				</td>	
+				</tr>
 			
-				<label for="i0" class="label">Name</label><input type="text" class="inputfield" id="i0"/>
-				<br /><br />
-				<label for="i1" class="label">How many business days does the typical business user or IT resource work per year?</label><input type="number" class="inputfield" placeholder="220" id="i1"/>
-				<br /><br />
-				<label for="i2" class="label">How many hours per day does the average IT resource work?</label><input type="number" class="inputfield" placeholder="7.5" id="i2"/>
-				<br /><br />
-				<label for="i3" class="label">What is the average salary of an IT staff member? (£)</label><input type="number" class="inputfield" placeholder="65000" id="i3"/>
-				<p class="hint" id="i3">Gartner recommends £65,000</p>
-				<label for="i4" class="label">What is the cost of a service desk call? (£)</label><input type="number" class="inputfield" placeholder="10" id="i4"/>
-				<br /><br />
-				<label for="i5" class="label">What is the expected cost of Dynatrace administration? (£)</label><input type="number" class="inputfield" placeholder="20000" id="i5"/>
-				<br /><br />
-				<label for="i6" class="label">How many employees will be managing Dynatrace</label><input type="number" class="inputfield" placeholder="1" id="i6"/>
-				<br /><br />
-				<label for="s1" class="label">How confident are you in the numbers provided?</label>
-					<select class="select" id="s1">
-					  <option value="10">10%</option>
-					  <option value="20">20%</option>
-					  <option value="30">30%</option>
-					  <option value="40">40%</option>
-					  <option value="50">50%</option>
-					  <option value="60">60%</option>
-					  <option value="70" selected = "selected">70%</option>
-					  <option value="80">80%</option>
-					  <option value="90">90%</option>
-					  <option value="100">100%</option>					  
-					</select>
-				<br /><br />				
+				<tr>
+				<td style="padding-top: 5px; padding-bottom: 5px;">
+					Decrease in incidents that affect end users
+				</td >
+				<td align="middle" style="width: 125px; padding-top: 5px; padding-bottom: 5px;">
+					<input type="text" class="inputfield" id="decrease_user_incidents" style="width: 75px;"/>
+				</td>
+				</tr>
 				
+				<tr>
+				<td style="padding-top: 5px; padding-bottom: 5px;">
+					Reduce the time taken to resolve incidents
+				</td>
+				<td align="middle" style="width: 125px; padding-top: 5px; padding-bottom: 5px;">
+					<input type="text" class="inputfield" id="reduce_incident_resolve" style="width: 75px;"/>
+				</td>
+				</tr>
 				
-				</div>
-				</div>
+				<tr>
+				<td style="padding-top: 5px; padding-bottom: 5px;">
+					Reduce service desk costs
+				</td>
+				<td align="middle" style="width: 125px; padding-top: 5px; padding-bottom: 5px;">
+					<input type="text" class="inputfield" id="reduce_service_desk" style="width: 75px;"/>
+				</td>
+				</tr>
 				
-				<!--second column-->
-				<div class="column--1-of-3">
-				<div style="margin-left: 30px; margin-right: 30px; margin-top: 30px; margin-bottom: 30px;">
+				<tr>
+				<td style="padding-top: 5px; padding-bottom: 5px;">
+					Reduce infrastructure costs
+				</td>
+				<td align="middle" style="width: 125px; padding-top: 5px; padding-bottom: 5px;">				
+					<input type="text" class="inputfield" id="reduce_infrastructure_cost" style="width: 75px;"/>
+				</td>
+				</tr>
 				
-				<h3>Tell us about the study</h3>
-				<br />
+				<tr>
+				<td style="padding-top: 5px; padding-bottom: 5px;">
+					Reduce SLA penalties
+				</td>
+				<td align="middle" style="width: 125px; padding-top: 5px; padding-bottom: 5px;">
+					<input type="text" class="inputfield" id="reduce_sla_penalties" style="width: 75px;"/>
+				</td>
+				</tr>
 				
-				<label for="i7" class="label">Expected revenue growth (%)</label><input type="text" class="inputfield" placeholder="3" id="i7"/>
-				<br /><br />
+				<tr>
+				<td style="padding-top: 5px; padding-bottom: 5px;">
+					Reduce your cloud bill
+				</td>
+				<td align="middle" style="width: 125px; padding-top: 5px; padding-bottom: 5px;">
+					<input type="text" class="inputfield" id="reduce_cloud_bill" style="width: 75px;"/>
+				</td>
+				</tr>
 				
-				<!--<label for="s2" class="label">Currency</label>
-				<select class="select" id="s2">
-				  <option value="GBP" selected="selected">GBP (£)</option>
-				  <option value="EUR">EUR (€)</option>
-				  <option value="USD">USD ($)</option>
-				</select>
-				<br /><br />-->
+				<tr>
+				<td style="padding-top: 5px; padding-bottom: 5px;">
+					Increase your time to market
+				</td>
+				<td align="middle" style="width: 125px; padding-top: 5px; padding-bottom: 5px;">
+					<input type="text" class="inputfield" id="increase_time_market" style="width: 75px;"/>
+				</td>			
+				</tr>
 				
-				<label for="s3" class="label">Study timeframe</label>
-				<select class="select" id="s3">
-				  <option value="1" selected="selected">1 year</option>
-				  <option value="2">2 year</option>
-				  <option value="3">3 year</option>
-				  <option value="4">4 year</option>
-				  <option value="5">5 year</option>				  
-				</select>				
-				<br /><br />
-				
-				<label for="i8" class="label">Start year of study</label><input type="text" class="inputfield" placeholder="2017" id="i8"/>
-				<br /><br />
-				
-				</div>
-				</div>
-				
-				<!--third column-->
-				<div class="column--1-of-3">
-				<div style="margin-left: 30px; margin-right: 50px; margin-top: 30px; margin-bottom: 30px;">				
-				
-				<h3>Detail the expected benefits</h3>
-				<br />
-								
-				<table class="table">
-				  <thead>
-					<tr>
-					  <th>Expected benefit</th>
-					  <th>Estimate (%)</th>
-					</tr>
-				  </thead>
-				  <tbody>
-					<tr>
-					  <td>Decrease in number of events that affect revenue</td>
-					  <td><input type="number" class="inputfield" placeholder="50" id="i9"/></td>
-					</tr>
-					<tr>
-					  <td>Reduced time to isolate and resolve incidents</td>
-					  <td><input type="text" class="inputfield" placeholder="40" id="i10"/></td>
-					</tr>
-					<tr>
-					  <td>Increased employee productivity</td>
-					  <td><input type="text" class="inputfield" placeholder="15" id="i11"/></td>
-					</tr>
-					<tr>
-					  <td>Decrease in the number of incidents that affect end users</td>
-					  <td><input type="text" class="inputfield" placeholder="50" id="i12"/></td>
-					</tr>
-					<tr>
-					  <td>Reduced time to resolve incidents</td>
-					  <td><input type="text" class="inputfield" placeholder="50" id="i13"/></td>
-					</tr>					
-					<tr>
-					  <td>Reduced service desk costs</td>
-					  <td><input type="text" class="inputfield" placeholder="50" id="i14"/></td>
-					</tr>
-					<tr>
-					  <td>Reduced server costs</td>
-					  <td><input type="text" class="inputfield" placeholder="10" id="i15"/></td>
-					</tr>
-					<tr>
-					  <td>Reduced costs of SLA penalties</td>
-					  <td><input type="text" class="inputfield" placeholder="25" id="i16"/></td>
-					</tr>
-					<tr>
-					  <td>Reduced costs of manual SLA report creation</td>
-					  <td><input type="text" class="inputfield" placeholder="50" id="i17"/></td>
-					</tr>					
-				  </tbody>
 				</table>
+				
+			</div>
+
+
+			
+			<div class="column--2-of-3" style="margin-top: -30px;">
+				
+			<div style="margin-left: 30px;">
+				<div class="section">
+				<div class="column--1-of-2">
+				
+				<h3>General details</h3>
+				<br />
+				
+				<label for="bus_days" class="label">How many business days does the typical business user or IT resource work per year?</label><input style="width: 150px;" type="number" class="inputfield" placeholder="220" id="bus_days"/>
 				<br /><br />
-				<button role="button" type="button" class="btn btn--primary">Save</button>
+				<label for="hours_day" class="label">How many hours per day does the average IT resource work?</label><input style="width: 150px;" type="number" class="inputfield" placeholder="7.5" id="hours_day"/>
+				<br /><br />
+				<label for="avg_salary" class="label">What is the average salary of an IT staff member? (£)</label><input style="width: 150px;" type="number" class="inputfield" placeholder="65000" id="avg_salary"/>
+				<p class="hint" >Gartner recommends £65,000</p>
+				
 				
 				</div>
-				</div>				
+				<div class="column--1-of-2" >
 				
-				
-			</div>	
+				<div style="margin-top: 58px;">
+					  <label for="svc_desk_cost" class="label">What is the cost of a service desk call? (£)</label><input style="width: 150px;" type="number" class="inputfield" placeholder="10" id="svc_desk_cost"/>
+					<br /><br />
+					<label for="rev_growth" class="label">Expected revenue growth (%)</label><input style="width: 150px;"  type="text" class="inputfield" placeholder="3" id="rev_growth"/>
+					<br /><br />	
+
+					<label for="confidence" class="label">How confident are you in the numbers provided?</label>
+						<select style="width: 150px;"  class="select" id="confidence">			
+						  <option value="10">10%</option>
+						  <option value="20">20%</option>
+						  <option value="30">30%</option>
+						  <option value="40">40%</option>
+						  <option value="50">50%</option>
+						  <option value="60">60%</option>
+						  <option value="70" selected = "selected">70%</option>
+						  <option value="80">80%</option>
+						  <option value="90">90%</option>
+						  <option value="100">100%</option>					  
+						</select>
+					<br /><br />
+				  </div>
+				</div>
+			  </div>
+			  
+			    
+			  
+			
+			
+			
+			
+			  <h3>Applications</h3>
+			  <p>Here comes more text</p>
+			  <p>Here comes more text</p>
+			  <p>Here comes more text</p>
+			  <p>Here comes more text</p>
+			  <p>Here comes more text</p>
+			
+			
+			</div>
+			
+			
+		  </div>
+		  
+		</div>			
+			
+			
+			
+			
 			</div>
 			<!--product cost-->
 			<div id="fullroi_input_prod_cont" style="margin-top: 30px; margin-left: 30px; margin-right: 30px;" class="non-primary">
@@ -1156,10 +1188,14 @@ function introductionSave() {
 
 		<!--report-->
 		<div id="c_fullroi_report" class="non-primary" style="position: absolute; width: 100%;" >
-		<div style="width: 800px; margin-left: 50px; margin-top: 50px;">
+		<div style="margin-left: 50px; margin-top: 0px;">
 
-		<div id="container" style="height: 300px; width: 550px;margin-bottom: 50px;">
+		<!--<div id="container" style="height: 300px; width: 550px;margin-bottom: 50px;">-->
+	
+			
 
+		
+		
 		</div>
 		</div>
 
