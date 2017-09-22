@@ -9,6 +9,9 @@
 document.cookie='application=hoaApJ2XUl';
 
 function switchSubNav(divId) {
+
+	introductionSave();
+
 	menu = document.getElementById("fullroi");
 	i = 0;
 
@@ -179,6 +182,24 @@ $(function () {
 
 }
 
+function addApplication() {
+	var application_name = document.getElementById("application_name").value;
+	var application_desc = document.getElementById("application_desc").value;
+
+	
+	var table = document.getElementById("application_list");
+    var length = document.getElementById("application_list").rows.length;
+	var row = table.insertRow(length);
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+	var cell3 = row.insertCell(2);
+	var cell4 = row.insertCell(3);
+    cell1.innerHTML = '<input disabled type="text" class="inputfield" id="application_' + length + '" style="width: 180px;" value=' + application_name + ' />';
+    cell2.innerHTML = '<input disabled type="text" class="inputfield" id="application_desc_' + length + '" style="width: 160px;" value=' + application_desc + ' />';
+	cell3.innerHTML = '<button role="button" type=\'button\' class=\'btn btn--primary\' onclick="document.getElementById(\'application_' + length + '\').removeAttribute(\'disabled\'); document.getElementById(\'application_desc_' + length + '\').removeAttribute(\'disabled\');" ><img src="/static/edit.svg" height="25" width="20"></button>';
+	cell4.innerHTML = '<button role="button" type="button" class="btn btn--primary" onclick="document.getElementById(\'application_list\').deleteRow(' + length + '); "><img src="/static/delete.svg" height="25" width="20"></button>';
+}
+
 function getUserId() {
 	var reg = /(application=)(.{10})/;
 	match = document.cookie.match(new RegExp(reg));
@@ -218,7 +239,6 @@ function retrieveOptions() {
 		document.getElementById("incident_frequency").checked = jsonResponse.incident_frequency;
 		document.getElementById("service_desk").checked = jsonResponse.service_desk;
 		document.getElementById("sla_compliance").checked = jsonResponse.sla_compliance;
-		document.getElementById("revenue_channels").checked = jsonResponse.revenue_channels;
 		document.getElementById("cloud_bill").checked = jsonResponse.cloud_bill;
 		document.getElementById("speed_market").checked = jsonResponse.speed_market;
 		
@@ -230,6 +250,149 @@ function retrieveOptions() {
 	
 }
 
+function buildBenefitsTable() {
+
+	for(i=expected_benefits.rows.length -1; i > 0 ; i--) {
+		expected_benefits.deleteRow(i);
+	}
+
+	userId = document.getElementById("userId").value;
+	document.getElementById("displayBvaId").innerHTML=userId;
+	document.cookie='application=' + userId;	
+	
+	var myHeaders = new Headers();
+	myHeaders.append("Content-Type", "application/json");
+	myHeaders.append("Accept", "application/json");
+	myHeaders.append("userId", userId);
+	
+	var myInit = { method: 'GET',
+        headers: myHeaders,
+        cache: 'default'
+	};
+	
+	fetch('/getOptions', myInit)
+
+	.then(function(response) {	
+		return response.json();
+	})
+	
+	.then(function(jsonResponse) {	
+	
+	if(jsonResponse.it_downtime == true){
+		var table = document.getElementById("expected_benefits");
+		var row = table.insertRow();
+		var it_downtime_desc = row.insertCell(0); 
+		it_downtime_desc.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+		it_downtime_desc.innerHTML="Decrease in revenue affecting incidents";
+		
+		var it_downtime_input = row.insertCell(1); 
+		it_downtime_input.setAttribute("align","middle"); 
+		it_downtime_input.setAttribute("style","width: 125px; padding-top: 5px; padding-bottom: 5px;"); 
+		it_downtime_input.innerHTML = '<input type="number" class="inputfield" id="dec_rev_incidents" style="width: 75px;" placeholder="50"/>'; 
+		
+		var row = table.insertRow();
+		var it_downtime_desc = row.insertCell(0); 
+		it_downtime_desc.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+		it_downtime_desc.innerHTML="Reduced MTTR";
+		
+		var it_downtime_input = row.insertCell(1); 
+		it_downtime_input.setAttribute("align","middle"); 
+		it_downtime_input.setAttribute("style","width: 125px; padding-top: 5px; padding-bottom: 5px;"); 
+		it_downtime_input.innerHTML = '<input type="number" class="inputfield" id="reduce_mttr" style="width: 75px;" placeholder="50"/>'; 
+	}
+	
+	if(jsonResponse.employee_productivity == true) {
+		var table = document.getElementById("expected_benefits");
+		var row = table.insertRow();
+		var it_downtime_desc = row.insertCell(0); 
+		it_downtime_desc.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+		it_downtime_desc.innerHTML="Increased employee productivity";
+		
+		var it_downtime_input = row.insertCell(1); 
+		it_downtime_input.setAttribute("align","middle"); 
+		it_downtime_input.setAttribute("style","width: 125px; padding-top: 5px; padding-bottom: 5px;"); 
+		it_downtime_input.innerHTML = '<input type="number" class="inputfield" id="increase_employee_prod" style="width: 75px;" placeholder="50"/>'; 
+	}
+	
+	if(jsonResponse.incident_frequency == true) {
+		var table = document.getElementById("expected_benefits");
+		var row = table.insertRow();
+		var it_downtime_desc = row.insertCell(0); 
+		it_downtime_desc.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+		it_downtime_desc.innerHTML="Decrease in incidents that affect end users";
+		
+		var it_downtime_input = row.insertCell(1); 
+		it_downtime_input.setAttribute("align","middle"); 
+		it_downtime_input.setAttribute("style","width: 125px; padding-top: 5px; padding-bottom: 5px;"); 
+		it_downtime_input.innerHTML = '<input type="number" class="inputfield" id="decrease_user_incidents" style="width: 75px;" placeholder="50"/>'; 
+		
+		var table = document.getElementById("expected_benefits");
+		var row = table.insertRow();
+		var it_downtime_desc = row.insertCell(0); 
+		it_downtime_desc.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+		it_downtime_desc.innerHTML="Reduce the time taken to resolve incidents";
+		
+		var it_downtime_input = row.insertCell(1); 
+		it_downtime_input.setAttribute("align","middle"); 
+		it_downtime_input.setAttribute("style","width: 125px; padding-top: 5px; padding-bottom: 5px;"); 
+		it_downtime_input.innerHTML = '<input type="number" class="inputfield" id="reduce_incident_resolve" style="width: 75px;" placeholder="50"/>'; 		
+	}
+	
+	if(jsonResponse.service_desk == true) {
+		var table = document.getElementById("expected_benefits");
+		var row = table.insertRow();
+		var it_downtime_desc = row.insertCell(0); 
+		it_downtime_desc.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+		it_downtime_desc.innerHTML="Reduce service desk costs";
+		
+		var it_downtime_input = row.insertCell(1); 
+		it_downtime_input.setAttribute("align","middle"); 
+		it_downtime_input.setAttribute("style","width: 125px; padding-top: 5px; padding-bottom: 5px;"); 
+		it_downtime_input.innerHTML = '<input type="number" class="inputfield" id="reduce_service_desk" style="width: 75px;" placeholder="50"/>'; 	
+	}
+	
+	if(jsonResponse.sla_compliance == true) {
+		var table = document.getElementById("expected_benefits");
+		var row = table.insertRow();
+		var it_downtime_desc = row.insertCell(0); 
+		it_downtime_desc.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+		it_downtime_desc.innerHTML="Reduce SLA penalties";
+		
+		var it_downtime_input = row.insertCell(1); 
+		it_downtime_input.setAttribute("align","middle"); 
+		it_downtime_input.setAttribute("style","width: 125px; padding-top: 5px; padding-bottom: 5px;"); 
+		it_downtime_input.innerHTML = '<input type="number" class="inputfield" id="reduce_sla_penalties" style="width: 75px;" placeholder="50"/>'; 	
+	}
+	
+	if(jsonResponse.cloud_bill == true) {
+		var table = document.getElementById("expected_benefits");
+		var row = table.insertRow();
+		var it_downtime_desc = row.insertCell(0); 
+		it_downtime_desc.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+		it_downtime_desc.innerHTML="Reduce your cloud bill";
+		
+		var it_downtime_input = row.insertCell(1); 
+		it_downtime_input.setAttribute("align","middle"); 
+		it_downtime_input.setAttribute("style","width: 125px; padding-top: 5px; padding-bottom: 5px;"); 
+		it_downtime_input.innerHTML = '<input type="number" class="inputfield" id="reduce_cloud_bill" style="width: 75px;" placeholder="50"/>'; 		
+	}
+		
+	if(jsonResponse.speed_market) {
+		var table = document.getElementById("expected_benefits");
+		var row = table.insertRow();
+		var it_downtime_desc = row.insertCell(0); 
+		it_downtime_desc.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+		it_downtime_desc.innerHTML="Increase your time to market";
+		
+		var it_downtime_input = row.insertCell(1); 
+		it_downtime_input.setAttribute("align","middle"); 
+		it_downtime_input.setAttribute("style","width: 125px; padding-top: 5px; padding-bottom: 5px;"); 
+		it_downtime_input.innerHTML = '<input type="number" class="inputfield" id="increase_time_market" style="width: 75px;" placeholder="50"/>'; 			
+	}
+	})
+	
+}
+
 function introductionSave() {
 	var userId = getUserId();
 	var it_downtime = document.getElementById("it_downtime").checked;
@@ -237,7 +400,7 @@ function introductionSave() {
 	var incident_frequency = document.getElementById("incident_frequency").checked;
 	var service_desk = document.getElementById("service_desk").checked;
 	var sla_compliance = document.getElementById("sla_compliance").checked;
-	var revenue_channels = document.getElementById("revenue_channels").checked;
+
 	var cloud_bill = document.getElementById("cloud_bill").checked;
 	var speed_market = document.getElementById("speed_market").checked;
 	
@@ -253,7 +416,7 @@ function introductionSave() {
 	var myInit = { method: 'POST',
         headers: myHeaders,
         cache: 'default',
-		body: JSON.stringify({"userId":userId, "it_downtime": it_downtime, "employee_productivity": employee_productivity, "incident_frequency":incident_frequency, "service_desk": service_desk, "sla_compliance": sla_compliance, "revenue_channels": revenue_channels, "cloud_bill": cloud_bill, "speed_market": speed_market, "company_name": company_name, "study_period": study_period, "dynatrace_cost": dynatrace_cost, "competitive_analysis": competitive_analysis})
+		body: JSON.stringify({"userId":userId, "it_downtime": it_downtime, "employee_productivity": employee_productivity, "incident_frequency":incident_frequency, "service_desk": service_desk, "sla_compliance": sla_compliance, "cloud_bill": cloud_bill, "speed_market": speed_market, "company_name": company_name, "study_period": study_period, "dynatrace_cost": dynatrace_cost, "competitive_analysis": competitive_analysis})
 	};
 	
 	fetch('/insertOptions', myInit)
@@ -265,8 +428,9 @@ function introductionSave() {
 }
 
 
-
 </script>
+
+
 </head>
 
 <body>
@@ -410,12 +574,6 @@ function introductionSave() {
 				
 				<br /><br />
 				
-				<input type="checkbox" class="switch" id="revenue_channels"/>
-				<label for="revenue_channels" class="switch__label">
-				<span class="switch__caption">Increase new revenue channels</span>
-				</label>
-			
-				<br /><br />
 
 				<input type="checkbox" class="switch" id="cloud_bill"/>
 				<label for="cloud_bill" class="switch__label">
@@ -463,7 +621,7 @@ function introductionSave() {
 				
 				<br /><br /><br /><br />
 				
-				<button role="button" type="button" class="btn btn--primary" onclick="introductionSave();">Save</button>
+				<button role="button" type="button" class="btn btn--primary" onclick="introductionSave(); buildBenefitsTable();">Save</button>
 				
 				</td>
 				
@@ -497,102 +655,14 @@ function introductionSave() {
 				<h3>Expected benefits</h3>
 				<br />
 				
-				<table class="table" style="font-size:0.9em;">
+				<table id="expected_benefits" class="table" style="font-size:0.9em;">
 	
 				<tr>
 				<th>Benefit</th>
 				<th>Expected value (%)</th>
 				</tr>
 	
-				<tr>
-				<td style="padding-top: 5px; padding-bottom: 5px;">
-					Decrease in revenue affecting incidents 
-				</td>
-				<td align="middle" style="width: 125px; padding-top: 5px; padding-bottom: 5px;">
-					<input type="text" class="inputfield" id="dec_rev_incidents" style="width: 75px;"/>
-				</td>
-				</tr>
 				
-				<tr>
-				<td style="padding-top: 5px; padding-bottom: 5px;">
-					Reduced MTTR
-				</td>
-				<td align="middle" style="width: 125px; padding-top: 5px; padding-bottom: 5px;">
-					<input type="text" class="inputfield" id="reduce_mttr" style="width: 75px;"/>
-				</td>
-				</tr>
-				
-				<tr>
-				<td style="padding-top: 5px; padding-bottom: 5px;">
-					Increase employee productivity
-				</td>
-				<td align="middle" style="width: 125px; padding-top: 5px; padding-bottom: 5px;">
-					<input type="text" class="inputfield" id="increase_employee_prod" style="width: 75px;"/>
-				</td>	
-				</tr>
-			
-				<tr>
-				<td style="padding-top: 5px; padding-bottom: 5px;">
-					Decrease in incidents that affect end users
-				</td >
-				<td align="middle" style="width: 125px; padding-top: 5px; padding-bottom: 5px;">
-					<input type="text" class="inputfield" id="decrease_user_incidents" style="width: 75px;"/>
-				</td>
-				</tr>
-				
-				<tr>
-				<td style="padding-top: 5px; padding-bottom: 5px;">
-					Reduce the time taken to resolve incidents
-				</td>
-				<td align="middle" style="width: 125px; padding-top: 5px; padding-bottom: 5px;">
-					<input type="text" class="inputfield" id="reduce_incident_resolve" style="width: 75px;"/>
-				</td>
-				</tr>
-				
-				<tr>
-				<td style="padding-top: 5px; padding-bottom: 5px;">
-					Reduce service desk costs
-				</td>
-				<td align="middle" style="width: 125px; padding-top: 5px; padding-bottom: 5px;">
-					<input type="text" class="inputfield" id="reduce_service_desk" style="width: 75px;"/>
-				</td>
-				</tr>
-				
-				<tr>
-				<td style="padding-top: 5px; padding-bottom: 5px;">
-					Reduce infrastructure costs
-				</td>
-				<td align="middle" style="width: 125px; padding-top: 5px; padding-bottom: 5px;">				
-					<input type="text" class="inputfield" id="reduce_infrastructure_cost" style="width: 75px;"/>
-				</td>
-				</tr>
-				
-				<tr>
-				<td style="padding-top: 5px; padding-bottom: 5px;">
-					Reduce SLA penalties
-				</td>
-				<td align="middle" style="width: 125px; padding-top: 5px; padding-bottom: 5px;">
-					<input type="text" class="inputfield" id="reduce_sla_penalties" style="width: 75px;"/>
-				</td>
-				</tr>
-				
-				<tr>
-				<td style="padding-top: 5px; padding-bottom: 5px;">
-					Reduce your cloud bill
-				</td>
-				<td align="middle" style="width: 125px; padding-top: 5px; padding-bottom: 5px;">
-					<input type="text" class="inputfield" id="reduce_cloud_bill" style="width: 75px;"/>
-				</td>
-				</tr>
-				
-				<tr>
-				<td style="padding-top: 5px; padding-bottom: 5px;">
-					Increase your time to market
-				</td>
-				<td align="middle" style="width: 125px; padding-top: 5px; padding-bottom: 5px;">
-					<input type="text" class="inputfield" id="increase_time_market" style="width: 75px;"/>
-				</td>			
-				</tr>
 				
 				</table>
 				
@@ -600,27 +670,21 @@ function introductionSave() {
 
 
 			
-			<div class="column--2-of-3" style="margin-top: -30px;">
+			<div class="column--1-of-3" style="margin-top: 0px;">
 				
 			<div style="margin-left: 30px;">
-				<div class="section">
-				<div class="column--1-of-2">
+				
+				
 				
 				<h3>General details</h3>
 				<br />
 				
-				<label for="bus_days" class="label">How many business days does the typical business user or IT resource work per year?</label><input style="width: 150px;" type="number" class="inputfield" placeholder="220" id="bus_days"/>
+				<label for="bus_days" class="label">How many business days does the typical IT resource work per year?</label><input style="width: 150px;" type="number" class="inputfield" placeholder="220" id="bus_days"/>
 				<br /><br />
 				<label for="hours_day" class="label">How many hours per day does the average IT resource work?</label><input style="width: 150px;" type="number" class="inputfield" placeholder="7.5" id="hours_day"/>
 				<br /><br />
 				<label for="avg_salary" class="label">What is the average salary of an IT staff member? (£)</label><input style="width: 150px;" type="number" class="inputfield" placeholder="65000" id="avg_salary"/>
-				<p class="hint" >Gartner recommends £65,000</p>
-				
-				
-				</div>
-				<div class="column--1-of-2" >
-				
-				<div style="margin-top: 58px;">
+				<br /><br />
 					  <label for="svc_desk_cost" class="label">What is the cost of a service desk call? (£)</label><input style="width: 150px;" type="number" class="inputfield" placeholder="10" id="svc_desk_cost"/>
 					<br /><br />
 					<label for="rev_growth" class="label">Expected revenue growth (%)</label><input style="width: 150px;"  type="text" class="inputfield" placeholder="3" id="rev_growth"/>
@@ -640,28 +704,58 @@ function introductionSave() {
 						  <option value="100">100%</option>					  
 						</select>
 					<br /><br />
-				  </div>
+				
 				</div>
-			  </div>
 			  
-			    
 			  
-			
-			
-			
+			   </div>
+				
+				
+				<div class="column--1-of-3" style="margin-top: 0px;">			   
 			
 			  <h3>Applications</h3>
-			  <p>Here comes more text</p>
-			  <p>Here comes more text</p>
-			  <p>Here comes more text</p>
-			  <p>Here comes more text</p>
-			  <p>Here comes more text</p>
+			  <br />
+			  <p style="font-size: 0.8em">Use the inputs below to add the applications which form part of this BVA in order to have a granular breakdown in the results.</p>
+			  <table class="table">
+			  <tr>
+				<th>Application name</th>
+				<th>Description</th>
+			  </tr>
+			  <tr>
+				<td>
+				<input type="text" class="inputfield" id="application_name"  />
+				</td>
+			    <td>
+				<input type="text" class="inputfield" id="application_desc" />
+				</td>
+				<td>
+				<button role="button" type="button" class="btn btn--primary" onclick="addApplication();" >Add</button>
+				</td>
+			  </tr>
+			  </table>
 			
+			<br />
 			
-			</div>
+			<table  id="application_list" >
+
+			  
+			  </table>
 			
 			
 		  </div>
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
 		  
 		</div>			
 			

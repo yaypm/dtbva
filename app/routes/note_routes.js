@@ -20,7 +20,7 @@ module.exports = function(app, db) {
 		
 		var resp = "test";
 		
-		MongoClient.connect(process.env.MONGOLAB_URI, function(err, db) {
+		MongoClient.connect("mongodb://dtbvaadmin:touchmymongodbwithyourdynatracestick@ds141274.mlab.com:41274/dtbva", function(err, db) {
 			if(err) { return console.dir(err); }
 
 			var collection = db.collection('option');
@@ -40,7 +40,6 @@ module.exports = function(app, db) {
 		var incident_frequency = req.body.incident_frequency;
 		var service_desk = req.body.service_desk;
 		var sla_compliance = req.body.sla_compliance;
-		var revenue_channels = req.body.revenue_channels;
 		var cloud_bill = req.body.cloud_bill;
 		var speed_market = req.body.speed_market;
 		
@@ -54,7 +53,6 @@ module.exports = function(app, db) {
 		console.log('incident_frequency is ' + incident_frequency + '');
 		console.log('service_desk is ' + service_desk + '');
 		console.log('sla_compliance is ' + sla_compliance + '');
-		console.log('revenue_channels is ' + revenue_channels + '');
 		console.log('cloud_bill is ' + cloud_bill + '');
 		console.log('speed_market is ' + speed_market + '');
 		console.log('company_name is ' + company_name + '');
@@ -62,12 +60,12 @@ module.exports = function(app, db) {
 		console.log('dynatrace_cost is ' + dynatrace_cost + '');
 		console.log('competitive_analysis is ' + competitive_analysis + '');
 		
-		MongoClient.connect(process.env.MONGOLAB_URI, function(err, db) {
+		MongoClient.connect("mongodb://dtbvaadmin:touchmymongodbwithyourdynatracestick@ds141274.mlab.com:41274/dtbva", function(err, db) {
 			if(err) { return console.dir(err); }
 
 			var collection = db.collection('option');
 			
-			collection.update({'_id':userId},{$set:{'it_downtime':it_downtime,'employee_productivity':employee_productivity,'incident_frequency':incident_frequency,'service_desk':service_desk,'sla_compliance':sla_compliance,'revenue_channels':revenue_channels,'cloud_bill':cloud_bill,'speed_market':speed_market,'company_name':company_name,'study_period':study_period,'dynatrace_cost':dynatrace_cost,'competitive_analysis':competitive_analysis}});
+			collection.update({'_id':userId},{$set:{'it_downtime':it_downtime,'employee_productivity':employee_productivity,'incident_frequency':incident_frequency,'service_desk':service_desk,'sla_compliance':sla_compliance,'cloud_bill':cloud_bill,'speed_market':speed_market,'company_name':company_name,'study_period':study_period,'dynatrace_cost':dynatrace_cost,'competitive_analysis':competitive_analysis}});
 		});
 	
 		res.writeHead(200, {'Access-Control-Allow-Headers':'content-type'});
