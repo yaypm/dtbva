@@ -13,6 +13,7 @@ function switchSubNav(divId) {
 	introductionSave();
 	buildBenefitsTable();
 	retrieveGeneralDetails();
+	retrieveApplications();
 
 	menu = document.getElementById("fullroi");
 	i = 0;
@@ -197,10 +198,10 @@ function addApplication() {
     var cell2 = row.insertCell(1);
 	var cell3 = row.insertCell(2);
 	var cell4 = row.insertCell(3);
-    cell1.innerHTML = '<input id="' + application_id + '" disabled type="text" class="inputfield" id="application_' + length + '" style="width: 180px;" />';
-    cell2.innerHTML = '<input disabled type="text" class="inputfield" id="application_desc_' + length + '" style="width: 220px;" />';
-	cell3.innerHTML = '<button role="button" type="button" class="btn btn--primary"><img src="/static/edit.svg" height="25" width="20"></button>';
-	cell4.innerHTML = '<button role="button" type="button" class="btn btn--primary"><img src="/static/delete.svg" height="25" width="20"></button>';
+    cell1.innerHTML = '<input id="' + application_id + '" disabled type="text" class="inputfield"  style="width: 180px;" />';
+    cell2.innerHTML = '<input disabled type="text" class="inputfield" style="width: 220px;" />';
+	cell3.innerHTML = '<button style="width:32px;height:32px;padding-left:0px;padding-right:0px;padding-top:0px;padding-bottom:0px;" role="button" type="button" class="btn btn--secondary" role="button" type="button" ><img src="/static/edit-blue.svg" height="25" width="20"></button>';
+	cell4.innerHTML = '<button style="width:32px;height:32px;padding-left:0px;padding-right:0px;padding-top:0px;padding-bottom:0px;" role="button" type="button" class="btn btn--secondary" role="button" type="button" ><img src="/static/delete-blue.svg" height="25" width="20"></button>';
 	
 	//Add application name and description
 	document.getElementById("application_list").children[0].children[length].getElementsByTagName("input")[0].value=application_name;
@@ -256,6 +257,82 @@ function deleteApplication(applicationId) {
 				return response;
 				console.log(response);
 		})		
+}
+
+function retrieveApplications() {
+	userId = getUserId();
+	
+	var myHeaders = new Headers();
+	myHeaders.append("Content-Type", "application/json");
+	myHeaders.append("Accept", "application/json");
+	myHeaders.append("userId", userId);
+	
+	var myInit = { method: 'GET',
+        headers: myHeaders,
+        cache: 'default'
+	};
+	
+	fetch('/getApplications', myInit)
+
+	.then(function(response) {	
+		return response.json();
+	})
+	
+	.then(function(jsonResponse) {
+		//var result = JSON.parse(jsonResponse);
+		//console.log(jsonResponse.application[0].id);
+
+		//return jsonResponse[0].id;
+		
+		for(i=application_list.rows.length -1; i >= 0 ; i--) {
+			application_list.deleteRow(i);
+		}
+		
+		for(i=0; i < jsonResponse.application.length; i++) {
+			var application_name = jsonResponse.application[i].application_name;
+			var application_desc = jsonResponse.application[i].application_desc;
+			var userId = getUserId();
+			var application_id = jsonResponse.application[i].id;	
+			
+			var table = document.getElementById("application_list");
+			var row = table.insertRow();
+			var cell1 = row.insertCell(0);
+			var cell2 = row.insertCell(1);
+			var cell3 = row.insertCell(2);
+			var cell4 = row.insertCell(3);
+			cell1.innerHTML = '<input id="' + application_id + '" disabled type="text" class="inputfield" style="width: 180px;" />';
+			cell2.innerHTML = '<input disabled type="text" class="inputfield" style="width: 220px;" />';
+			cell3.innerHTML = '<button style="width:32px;height:32px;padding-left:0px;padding-right:0px;padding-top:0px;padding-bottom:0px;" role="button" type="button" class="btn btn--secondary"><img src="/static/edit-blue.svg" height="56px" width="56px"></button>';
+			cell4.innerHTML = '<button style="width:32px;height:32px;padding-left:0px;padding-right:0px;padding-top:0px;padding-bottom:0px;" role="button" type="button" class="btn btn--secondary"><img src="/static/delete-blue.svg" height="25" width="20"></button>';
+			
+			//Add application name and description
+			document.getElementById("application_list").children[0].children[i].getElementsByTagName("input")[0].value=application_name;
+			document.getElementById("application_list").children[0].children[i].getElementsByTagName("input")[1].value=application_desc;	
+			
+			//Enable edit button
+			document.getElementById("application_list").children[0].children[i].getElementsByTagName("button")[0].addEventListener("click", function(){
+				this.parentElement.parentElement.getElementsByTagName("input")[0].removeAttribute("disabled");
+				this.parentElement.parentElement.getElementsByTagName("input")[1].removeAttribute("disabled");
+			});
+
+			//Enable delete button
+			document.getElementById("application_list").children[0].children[i].getElementsByTagName("button")[1].addEventListener("click", function(){
+				applicationId =  this.parentElement.parentElement.children[0].children[0].id;
+				deleteApplication(applicationId);
+				index = this.parentElement.parentElement.rowIndex;
+				document.getElementById("application_list").deleteRow(index);
+			});		
+
+		}
+		
+		
+		
+		
+		
+		
+		
+	})
+		
 }
 
 function getUserId() {
@@ -960,7 +1037,7 @@ function generateId() {
 			
 			<br />
 			
-			<table class="table" id="application_list" >
+			<table id="application_list" >
 
 			  
 			  </table>

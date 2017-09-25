@@ -227,5 +227,30 @@ module.exports = function(app, db) {
 		res.writeHead(200, {'Access-Control-Allow-Headers':'content-type'});
 		res.end("success!");
 	});	
-	
+
+	app.get('/getApplications', (req, res) => {	
+		var userId = req.header('userId');
+		console.log(userId);
+		
+		var jsonStr = '{"application":[]}';
+		var obj = JSON.parse(jsonStr);
+		
+		MongoClient.connect(process.env.MONGOLAB_URI, function(err, db) {
+			if(err) { return console.dir(err); }
+
+			var collection = db.collection('applications');
+			var results = collection.find({'userId':userId}).toArray(function(err, items) {
+				
+				for(i=0; i < items.length; i++) {
+					obj['application'].push({'id': items[i]._id, 'application_name':items[i].application_name, 'application_desc':items[i].application_desc})
+				}
+				
+				console.log(obj.application[0].id);
+				resp = JSON.stringify(obj);
+				console.log(resp);
+				res.writeHead(200, {'Access-Control-Allow-Headers':'content-type'});
+				res.end(resp);
+			});
+		});
+	});			
 };
