@@ -11,6 +11,8 @@ document.cookie='application=hoaApJ2XUl';
 function switchSubNav(divId) {
 
 	introductionSave();
+	buildBenefitsTable();
+	retrieveGeneralDetails();
 
 	menu = document.getElementById("fullroi");
 	i = 0;
@@ -185,7 +187,8 @@ $(function () {
 function addApplication() {
 	var application_name = document.getElementById("application_name").value;
 	var application_desc = document.getElementById("application_desc").value;
-
+	var userId = getUserId();
+	var application_id = generateId();	
 	
 	var table = document.getElementById("application_list");
     var length = document.getElementById("application_list").rows.length;
@@ -194,10 +197,65 @@ function addApplication() {
     var cell2 = row.insertCell(1);
 	var cell3 = row.insertCell(2);
 	var cell4 = row.insertCell(3);
-    cell1.innerHTML = '<input disabled type="text" class="inputfield" id="application_' + length + '" style="width: 180px;" value=' + application_name + ' />';
-    cell2.innerHTML = '<input disabled type="text" class="inputfield" id="application_desc_' + length + '" style="width: 160px;" value=' + application_desc + ' />';
-	cell3.innerHTML = '<button role="button" type=\'button\' class=\'btn btn--primary\' onclick="document.getElementById(\'application_' + length + '\').removeAttribute(\'disabled\'); document.getElementById(\'application_desc_' + length + '\').removeAttribute(\'disabled\');" ><img src="/static/edit.svg" height="25" width="20"></button>';
-	cell4.innerHTML = '<button role="button" type="button" class="btn btn--primary" onclick="document.getElementById(\'application_list\').deleteRow(' + length + '); "><img src="/static/delete.svg" height="25" width="20"></button>';
+    cell1.innerHTML = '<input id="' + application_id + '" disabled type="text" class="inputfield" id="application_' + length + '" style="width: 180px;" />';
+    cell2.innerHTML = '<input disabled type="text" class="inputfield" id="application_desc_' + length + '" style="width: 220px;" />';
+	cell3.innerHTML = '<button role="button" type="button" class="btn btn--primary"><img src="/static/edit.svg" height="25" width="20"></button>';
+	cell4.innerHTML = '<button role="button" type="button" class="btn btn--primary"><img src="/static/delete.svg" height="25" width="20"></button>';
+	
+	//Add application name and description
+	document.getElementById("application_list").children[0].children[length].getElementsByTagName("input")[0].value=application_name;
+	document.getElementById("application_list").children[0].children[length].getElementsByTagName("input")[1].value=application_desc;	
+	
+	//Enable edit button
+	document.getElementById("application_list").children[0].children[length].getElementsByTagName("button")[0].addEventListener("click", function(){
+        this.parentElement.parentElement.getElementsByTagName("input")[0].removeAttribute("disabled");
+		this.parentElement.parentElement.getElementsByTagName("input")[1].removeAttribute("disabled");
+	});
+
+	//Enable delete button
+	document.getElementById("application_list").children[0].children[length].getElementsByTagName("button")[1].addEventListener("click", function(){
+        applicationId =  this.parentElement.parentElement.children[0].children[0].id;
+		deleteApplication(applicationId);
+		index = this.parentElement.parentElement.rowIndex;
+		document.getElementById("application_list").deleteRow(index);
+	});
+	
+	var myHeaders = new Headers();
+	myHeaders.append("Content-Type", "application/json");
+	myHeaders.append("Accept", "application/json");
+	
+	var myInit = { method: 'POST',
+        headers: myHeaders,
+        cache: 'default',
+		body: JSON.stringify({"userId":userId,"application_id":application_id,"application_name":application_name, "application_desc": application_desc})
+	};
+
+	fetch('/addApplication', myInit)
+		
+	.then(function(response) {	
+			return response;
+			console.log(response);
+	})	
+}
+
+function deleteApplication(applicationId) {
+	
+	var myHeaders = new Headers();
+		myHeaders.append("Content-Type", "application/json");
+		myHeaders.append("Accept", "application/json");
+		
+		var myInit = { method: 'POST',
+			headers: myHeaders,
+			cache: 'default',
+			body: JSON.stringify({"application_id":applicationId})
+		};
+
+		fetch('/deleteApplication', myInit)
+			
+		.then(function(response) {	
+				return response;
+				console.log(response);
+		})		
 }
 
 function getUserId() {
@@ -246,6 +304,9 @@ function retrieveOptions() {
 		document.getElementById("study_period").value = jsonResponse.study_period;
 		document.getElementById("dynatrace_cost").checked = jsonResponse.dynatrace_cost;
 		document.getElementById("competitive_analysis").checked = jsonResponse.competitive_analysis;
+		
+		buildBenefitsTable();
+		retrieveGeneralDetails();
 	})
 	
 }
@@ -298,7 +359,7 @@ function buildBenefitsTable() {
 		var it_downtime_input = row.insertCell(1); 
 		it_downtime_input.setAttribute("align","middle"); 
 		it_downtime_input.setAttribute("style","width: 125px; padding-top: 5px; padding-bottom: 5px;"); 
-		it_downtime_input.innerHTML = '<input type="number" class="inputfield" id="reduce_mttr" style="width: 75px;" placeholder="50"/>'; 
+		it_downtime_input.innerHTML = '<input type="number" class="inputfield" id="reduce_mttr" style="width: 75px;" placeholder="40"/>'; 
 	}
 	
 	if(jsonResponse.employee_productivity == true) {
@@ -311,7 +372,7 @@ function buildBenefitsTable() {
 		var it_downtime_input = row.insertCell(1); 
 		it_downtime_input.setAttribute("align","middle"); 
 		it_downtime_input.setAttribute("style","width: 125px; padding-top: 5px; padding-bottom: 5px;"); 
-		it_downtime_input.innerHTML = '<input type="number" class="inputfield" id="increase_employee_prod" style="width: 75px;" placeholder="50"/>'; 
+		it_downtime_input.innerHTML = '<input type="number" class="inputfield" id="increase_employee_prod" style="width: 75px;" placeholder="15"/>'; 
 	}
 	
 	if(jsonResponse.incident_frequency == true) {
@@ -361,7 +422,7 @@ function buildBenefitsTable() {
 		var it_downtime_input = row.insertCell(1); 
 		it_downtime_input.setAttribute("align","middle"); 
 		it_downtime_input.setAttribute("style","width: 125px; padding-top: 5px; padding-bottom: 5px;"); 
-		it_downtime_input.innerHTML = '<input type="number" class="inputfield" id="reduce_sla_penalties" style="width: 75px;" placeholder="50"/>'; 	
+		it_downtime_input.innerHTML = '<input type="number" class="inputfield" id="reduce_sla_penalties" style="width: 75px;" placeholder="25"/>'; 	
 	}
 	
 	if(jsonResponse.cloud_bill == true) {
@@ -387,9 +448,13 @@ function buildBenefitsTable() {
 		var it_downtime_input = row.insertCell(1); 
 		it_downtime_input.setAttribute("align","middle"); 
 		it_downtime_input.setAttribute("style","width: 125px; padding-top: 5px; padding-bottom: 5px;"); 
-		it_downtime_input.innerHTML = '<input type="number" class="inputfield" id="increase_time_market" style="width: 75px;" placeholder="50"/>'; 			
+		it_downtime_input.innerHTML = '<input type="number" class="inputfield" id="increase_time_market" style="width: 75px;" placeholder="30"/>'; 			
 	}
+	
+	retrieveExpectedBenefits();
+	
 	})
+	
 	
 }
 
@@ -427,6 +492,165 @@ function introductionSave() {
 	})
 }
 
+function expectedBenefitsSave() {
+	var userId = getUserId();
+
+	if (document.getElementById("dec_rev_incidents") == null) { var dec_rev_incidents = null; }
+	else { var dec_rev_incidents = document.getElementById("dec_rev_incidents").value; }
+
+	if (document.getElementById("reduce_mttr") == null) { var reduce_mttr = null; }
+	else { var reduce_mttr = document.getElementById("reduce_mttr").value; }
+
+	if (document.getElementById("increase_employee_prod") == null) { var increase_employee_prod = null; }
+	else { var increase_employee_prod = document.getElementById("increase_employee_prod").value; }
+
+	if (document.getElementById("decrease_user_incidents") == null) { var decrease_user_incidents = null; }
+	else { var decrease_user_incidents = document.getElementById("decrease_user_incidents").value; }
+
+	if (document.getElementById("reduce_incident_resolve") == null) { var reduce_incident_resolve = null; }
+	else { var reduce_incident_resolve = document.getElementById("reduce_incident_resolve").value; }
+	
+	if (document.getElementById("reduce_service_desk") == null) { var reduce_service_desk = null; }
+	else { var reduce_service_desk = document.getElementById("reduce_service_desk").value; }	
+	
+	if (document.getElementById("reduce_sla_penalties") == null) { var reduce_sla_penalties = null; }
+	else { var reduce_sla_penalties = document.getElementById("reduce_sla_penalties").value; }	
+
+	if (document.getElementById("reduce_cloud_bill") == null) { var reduce_cloud_bill = null; }
+	else { var reduce_cloud_bill = document.getElementById("reduce_cloud_bill").value; }	
+
+	if (document.getElementById("increase_time_market") == null) { var increase_time_market = null; }
+	else { var increase_time_market = document.getElementById("increase_time_market").value; }	
+	
+	var myHeaders = new Headers();
+	myHeaders.append("Content-Type", "application/json");
+	myHeaders.append("Accept", "application/json");
+	
+	var myInit = { method: 'POST',
+        headers: myHeaders,
+        cache: 'default',
+		body: JSON.stringify({"userId":userId,"dec_rev_incidents":dec_rev_incidents, "reduce_mttr": reduce_mttr, "increase_employee_prod": increase_employee_prod, "decrease_user_incidents":decrease_user_incidents, "reduce_incident_resolve": reduce_incident_resolve, "reduce_service_desk": reduce_service_desk, "reduce_sla_penalties": reduce_sla_penalties, "reduce_cloud_bill": reduce_cloud_bill, "increase_time_market": increase_time_market})
+	};
+
+	fetch('/insertExpectedBenefits', myInit)
+		
+	.then(function(response) {	
+			return response;
+			console.log(response);
+	})	
+}
+
+function generalDetailsSave() {
+	var userId = getUserId();
+
+	if (document.getElementById("bus_days") == null) { var bus_days = null; }
+	else { var bus_days = document.getElementById("bus_days").value; }
+
+	if (document.getElementById("hours_day") == null) { var hours_day = null; }
+	else { var hours_day = document.getElementById("hours_day").value; }
+
+	if (document.getElementById("avg_salary") == null) { var avg_salary = null; }
+	else { var avg_salary = document.getElementById("avg_salary").value; }
+
+	if (document.getElementById("svc_desk_cost") == null) { var svc_desk_cost = null; }
+	else { var svc_desk_cost = document.getElementById("svc_desk_cost").value; }
+
+	if (document.getElementById("rev_growth") == null) { var rev_growth = null; }
+	else { var rev_growth = document.getElementById("rev_growth").value; }
+	
+	if (document.getElementById("confidence") == null) { var confidence = null; }
+	else { var confidence = document.getElementById("confidence").value; }	
+	
+	var myHeaders = new Headers();
+	myHeaders.append("Content-Type", "application/json");
+	myHeaders.append("Accept", "application/json");
+	
+	var myInit = { method: 'POST',
+        headers: myHeaders,
+        cache: 'default',
+		body: JSON.stringify({"userId":userId,"bus_days":bus_days, "hours_day": hours_day, "avg_salary": avg_salary, "svc_desk_cost":svc_desk_cost, "rev_growth": rev_growth, "confidence": confidence})
+	};
+
+	fetch('/insertGeneralDetails', myInit)
+		
+	.then(function(response) {	
+			return response;
+			console.log(response);
+	})
+}
+
+function retrieveExpectedBenefits() {
+	userId = getUserId();
+	
+	var myHeaders = new Headers();
+	myHeaders.append("Content-Type", "application/json");
+	myHeaders.append("Accept", "application/json");
+	myHeaders.append("userId", userId);
+	
+	var myInit = { method: 'GET',
+        headers: myHeaders,
+        cache: 'default'
+	};
+	
+	fetch('/getExpectedBenefits', myInit)
+
+	.then(function(response) {	
+		return response.json();
+	})
+	
+	.then(function(jsonResponse) {	
+		var dec_rev_incidents = document.getElementById("dec_rev_incidents"); if(dec_rev_incidents != null) { dec_rev_incidents.value = jsonResponse.dec_rev_incidents}
+		var reduce_mttr = document.getElementById("reduce_mttr"); if(reduce_mttr != null) { reduce_mttr.value = jsonResponse.reduce_mttr}
+		var increase_employee_prod = document.getElementById("increase_employee_prod"); if(increase_employee_prod != null) { increase_employee_prod.value = jsonResponse.increase_employee_prod}
+		var decrease_user_incidents = document.getElementById("decrease_user_incidents"); if(decrease_user_incidents != null) { decrease_user_incidents.value = jsonResponse.decrease_user_incidents}
+		var reduce_incident_resolve = document.getElementById("reduce_incident_resolve"); if(reduce_incident_resolve != null) { reduce_incident_resolve.value = jsonResponse.reduce_incident_resolve}
+		var reduce_service_desk = document.getElementById("reduce_service_desk"); if(reduce_service_desk != null) { reduce_service_desk.value = jsonResponse.reduce_service_desk}		
+		var reduce_sla_penalties = document.getElementById("reduce_sla_penalties"); if(reduce_sla_penalties != null) { reduce_sla_penalties.value = jsonResponse.reduce_sla_penalties}
+		var reduce_cloud_bill = document.getElementById("reduce_cloud_bill"); if(reduce_cloud_bill != null) { reduce_cloud_bill.value = jsonResponse.reduce_cloud_bill}
+		var increase_time_market = document.getElementById("increase_time_market"); if(increase_time_market != null) { increase_time_market.value = jsonResponse.increase_time_market}
+	})
+	
+}
+
+function retrieveGeneralDetails() {
+	userId = getUserId();
+	
+	var myHeaders = new Headers();
+	myHeaders.append("Content-Type", "application/json");
+	myHeaders.append("Accept", "application/json");
+	myHeaders.append("userId", userId);
+	
+	var myInit = { method: 'GET',
+        headers: myHeaders,
+        cache: 'default'
+	};
+	
+	fetch('/getGeneralDetails', myInit)
+
+	.then(function(response) {	
+		return response.json();
+	})
+	
+	.then(function(jsonResponse) {	
+		var bus_days = document.getElementById("bus_days"); if(bus_days != null) { bus_days.value = jsonResponse.bus_days}
+		var hours_day = document.getElementById("hours_day"); if(hours_day != null) { hours_day.value = jsonResponse.hours_day}
+		var avg_salary = document.getElementById("avg_salary"); if(avg_salary != null) { avg_salary.value = jsonResponse.avg_salary}
+		var svc_desk_cost = document.getElementById("svc_desk_cost"); if(svc_desk_cost != null) { svc_desk_cost.value = jsonResponse.svc_desk_cost}
+		var rev_growth = document.getElementById("rev_growth"); if(rev_growth != null) { rev_growth.value = jsonResponse.rev_growth}
+		var confidence = document.getElementById("confidence"); if(confidence != null) { confidence.value = jsonResponse.confidence}		
+	})
+	
+}
+
+function generateId() {
+	var text = "";
+	var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+	for (var i = 0; i < 10; i++)
+	text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+	return text;
+}
 
 </script>
 
@@ -729,14 +953,14 @@ function introductionSave() {
 				<input type="text" class="inputfield" id="application_desc" />
 				</td>
 				<td>
-				<button role="button" type="button" class="btn btn--primary" onclick="addApplication();" >Add</button>
+				<button role="button" type="button" class="btn btn--primary" onclick="addApplication(); " >Add</button>
 				</td>
 			  </tr>
 			  </table>
 			
 			<br />
 			
-			<table  id="application_list" >
+			<table class="table" id="application_list" >
 
 			  
 			  </table>

@@ -20,7 +20,7 @@ module.exports = function(app, db) {
 		
 		var resp = "test";
 		
-		MongoClient.connect("mongodb://dtbvaadmin:touchmymongodbwithyourdynatracestick@ds141274.mlab.com:41274/dtbva", function(err, db) {
+		MongoClient.connect(process.env.MONGOLAB_URI, function(err, db) {
 			if(err) { return console.dir(err); }
 
 			var collection = db.collection('option');
@@ -60,7 +60,7 @@ module.exports = function(app, db) {
 		console.log('dynatrace_cost is ' + dynatrace_cost + '');
 		console.log('competitive_analysis is ' + competitive_analysis + '');
 		
-		MongoClient.connect("mongodb://dtbvaadmin:touchmymongodbwithyourdynatracestick@ds141274.mlab.com:41274/dtbva", function(err, db) {
+		MongoClient.connect(process.env.MONGOLAB_URI, function(err, db) {
 			if(err) { return console.dir(err); }
 
 			var collection = db.collection('option');
@@ -71,4 +71,161 @@ module.exports = function(app, db) {
 		res.writeHead(200, {'Access-Control-Allow-Headers':'content-type'});
 		res.end("success!");
 	});
+	
+	app.post('/insertExpectedBenefits', (req, res) => {
+		var userId = req.body.userId;
+		var dec_rev_incidents = req.body.dec_rev_incidents;
+		var reduce_mttr = req.body.reduce_mttr;
+		var increase_employee_prod = req.body.increase_employee_prod;
+		var decrease_user_incidents = req.body.decrease_user_incidents;
+		var reduce_incident_resolve = req.body.reduce_incident_resolve;
+		var reduce_service_desk = req.body.reduce_service_desk;
+		var reduce_sla_penalties = req.body.reduce_sla_penalties;
+		var reduce_cloud_bill = req.body.reduce_cloud_bill;
+		var increase_time_market = req.body.increase_time_market;
+		
+		console.log('dec_rev_incidents is ' + dec_rev_incidents + '');
+		console.log('reduce_mttr is ' + reduce_mttr + '');
+		console.log('increase_employee_prod is ' + increase_employee_prod + '');
+		console.log('decrease_user_incidents is ' + decrease_user_incidents + '');
+		console.log('reduce_incident_resolve is ' + reduce_incident_resolve + '');
+		console.log('reduce_service_desk is ' + reduce_service_desk + '');
+		console.log('reduce_sla_penalties is ' + reduce_sla_penalties + '');
+		console.log('reduce_cloud_bill is ' + reduce_cloud_bill + '');
+		console.log('increase_time_market is ' + increase_time_market + '');
+		
+		MongoClient.connect(process.env.MONGOLAB_URI, function(err, db) {
+			if(err) { return console.dir(err); }
+			
+			var collection = db.collection('expected_benefits');
+			
+			var fullJson = {'_id':userId,'dec_rev_incidents':dec_rev_incidents,'reduce_mttr':reduce_mttr,'increase_employee_prod':increase_employee_prod,'decrease_user_incidents':decrease_user_incidents,'reduce_incident_resolve':reduce_incident_resolve,'reduce_service_desk':reduce_service_desk,'reduce_sla_penalties':reduce_sla_penalties,'reduce_cloud_bill':reduce_cloud_bill,'increase_time_market':increase_time_market};
+			
+			collection.find({_id:userId}).toArray(function(err, items) { 
+		
+				if(items[0] != undefined) {
+					collection.update({'_id':userId},{$set:{'dec_rev_incidents':dec_rev_incidents,'reduce_mttr':reduce_mttr,'increase_employee_prod':increase_employee_prod,'decrease_user_incidents':decrease_user_incidents,'reduce_incident_resolve':reduce_incident_resolve,'reduce_service_desk':reduce_service_desk,'reduce_sla_penalties':reduce_sla_penalties,'reduce_cloud_bill':reduce_cloud_bill,'increase_time_market':increase_time_market}});							
+				} 
+				
+				else {
+					collection.insert(fullJson, {w:1}, function(err, result) { if(err!=null){console.log(err);}     console.log(result);    });								
+				}
+			});
+			
+		});
+		
+		res.writeHead(200, {'Access-Control-Allow-Headers':'content-type'});
+		res.end("success!");
+	});
+
+	app.get('/getExpectedBenefits', (req, res) => {	
+		var userId = req.header('userId');
+		console.log(userId);
+		
+		var resp = "test";
+		
+		MongoClient.connect(process.env.MONGOLAB_URI, function(err, db) {
+			if(err) { return console.dir(err); }
+
+			var collection = db.collection('expected_benefits');
+			var results = collection.find({_id:userId}).toArray(function(err, items) {
+				var resp = JSON.stringify(items[0]);
+				console.log(JSON.stringify(resp));
+				res.writeHead(200, {'Access-Control-Allow-Headers':'content-type'});
+				res.end(resp);
+			});
+		});
+	});	
+
+	app.post('/insertGeneralDetails', (req, res) => {
+		var userId = req.body.userId;
+		var bus_days = req.body.bus_days;
+		var hours_day = req.body.hours_day;
+		var avg_salary = req.body.avg_salary;
+		var svc_desk_cost = req.body.svc_desk_cost;
+		var rev_growth = req.body.rev_growth;
+		var confidence = req.body.confidence;
+		
+		MongoClient.connect(process.env.MONGOLAB_URI, function(err, db) {
+			if(err) { return console.dir(err); }
+			
+			var collection = db.collection('general');
+			
+			var fullJson = {'_id':userId,'bus_days':bus_days,'hours_day':hours_day,'avg_salary':avg_salary,'svc_desk_cost':svc_desk_cost,'rev_growth':rev_growth,'confidence':confidence};
+			
+			collection.find({_id:userId}).toArray(function(err, items) { 
+		
+				if(items[0] != undefined) {
+					collection.update({'_id':userId},{$set:{'bus_days':bus_days,'hours_day':hours_day,'avg_salary':avg_salary,'svc_desk_cost':svc_desk_cost,'rev_growth':rev_growth,'confidence':confidence}});							
+				} 
+				
+				else {
+					collection.insert(fullJson, {w:1}, function(err, result) { if(err!=null){console.log(err);}     console.log(result);    });								
+				}
+			});
+			
+		});
+		
+		res.writeHead(200, {'Access-Control-Allow-Headers':'content-type'});
+		res.end("success!");
+	});	
+	
+	app.get('/getGeneralDetails', (req, res) => {	
+		var userId = req.header('userId');
+		console.log(userId);
+		
+		var resp = "test";
+		
+		MongoClient.connect(process.env.MONGOLAB_URI, function(err, db) {
+			if(err) { return console.dir(err); }
+
+			var collection = db.collection('general');
+			var results = collection.find({_id:userId}).toArray(function(err, items) {
+				var resp = JSON.stringify(items[0]);
+				console.log(JSON.stringify(resp));
+				res.writeHead(200, {'Access-Control-Allow-Headers':'content-type'});
+				res.end(resp);
+			});
+		});
+	});		
+
+	app.post('/addApplication', (req, res) => {
+		var userId = req.body.userId;
+		var application_id = req.body.application_id;
+		var application_name = req.body.application_name;
+		var application_desc = req.body.application_desc;
+		
+		console.log('application_id is ' + application_id + '');
+		console.log('application_name is ' + application_name + '');
+		console.log('application_desc is ' + application_desc + '');	
+
+		MongoClient.connect(process.env.MONGOLAB_URI, function(err, db) {
+			if(err) { return console.dir(err); }
+			
+			var collection = db.collection('applications');
+			
+			var fullJson = {'_id':application_id,'userId':userId,'application_name':application_name, 'application_desc': application_desc};
+					
+			collection.insert(fullJson, {w:1}, function(err, result) { if(err!=null){console.log(err);}     console.log(result);    });										
+		});
+		
+		res.writeHead(200, {'Access-Control-Allow-Headers':'content-type'});
+		res.end("success!");
+	});	
+	
+	app.post('/deleteApplication', (req, res) => {
+		var application_id = req.body.application_id;
+		
+		MongoClient.connect(process.env.MONGOLAB_URI, function(err, db) {
+			if(err) { return console.dir(err); }
+			
+			var collection = db.collection('applications');
+			
+			collection.deleteOne( { _id: application_id } );			
+		});
+		
+		res.writeHead(200, {'Access-Control-Allow-Headers':'content-type'});
+		res.end("success!");
+	});	
+	
 };
