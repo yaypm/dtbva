@@ -6,7 +6,7 @@
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
 <script>
-document.cookie='application=hoaApJ2XUl';
+//document.cookie='application=hoaApJ2XUl';
 
 function switchSubNav(divId) {
 
@@ -14,7 +14,15 @@ function switchSubNav(divId) {
 	buildBenefitsTable();
 	retrieveGeneralDetails();
 	retrieveApplications();
+	buildCostTable();
 
+	if(document.getElementById("dynatrace_cost").checked == false) {
+		document.getElementById("fullroi_input_prod").style.display = "none";
+	}
+	else {
+		document.getElementById("fullroi_input_prod").style.display = "block";
+	}	
+	
 	menu = document.getElementById("fullroi");
 	i = 0;
 
@@ -31,7 +39,7 @@ function switchSubNav(divId) {
 
 		else {
 			$( '#' + menu.children[i].id ).removeClass("is-current");
-			$("#c_" + menu.children[i].id).fadeOut();
+			$("#c_" + menu.children[i].id).css("display", "none");
 		}
 
 		i++;
@@ -42,7 +50,7 @@ function switchSubNav(divId) {
 function switchTab (divId) {
 	menu = document.getElementById("c_fullroi_input");
 	i = 1;
-
+	
 	while(menu.children[i] != undefined) {
 
 		if(menu.children[i].id == divId + "_cont") {
@@ -381,7 +389,7 @@ function retrieveOptions() {
 		document.getElementById("study_period").value = jsonResponse.study_period;
 		document.getElementById("dynatrace_cost").checked = jsonResponse.dynatrace_cost;
 		document.getElementById("competitive_analysis").checked = jsonResponse.competitive_analysis;
-		
+				
 		buildBenefitsTable();
 		retrieveGeneralDetails();
 	})
@@ -390,7 +398,7 @@ function retrieveOptions() {
 
 function buildBenefitsTable() {
 
-	for(i=expected_benefits.rows.length -1; i > 0 ; i--) {
+	for(i=expected_benefits.rows.length -1; i >= 0 ; i--) {
 		expected_benefits.deleteRow(i);
 	}
 
@@ -729,6 +737,108 @@ function generateId() {
 	return text;
 }
 
+function buildCostTable() {
+	for(i=product_cost.children[1].rows.length; i > 0 ; i--) {
+		product_cost.deleteRow(i);
+	}
+
+	userId = getUserId();	
+	
+	var myHeaders = new Headers();
+	myHeaders.append("Content-Type", "application/json");
+	myHeaders.append("Accept", "application/json");
+	myHeaders.append("userId", userId);
+	
+	var myInit = { method: 'GET',
+        headers: myHeaders,
+        cache: 'default'
+	};
+	
+	fetch('/getOptions', myInit)
+
+	.then(function(response) {	
+		return response.json();
+	})
+	
+	.then(function(jsonResponse) {	
+	
+		console.log(jsonResponse.study_period);
+		noYears = jsonResponse.study_period;
+		year = (new Date()).getFullYear();
+		
+		var table = document.getElementById("product_cost");
+		
+		for(i=0;i<noYears;i++) {
+			
+			var row = table.children[1].insertRow();
+			var product_year = row.insertCell(0); 
+			product_year.setAttribute("id",i+1);			
+			product_year.innerHTML=year + i;	
+
+			var license_fees = row.insertCell(1); 
+			license_fees.innerHTML = '<input type="number" class="inputfield" id="license_fees_y' + (i+1) +'"/>';			
+
+			var maintenance = row.insertCell(2); 
+			maintenance.innerHTML = '<input type="number" class="inputfield" id="maintenance_y' + (i+1) +'"/>';			
+			
+			var hardware = row.insertCell(3); 
+			hardware.innerHTML = '<input type="number" class="inputfield" id="hardware_y' + (i+1) +'"/>';		
+
+			var implementation = row.insertCell(4); 
+			implementation.innerHTML = '<input type="number" class="inputfield" id="implementation_y' + (i+1) +'"/>';	
+
+			var training = row.insertCell(5); 
+			training.innerHTML = '<input type="number" class="inputfield" id="training_y' + (i+1) +'"/>';				
+		}
+		
+			
+	})
+}
+
+function saveCostTable() {
+	var table = document.getElementById("product_cost");
+	var userId = getUserId();
+	noYears = parseInt(document.getElementById("study_period").value);
+	noYears = noYears + 1;
+	
+	var jsonStr = '{"_id":"' + userId + '","costs":[]}';
+	var obj = JSON.parse(jsonStr);	
+	
+	for(i=1;i<noYears;i++) {
+		license_fees = document.getElementById("license_fees_y" + i).value;
+		maintenance = document.getElementById("maintenance_y" + i).value;
+		hardware = document.getElementById("hardware_y" + i).value;
+		implementation = document.getElementById("implementation_y" + i).value;
+		training = document.getElementById("training_y" + i).value;
+		
+		obj.costs.push({"license_fees":license_fees,"maintenance":maintenance,"hardware":hardware,"implementation":implementation,"training":training});
+	}
+
+	var myHeaders = new Headers();
+	myHeaders.append("Content-Type", "application/json");
+	myHeaders.append("Accept", "application/json");
+	
+	var myInit = { method: 'POST',
+        headers: myHeaders,
+        cache: 'default',
+		body: JSON.stringify(obj)
+	};
+
+	fetch('/insertProductCosts', myInit)
+		
+	.then(function(response) {	
+			return response;
+			console.log(response);
+	})	
+	
+	
+	
+}
+
+function retrieveCostValues() {
+
+}
+
 </script>
 
 
@@ -812,7 +922,7 @@ function generateId() {
 			<h3>Returning users</h3>
 			<label class="label" style="width: 250px;">If you are coming back to finish a previous BVA, please enter your ID below to load up your details and continue!</label>
 			<br />
-			<label for="newId" class="label" >ID</label><input type="text" class="inputfield" id="userId" style="width: 250px;"/>
+			<label for="newId" class="label" >ID</label><input type="text" class="inputfield" id="userId" style="width: 250px;" value="hoaApJ2XUl"/>
 			<br /><br />
 			<button role="button" type="button" class="btn btn--primary" onclick="retrieveOptions();">Load</button>
 			
@@ -1037,7 +1147,7 @@ function generateId() {
 			
 			<br />
 			
-			<table id="application_list" >
+			<table style="width: 100%"id="application_list" >
 
 			  
 			  </table>
@@ -1070,7 +1180,7 @@ function generateId() {
 			<h3>Input the costs associated with Dynatrace</h3>
 			<br />
 			
-				<table class="table">
+				<table class="table" id="product_cost">
 					  <thead>
 						<tr>
 						  <th>Year</th>
@@ -1082,51 +1192,13 @@ function generateId() {
 						</tr>
 					  </thead>
 					  <tbody>
-						<tr>
-						  <td>2017</td>
-						  <td><input type="number" class="inputfield" id="fullroi_input_prod_cont_license_y1"/></td>
-						  <td><input type="number" class="inputfield" id="fullroi_input_prod_cont_maintenance_y1"/></td>
-						  <td><input type="number" class="inputfield" id="fullroi_input_prod_cont_hardware_y1"/></td>
-						  <td><input type="number" class="inputfield" id="fullroi_input_prod_cont_impl_y1"/></td>
-						  <td><input type="number" class="inputfield" id="fullroi_input_prod_cont_training_y1"/></td>
-						</tr>
-						<tr>
-						  <td>2018</td>
-						  <td><input type="number" class="inputfield" id="fullroi_input_prod_cont_license_y2"/></td>
-						  <td><input type="number" class="inputfield" id="fullroi_input_prod_cont_maintenance_y2"/></td>
-						  <td><input type="number" class="inputfield" id="fullroi_input_prod_cont_hardware_y2"/></td>
-						  <td><input type="number" class="inputfield" id="fullroi_input_prod_cont_impl_y2"/></td>
-						  <td><input type="number" class="inputfield" id="fullroi_input_prod_cont_training_y2"/></td>
-						</tr>
-						<tr>
-						  <td>2019</td>
-						  <td><input type="number" class="inputfield" id="fullroi_input_prod_cont_license_y3"/></td>
-						  <td><input type="number" class="inputfield" id="fullroi_input_prod_cont_maintenance_y3"/></td>
-						  <td><input type="number" class="inputfield" id="fullroi_input_prod_cont_hardware_y3"/></td>
-						  <td><input type="number" class="inputfield" id="fullroi_input_prod_cont_impl_y3"/></td>
-						  <td><input type="number" class="inputfield" id="fullroi_input_prod_cont_training_y3"/></td>
-						</tr>
-						<tr>
-						  <td>2020</td>
-						  <td><input type="number" class="inputfield" id="fullroi_input_prod_cont_license_y4"/></td>
-						  <td><input type="number" class="inputfield" id="fullroi_input_prod_cont_maintenance_y4"/></td>
-						  <td><input type="number" class="inputfield" id="fullroi_input_prod_cont_hardware_y4"/></td>
-						  <td><input type="number" class="inputfield" id="fullroi_input_prod_cont_impl_y4"/></td>
-						  <td><input type="number" class="inputfield" id="fullroi_input_prod_cont_training_y4"/></td>						
-						</tr>
-						<tr>
-						  <td>2021</td>
-						  <td><input type="number" class="inputfield" id="fullroi_input_prod_cont_license_y5"/></td>
-						  <td><input type="number" class="inputfield" id="fullroi_input_prod_cont_maintenance_y5"/></td>
-						  <td><input type="number" class="inputfield" id="fullroi_input_prod_cont_hardware_y5"/></td>
-						  <td><input type="number" class="inputfield" id="fullroi_input_prod_cont_impl_y5"/></td>
-						  <td><input type="number" class="inputfield" id="fullroi_input_prod_cont_training_y5"/></td>						
-						</tr>
+
+
 					  </tbody>
 				</table>
 				
-				<br /><br />
-				<button role="button" type="button" class="btn btn--primary">Save</button>
+				<br />
+				<button role="button" type="button" class="btn btn--primary" onclick="saveCostTable()">Save</button>
 				
 			</div>
 			
