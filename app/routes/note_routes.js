@@ -292,5 +292,25 @@ module.exports = function(app, db) {
 		
 		res.writeHead(200, {'Access-Control-Allow-Headers':'content-type'});
 		res.end("success!");
+	});	
+	
+	app.get('/getProductCosts', (req, res) => {	
+		var userId = req.header('userId');
+		var noYears = req.header('noYears');
+		console.log(noYears);
+		
+		MongoClient.connect(process.env.MONGOLAB_URI, function(err, db) {
+			if(err) { return console.dir(err); }
+
+			var collection = db.collection('product_cost');
+			var results = collection.find({'_id':userId}).toArray(function(err, items) {
+				//console.log(items);
+
+				resp=JSON.stringify(items);
+				console.log(resp);
+				res.writeHead(200, {'Access-Control-Allow-Headers':'content-type'});
+				res.end(resp);
+			});
+		});
 	});		
 };
