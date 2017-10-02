@@ -15,6 +15,7 @@ function switchSubNav(divId) {
 	retrieveGeneralDetails();
 	retrieveApplications();
 	buildCostTable();
+	buildDetailsTable();
 
 	
 
@@ -879,11 +880,121 @@ function retrieveCostValues() {
 	})
 }
 
+function addApplicationsToDetails() {
+	userId = getUserId();
+	
+	var myHeaders = new Headers();
+	myHeaders.append("Content-Type", "application/json");
+	myHeaders.append("Accept", "application/json");
+	myHeaders.append("userId", userId);
+	
+	var myInit = { method: 'GET',
+        headers: myHeaders,
+        cache: 'default'
+	};
+	
+	fetch('/getApplications', myInit)
+
+	.then(function(response) {	
+		return response.json();
+	})	
+	
+	.then(function(jsonResponse) {
+		
+		if(jsonResponse.application.length == 0) {
+			return "no applications";
+		}		
+
+		var details = document.getElementById("details");
+
+		for(i=1;i<details.children.length;i++) {
+			
+			details.children[i].children[1].children[0].innerHTML="";
+			
+			var length = jsonResponse.application.length;
+					
+			var containers = Math.ceil(length / 5);		
+			
+			
+			if(details.children[i].style.display=="table-row-group") {
+			//console.log(details.children[i]);
+				for(x=0;x<containers;x++) {
+					var details = document.getElementById("details");
+					var newDiv = document.createElement("div");
+					newDiv.classList.add("container");
+					newDiv.style.display="flex";
+					details.children[i].children[1].children[0].appendChild(newDiv);
+					
+							
+					for(y=1 + x * 5; y < (x+1) * 5 + 1;y++ ) {
+						var details = document.getElementById("details");
+						divApp = document.createElement("div");
+						divApp.classList.add("column--1-of-5");
+						divApp.setAttribute("style","width: 20%; margin-bottom: 30px");
+						details.children[i].children[1].children[0].children[x].appendChild(divApp);
+					}
+				}					
+			}
+			
+			column = 0;
+			
+			for(a=1;a<length + 1;a++) {
+				container = Math.ceil(a / 5);
+				container = container - 1;
+				//console.log("container " + container + ", column " + column);
+				
+				if(details.children[i].children[1].children[0].children[container].children[column].parentElement.parentElement.parentElement.parentElement.children[0].children[0].innerHTML == "<h4>Base information</h4>") {
+					details.children[i].children[1].children[0].children[container].children[column].innerHTML='<h4>' + jsonResponse.application[a-1].application_name + '</h4><br /><label for="' + jsonResponse.application[a-1].id + '_avgusers" class="label">Average number of users</label><input type="text" class="inputfield" id="' + jsonResponse.application[a-1].id +'_avgusers" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id +'_peakusers" class="label">Peak number of users</label><input type="text" class="inputfield" id="' + jsonResponse.application[a-1].id +'_peakusers" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_intext" class="label">External or internal?</label><select class="select" id="' + jsonResponse.application[a-1].id +'_intext" style="width:75%"><option value="internal" selected="selected">Internal</option><option value="external">External</option></select>';
+					
+					
+				}
+				
+				if(details.children[i].children[1].children[0].children[container].children[column].parentElement.parentElement.parentElement.parentElement.children[0].children[0].innerHTML == "<h4>Business impact</h4>") {
+					details.children[i].children[1].children[0].children[container].children[column].innerHTML='<h4>' + jsonResponse.application[a-1].application_name + '</h4><br /><label for="' + jsonResponse.application[a-1].id + '_downtimecost" class="label">Cost of downtime per minute (&pound;)</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_downtimecost" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_impactemployeeprod" class="label">Is there an impact to employee productivity?</label><select class="select" id="' + jsonResponse.application[a-1].id +'_impactemployeeprod" style="width:75%"><option value="yes" selected="selected">Yes</option><option value="no">No</option></select><br /><br /><label for="' + jsonResponse.application[a-1].id + '_impactcompet" class="label">Is there an impact in competitive loss?</label><select class="select" id="' + jsonResponse.application[a-1].id +'_impactcompet" style="width:75%"><option value="yes" selected="selected">Yes</option><option value="no">No</option></select>';
+				}
+
+				if(details.children[i].children[1].children[0].children[container].children[column].parentElement.parentElement.parentElement.parentElement.children[0].children[0].innerHTML == "<h4>Revenue loss</h4>") {
+					details.children[i].children[1].children[0].children[container].children[column].innerHTML='<h4>' + jsonResponse.application[a-1].application_name + '</h4><br /><label for="' + jsonResponse.application[a-1].id + '_incidentsmonth" class="label">Current incidents/month</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_incidentsmonth" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_userimpactpercent" class="label">Users impacted by an incident (%)</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_userimpactpercent" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_currentmttr" class="label">Current MTTR (mins)</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_currentmttr" style="width:75%"/><br /><br />';
+				}	
+
+				if(details.children[i].children[1].children[0].children[container].children[column].parentElement.parentElement.parentElement.parentElement.children[0].children[0].innerHTML == "<h4>User productivity</h4>") {
+					details.children[i].children[1].children[0].children[container].children[column].innerHTML='<h4>' + jsonResponse.application[a-1].application_name + '</h4><br /><label for="' + jsonResponse.application[a-1].id + '_bustranperday" class="label">Number of business transactions per user, per day</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_bustranperday" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_hourlyrevbususer" class="label">Hourly revenue of a business user (&pound;)</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_hourlyrevbususer" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_avgbustrantime" class="label">Average time of a business transaction (s)</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_avgbustrantime" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_userimpactpercentppl" class="label">Users impacted by an incident (%)</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_userimpactpercentppl" style="width:75%"/><br /><br />';
+				}	
+
+				if(details.children[i].children[1].children[0].children[container].children[column].parentElement.parentElement.parentElement.parentElement.children[0].children[0].innerHTML == "<h4>Service desk cost</h4>") {
+					details.children[i].children[1].children[0].children[container].children[column].innerHTML='<h4>' + jsonResponse.application[a-1].application_name + '</h4><br /><label for="' + jsonResponse.application[a-1].id + '_svcdeskpermonth" class="label">Number of service desk calls per month</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_svcdeskpermonth" style="width:75%"/><br /><br />';
+				}	
+
+				if(details.children[i].children[1].children[0].children[container].children[column].parentElement.parentElement.parentElement.parentElement.children[0].children[0].innerHTML == "<h4>Problem resolution</h4>") {
+					details.children[i].children[1].children[0].children[container].children[column].innerHTML='<h4>' + jsonResponse.application[a-1].application_name + '</h4><br /><label for="' + jsonResponse.application[a-1].id + '_currentincidentsmonth" class="label">Number of incidents/month</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_currentincidentsmonth" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_staffhoursincident" class="label">Staff hours spent per incident</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_staffhoursincident" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_staffissueresolve" class="label">Number of staff needed to resolve an issue</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_staffissueresolve" style="width:75%"/><br /><br />';
+				}	
+
+				if(details.children[i].children[1].children[0].children[container].children[column].parentElement.parentElement.parentElement.parentElement.children[0].children[0].innerHTML == "<h4>SLA compliance and reporting</h4>") {
+					details.children[i].children[1].children[0].children[container].children[column].innerHTML='<h4>' + jsonResponse.application[a-1].application_name + '</h4><br /><label for="' + jsonResponse.application[a-1].id + '_potentialmonthlypenalties" class="label">Potential monthly penalties (&pound;)</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_potentialmonthlypenalties" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_currentsla" class="label">Current SLA attainment (%)</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_currentsla" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_slareporthours" class="label">Hours to create SLA reports</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_slareporthours" style="width:75%"/><br /><br />';
+				}					
+				
+					
+				
+				
+				
+				
+				
+				
+				
+				
+				column = column + 1;
+				if(column == 5) { column = 0;}
+			}			
+		}
+
+	})
+}
+
 function buildDetailsTable() {
-	var test = document.getElementById("details");
+	var details = document.getElementById("details");
 	
 	for(i=details.children.length-1; i > 0 ; i--) {
-		test.removeChild(test.children[1]);
+		details.children[i].style.display="none";
 	}
 
 	userId = getUserId();	
@@ -906,53 +1017,136 @@ function buildDetailsTable() {
 	
 	.then(function(jsonResponse) {
 
-	//details.children[1].style.display="table-row-group";
+	
 	
 
+	var details = document.getElementById("details");
 	
-	
+	details.children[1].style.display="table-row-group";
 
 	
 		if(jsonResponse.it_downtime == true){
-			//details.children[2].style.display="table-row-group";
-			//details.children[3].style.display="table-row-group";
+			details.children[2].style.display="table-row-group";
+			details.children[3].style.display="table-row-group";
 		}
 		if(jsonResponse.employee_productivity == true){
-			//details.children[4].style.display="table-row-group";
+			details.children[4].style.display="table-row-group";
 		}
 		if(jsonResponse.incident_frequency == true){
-			//details.children[6].style.display="table-row-group";
+			details.children[6].style.display="table-row-group";
 		}
 		if(jsonResponse.service_desk == true){
-			//details.children[5].style.display="table-row-group";
+			details.children[5].style.display="table-row-group";
 		}
 		if(jsonResponse.sla_compliance == true){
-			//details.children[7].style.display="table-row-group";
+			details.children[7].style.display="table-row-group";
 		}
 		if(jsonResponse.cloud_bill == true){
-		
-			var test = document.getElementById("details");
-	
-	var node = document.createElement("tbody");
-	node.classList.add("expandable");
-	var textRow = node.insertRow();
-	var title = textRow.insertCell(0); title.innerHTML="<h4>Revenue loss</h4>"; title.setAttribute("data-th","Benefit");
-	var desc = textRow.insertCell(1); desc.innerHTML="How frequently do issues occur and how long do they take to resolve."; desc.setAttribute("data-th","Description");
-	var expand = textRow.insertCell(2); expand.innerHTML='<a href="#" class="expandable__trigger" data-initialized="true">more</a>';
-	var contentRow = node.insertRow(); contentRow.classList.add("expandable__content");
-	var expCell = contentRow.insertCell(0); expCell.colspan="5"; expCell.innerHTML="testing!";
-	
-	test.appendChild(node);
-		
-		
-		
-		
-		
 		
 		}
 		if(jsonResponse.speed_market == true){
 		
-		}		
+		}
+
+		var details = document.getElementById("details");
+		var colour = 1;
+		for(i=1;i<details.children.length;i++) {
+
+			if(details.children[i].style.display=="" && colour ==1) {
+				details.children[i].children[0].setAttribute("style","background-color: #F8F8F8");
+				console.log("setting " + details.children[i].children[0].children[0].innerHTML + " to grey");
+				colour = 0;
+				continue;
+			}
+			if(details.children[i].style.display=="" && colour == 0) {
+				details.children[i].children[0].setAttribute("style","background-color: white");
+				console.log("setting " + details.children[i].children[0].children[0].innerHTML + " to white");
+				colour = 1;
+			} 
+		}
+
+
+	addApplicationsToDetails();
+		
+	})
+}
+
+function saveApplicationDetails() {
+	userId = getUserId();
+	
+	var myHeaders = new Headers();
+	myHeaders.append("Content-Type", "application/json");
+	myHeaders.append("Accept", "application/json");
+	myHeaders.append("userId", userId);
+	
+	var myInit = { method: 'GET',
+        headers: myHeaders,
+        cache: 'default'
+	};
+	
+	fetch('/getApplications', myInit)
+
+	.then(function(response) {	
+		return response.json();
+	})
+	
+	.then(function(jsonResponse) {	
+		var noApps = jsonResponse.application.length;
+		
+		var jsonStr = '{"_id":"' + userId + '"';
+		
+		for (i=0;i<noApps;i++) {
+			jsonStr += ',"' + jsonResponse.application[i].id + '":{}';
+		}
+
+		jsonStr += "}";
+		console.log(jsonStr);
+		
+		var obj = JSON.parse(jsonStr);	
+	
+		for(i=0;i<noApps;i++) {
+			obj[jsonResponse.application[i].id].avgusers=document.getElementById(jsonResponse.application[i].id + "_avgusers").value;
+			
+			obj[jsonResponse.application[i].id].peakusers=document.getElementById(jsonResponse.application[i].id + "_peakusers").value;
+			
+			obj[jsonResponse.application[i].id].intext=document.getElementById(jsonResponse.application[i].id + "_intext").value;
+			
+			obj[jsonResponse.application[i].id].downtimecost=document.getElementById(jsonResponse.application[i].id + "_downtimecost").value;
+			
+			obj[jsonResponse.application[i].id].impactemployeeprod=document.getElementById(jsonResponse.application[i].id + "_impactemployeeprod").value;
+			
+			obj[jsonResponse.application[i].id].impactcompet=document.getElementById(jsonResponse.application[i].id + "_impactcompet").value;
+			
+			obj[jsonResponse.application[i].id].incidentsmonth=document.getElementById(jsonResponse.application[i].id + "_incidentsmonth").value;
+			
+			obj[jsonResponse.application[i].id].userimpactpercent=document.getElementById(jsonResponse.application[i].id + "_userimpactpercent").value;
+			
+			obj[jsonResponse.application[i].id].currentmttr=document.getElementById(jsonResponse.application[i].id + "_currentmttr").value;			
+			
+			obj[jsonResponse.application[i].id].bustranperday=document.getElementById(jsonResponse.application[i].id + "_bustranperday").value;
+			
+			obj[jsonResponse.application[i].id].hourlyrevbususer=document.getElementById(jsonResponse.application[i].id + "_hourlyrevbususer").value;
+			
+			obj[jsonResponse.application[i].id].avgbustrantime=document.getElementById(jsonResponse.application[i].id + "_avgbustrantime").value;
+			
+			obj[jsonResponse.application[i].id].userimpactpercentppl=document.getElementById(jsonResponse.application[i].id + "_userimpactpercentppl").value;		
+
+			obj[jsonResponse.application[i].id].svcdeskpermonth=document.getElementById(jsonResponse.application[i].id + "_svcdeskpermonth").value;				
+			
+			obj[jsonResponse.application[i].id].currentincidentsmonth=document.getElementById(jsonResponse.application[i].id + "_currentincidentsmonth").value;
+			
+			obj[jsonResponse.application[i].id].staffhoursincident=document.getElementById(jsonResponse.application[i].id + "_staffhoursincident").value;		
+
+			obj[jsonResponse.application[i].id].staffissueresolve=document.getElementById(jsonResponse.application[i].id + "_staffissueresolve").value;		
+
+			obj[jsonResponse.application[i].id].potentialmonthlypenalties=document.getElementById(jsonResponse.application[i].id + "_potentialmonthlypenalties").value;
+			
+			obj[jsonResponse.application[i].id].currentsla=document.getElementById(jsonResponse.application[i].id + "_currentsla").value;		
+
+			obj[jsonResponse.application[i].id].slareporthours=document.getElementById(jsonResponse.application[i].id + "_slareporthours").value;				
+		}
+					
+		console.log(obj);			
 	})
 }
 
@@ -1344,7 +1538,7 @@ function buildDetailsTable() {
 					</tr>
 					<tr class="expandable__content">
 					  <td colspan="5">
-						More expandable content...
+						
 					  </td>
 					</tr>
 				  </tbody>
@@ -1356,7 +1550,7 @@ function buildDetailsTable() {
 					</tr>
 					<tr class="expandable__content">
 					  <td colspan="5">
-						More expandable content...
+						
 					  </td>
 					</tr>
 				  </tbody>
@@ -1368,7 +1562,7 @@ function buildDetailsTable() {
 					</tr>
 					<tr class="expandable__content">
 					  <td colspan="5">
-						More expandable content...
+						
 					  </td>
 					</tr>
 				  </tbody>
@@ -1380,7 +1574,7 @@ function buildDetailsTable() {
 					</tr>
 					<tr class="expandable__content">
 					  <td colspan="5">
-						More expandable content...
+						
 					  </td>
 					</tr>
 				  </tbody>	
@@ -1392,7 +1586,7 @@ function buildDetailsTable() {
 					</tr>
 					<tr class="expandable__content">
 					  <td colspan="5">
-						More expandable content...
+						
 					  </td>
 					</tr>
 				  </tbody>					  
@@ -1404,7 +1598,7 @@ function buildDetailsTable() {
 					</tr>
 					<tr class="expandable__content">
 					  <td colspan="5">
-						More expandable content...
+					
 					  </td>
 					</tr>
 				  </tbody>
@@ -1416,7 +1610,7 @@ function buildDetailsTable() {
 					</tr>
 					<tr class="expandable__content">
 					  <td colspan="5">
-						More expandable content...
+					
 					  </td>
 					</tr>
 				  </tbody>				  
@@ -1429,7 +1623,7 @@ function buildDetailsTable() {
 
 		<!--report-->
 		<div id="c_fullroi_report" class="non-primary" style="position: absolute; width: 100%;" >
-		<div style="margin-left: 50px; margin-top: 0px;">
+		<div style="margin-left: 50px; margin-top: 0px;" id="testAdd">
 
 		<!--<div id="container" style="height: 300px; width: 550px;margin-bottom: 50px;">-->
 	
