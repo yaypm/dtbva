@@ -6,7 +6,27 @@
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
 <script>
-//document.cookie='application=hoaApJ2XUl';
+function createNewUser() {
+	var userId = generateId().toString();
+	var newEmail = "alistair.emslie@dynatrace.com";
+	
+	var myHeaders = new Headers();
+	myHeaders.append("Content-Type", "application/json");
+	myHeaders.append("Accept", "application/json");
+	myHeaders.append("userId", userId);
+	myHeaders.append("emailAddress", newEmail);
+	
+	var myInit = { method: 'GET',
+        headers: myHeaders,
+        cache: 'default'
+	};
+	
+	fetch('/createUser', myInit)
+
+	.then(function(response) {	
+		return response;
+	})
+}
 
 function switchSubNav(divId) {
 
@@ -247,6 +267,8 @@ function addApplication() {
 	fetch('/addApplication', myInit)
 		
 	.then(function(response) {	
+			document.getElementById("application_name").value="";
+			document.getElementById("application_desc").value="";
 			return response;
 			console.log(response);
 	})	
@@ -834,7 +856,7 @@ function saveCostTable() {
 	fetch('/insertProductCosts', myInit)
 		
 	.then(function(response) {	
-			return response.json();
+			return response;
 			console.log(response);
 	})	
 	
@@ -1259,22 +1281,22 @@ function retrieveApplicationDetails() {
     <ul class="nav__list nav__list--primary">
 
       <li class="nav__item expandable expandable--nav is-current">
-        <a class="nav__link expandable__trigger" onclick="openFullRoi()" href="#noop">Business Value Analysis</a>
+        <a class="nav__link expandable__trigger"  >Business Value Analysis</a>
         <ul id="fullroi" class="nav__list nav__list--secondary expandable__content">
           <li id="fullroi_intro" class="nav__item is-current" onclick="switchSubNav(this.id)">
-            <a class="nav__link" href="#noop">Introduction</a>
+            <a class="nav__link" >Introduction</a>
           </li>
           <li id="fullroi_input" class="nav__item" onclick="switchSubNav(this.id)">
-            <a class="nav__link" href="#noop">Data input</a>
+            <a class="nav__link" >Data input</a>
           </li>
           <li id="fullroi_report" class="nav__item" onclick="switchSubNav(this.id); drawBlank();">
-            <a class="nav__link" href="#noop">Report overview</a>
+            <a class="nav__link" >Report overview</a>
           </li>
         </ul>
       </li>
 
       <li class="nav__item nav__item--right">
-        <a class="nav__link" href="#noop">Login</a>
+        <a class="nav__link" >Login</a>
       </li>
     </ul>
   </nav>
@@ -1378,7 +1400,7 @@ function retrieveApplicationDetails() {
 			
 				<input type="checkbox" class="switch" id="sla_compliance"/>
 				<label for="sla_compliance" class="switch__label">
-				<span class="switch__caption">Improve SLA compliance</span>
+				<span class="switch__caption">Improve SLA compliance and reporting</span>
 				</label>	
 				
 				<br /><br />
@@ -1568,7 +1590,7 @@ function retrieveApplicationDetails() {
 		  
 		</div>			
 			
-			
+		<button role="button" type="button" class="btn btn--primary" onclick="">Save</button>	
 			
 			
 			</div>
@@ -1703,8 +1725,9 @@ function retrieveApplicationDetails() {
 				  </tbody>				  
 				</table>
 
-			
+			<button role="button" type="button" class="btn btn--primary" onclick="saveApplicationDetails();">Save</button>
 			</div>
+			
 			
 		</div>
 
