@@ -5,6 +5,7 @@
 <link rel="icon" href="https://dt-cdn.net/assets/images/brand/favicon-63e287af7c.ico">
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
+<style>a:hover {cursor:pointer;}</style>
 <script>
 function createNewUser() {
 	var userId = generateId().toString();
@@ -433,7 +434,7 @@ function buildBenefitsTable() {
 
 	userId = document.getElementById("userId").value;
 	document.getElementById("displayBvaId").innerHTML=userId;
-	document.cookie='application=' + userId;	
+	//document.cookie='application=' + userId;	
 	
 	var myHeaders = new Headers();
 	myHeaders.append("Content-Type", "application/json");
