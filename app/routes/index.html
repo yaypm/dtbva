@@ -1067,6 +1067,7 @@ function buildDetailsTable() {
 
 
 	addApplicationsToDetails();
+	retrieveApplicationDetails()
 		
 	})
 }
@@ -1146,7 +1147,93 @@ function saveApplicationDetails() {
 			obj[jsonResponse.application[i].id].slareporthours=document.getElementById(jsonResponse.application[i].id + "_slareporthours").value;				
 		}
 					
-		console.log(obj);			
+		//console.log(obj);	
+
+		var myHeaders = new Headers();
+		myHeaders.append("Content-Type", "application/json");
+		myHeaders.append("Accept", "application/json");
+	
+		var myInit = { method: 'POST',
+			headers: myHeaders,
+			cache: 'default',
+			body: JSON.stringify(obj)
+		};
+
+		fetch('/insertApplicationDetails', myInit)
+		
+		.then(function(response) {	
+			return response;
+		})			
+	})
+}
+
+function retrieveApplicationDetails() {
+	userId = getUserId();
+	
+	var myHeaders = new Headers();
+	myHeaders.append("Content-Type", "application/json");
+	myHeaders.append("Accept", "application/json");
+	myHeaders.append("userId", userId);
+	
+	var myInit = { method: 'GET',
+        headers: myHeaders,
+        cache: 'default'
+	};
+	
+	fetch('/getApplicationDetails', myInit)
+
+	.then(function(response) {	
+		return response.json();
+	})	
+	
+	.then(function(jsonResponse) {
+		userId = getUserId();
+		
+		var myHeaders = new Headers();
+		myHeaders.append("Content-Type", "application/json");
+		myHeaders.append("Accept", "application/json");
+		myHeaders.append("userId", userId);
+		
+		var myInit = { method: 'GET',
+			headers: myHeaders,
+			cache: 'default'
+		};
+		
+		fetch('/getApplications', myInit)
+
+		.then(function(response) {	
+			return response.json();
+		})
+		
+		.then(function(gotApplications) {
+			var noApps = gotApplications.application.length;
+			
+			console.log(gotApplications);
+			
+			for (i=0;i<noApps;i++) {
+				document.getElementById(gotApplications.application[i].id + "_avgusers").value=jsonResponse[0][gotApplications.application[i].id].avgusers;
+				document.getElementById(gotApplications.application[i].id + "_peakusers").value=jsonResponse[0][gotApplications.application[i].id].peakusers;	
+				document.getElementById(gotApplications.application[i].id + "_intext").value=jsonResponse[0][gotApplications.application[i].id].intext;
+				document.getElementById(gotApplications.application[i].id + "_downtimecost").value=jsonResponse[0][gotApplications.application[i].id].downtimecost;	
+				document.getElementById(gotApplications.application[i].id + "_impactemployeeprod").value=jsonResponse[0][gotApplications.application[i].id].impactemployeeprod;
+				document.getElementById(gotApplications.application[i].id + "_impactcompet").value=jsonResponse[0][gotApplications.application[i].id].impactcompet;	
+				document.getElementById(gotApplications.application[i].id + "_incidentsmonth").value=jsonResponse[0][gotApplications.application[i].id].incidentsmonth;
+				document.getElementById(gotApplications.application[i].id + "_userimpactpercent").value=jsonResponse[0][gotApplications.application[i].id].userimpactpercent;	
+				document.getElementById(gotApplications.application[i].id + "_currentmttr").value=jsonResponse[0][gotApplications.application[i].id].currentmttr;
+				document.getElementById(gotApplications.application[i].id + "_bustranperday").value=jsonResponse[0][gotApplications.application[i].id].bustranperday;
+				document.getElementById(gotApplications.application[i].id + "_hourlyrevbususer").value=jsonResponse[0][gotApplications.application[i].id].hourlyrevbususer;	
+				document.getElementById(gotApplications.application[i].id + "_avgbustrantime").value=jsonResponse[0][gotApplications.application[i].id].avgbustrantime;
+				document.getElementById(gotApplications.application[i].id + "_userimpactpercentppl").value=jsonResponse[0][gotApplications.application[i].id].userimpactpercentppl;	
+				document.getElementById(gotApplications.application[i].id + "_svcdeskpermonth").value=jsonResponse[0][gotApplications.application[i].id].svcdeskpermonth;					
+				document.getElementById(gotApplications.application[i].id + "_currentincidentsmonth").value=jsonResponse[0][gotApplications.application[i].id].currentincidentsmonth;
+				document.getElementById(gotApplications.application[i].id + "_staffhoursincident").value=jsonResponse[0][gotApplications.application[i].id].staffhoursincident;		
+				document.getElementById(gotApplications.application[i].id + "_staffissueresolve").value=jsonResponse[0][gotApplications.application[i].id].staffissueresolve;
+				document.getElementById(gotApplications.application[i].id + "_potentialmonthlypenalties").value=jsonResponse[0][gotApplications.application[i].id].potentialmonthlypenalties;	
+				document.getElementById(gotApplications.application[i].id + "_currentsla").value=jsonResponse[0][gotApplications.application[i].id].currentsla;
+				document.getElementById(gotApplications.application[i].id + "_slareporthours").value=jsonResponse[0][gotApplications.application[i].id].slareporthours;					
+			}			
+		})
+	
 	})
 }
 

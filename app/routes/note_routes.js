@@ -314,7 +314,7 @@ module.exports = function(app, db) {
 		});
 	});	
 
-	app.post('/insertProductDetails', (req, res) => {
+	app.post('/insertApplicationDetails', (req, res) => {
 		var userId = req.body._id;
 		var obj = req.body;
 		
@@ -323,27 +323,32 @@ module.exports = function(app, db) {
 		MongoClient.connect(process.env.MONGOLAB_URI, function(err, db) {
 			if(err) { return console.dir(err); }
 			
-			var collection = db.collection('product_cost');
+			var collection = db.collection('application_details');
 			
 			collection.find({_id:userId}).toArray(function(err, items) { 
 		
 				if(items[0] != undefined) {
-					console.log(obj.costs.length);
-					for(i=0;i<obj.costs.length;i++) {
-						var query = {};
-						query["costs." + i + ".license_fees"] = obj.costs[i].license_fees;						
-						query["costs." + i + ".maintenance"] = obj.costs[i].maintenance;	
-						query["costs." + i + ".hardware"] = obj.costs[i].hardware;	
-						query["costs." + i + ".implementation"] = obj.costs[i].implementation;	
-						query["costs." + i + ".training"] = obj.costs[i].training;							
-						
-						collection.update({'_id':userId},{$set: query  });	
+					//console.log(items);
+					
+					for(var name in items) {
+						console.log("space");
+						console.log(items[name]);						
 					}
+					//for(i=0;i<obj.length;i++) {
+					//	var query = {};
+					//	query["costs." + i + ".license_fees"] = obj.costs[i].license_fees;						
+					//	query["costs." + i + ".maintenance"] = obj.costs[i].maintenance;	
+					//	query["costs." + i + ".hardware"] = obj.costs[i].hardware;	
+					//	query["costs." + i + ".implementation"] = obj.costs[i].implementation;	
+					//	query["costs." + i + ".training"] = obj.costs[i].training;							
+						
+					//	collection.update({'_id':userId},{$set: query  });	
+					//}
 					
 				} 
 				
 				else {
-					console.log("else");
+					//console.log("else");
 					collection.insert(req.body, {w:1}, function(err, result) { if(err!=null){console.log(err);}     console.log(result);    });								
 				}
 			});			
@@ -352,5 +357,22 @@ module.exports = function(app, db) {
 		
 		res.writeHead(200, {'Access-Control-Allow-Headers':'content-type'});
 		res.end("success!");
+	});	
+
+	app.get('/getApplicationDetails', (req, res) => {	
+		var userId = req.header('userId');
+		console.log(userId);
+		MongoClient.connect(process.env.MONGOLAB_URI, function(err, db) {
+			if(err) { return console.dir(err); }
+
+			var collection = db.collection('application_details');
+			var results = collection.find({'_id':userId}).toArray(function(err, items) {
+
+				resp=JSON.stringify(items);
+				console.log(resp);
+				res.writeHead(200, {'Access-Control-Allow-Headers':'content-type'});
+				res.end(resp);
+			});
+		});
 	});		
 };
