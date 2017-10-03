@@ -7,31 +7,53 @@
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
 <style>a:hover {cursor:pointer;}</style>
 <script>
+function isEmail(email) {
+  var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+  return regex.test(email);
+}
+
 function createNewUser() {
 	var userId = generateId().toString();
-	var newEmail = "alistair.emslie@dynatrace.com";
+	var newEmail = document.getElementById("newId").value;
 	
-	var myHeaders = new Headers();
-	myHeaders.append("Content-Type", "application/json");
-	myHeaders.append("Accept", "application/json");
-	myHeaders.append("userId", userId);
-	myHeaders.append("emailAddress", newEmail);
+	if(isEmail(newEmail) == false) {
+		alert("Please enter a valid email address!");
+	}
 	
-	var myInit = { method: 'GET',
-        headers: myHeaders,
-        cache: 'default'
-	};
-	
-	fetch('/createUser', myInit)
+	else {
+		var myHeaders = new Headers();
+		myHeaders.append("Content-Type", "application/json");
+		myHeaders.append("Accept", "application/json");
+		myHeaders.append("userId", userId);
+		myHeaders.append("emailAddress", newEmail);
+		
+		var myInit = { method: 'GET',
+			headers: myHeaders,
+			cache: 'default'
+		};
+		
+		fetch('/createUser', myInit)
 
-	.then(function(response) {	
-		return response;
-	})
+		.then(function(response) {	
+			return response.text();
+		})
+		
+		.then(function(textResponse) {
+			userId = textResponse;
+			document.getElementById("displayBvaId").innerHTML=userId;
+			document.cookie='application=' + userId;
+			document.getElementById("userId").value = userId;		
+		})
+		
+		.then(function() {
+			retrieveOptions();	
+		})
+	}	
 }
 
 function switchSubNav(divId) {
 
-	introductionSave();
+	//introductionSave();
 	buildBenefitsTable();
 	retrieveGeneralDetails();
 	retrieveApplications();
@@ -270,8 +292,8 @@ function addApplication() {
 	.then(function(response) {	
 			document.getElementById("application_name").value="";
 			document.getElementById("application_desc").value="";
+			addApplicationsToDetails();
 			return response;
-			console.log(response);
 	})	
 }
 
@@ -291,7 +313,6 @@ function deleteApplication(applicationId) {
 			
 		.then(function(response) {	
 				return response;
-				console.log(response);
 		})		
 }
 
@@ -315,11 +336,6 @@ function retrieveApplications() {
 	})
 	
 	.then(function(jsonResponse) {
-		//var result = JSON.parse(jsonResponse);
-		//console.log(jsonResponse.application[0].id);
-
-		//return jsonResponse[0].id;
-		
 		for(i=application_list.rows.length -1; i >= 0 ; i--) {
 			application_list.deleteRow(i);
 		}
@@ -603,7 +619,6 @@ function introductionSave() {
 		
 	.then(function(response) {	
 			return response;
-			console.log(response);
 	})
 }
 
@@ -651,7 +666,6 @@ function expectedBenefitsSave() {
 		
 	.then(function(response) {	
 			return response;
-			console.log(response);
 	})	
 }
 
@@ -690,7 +704,6 @@ function generalDetailsSave() {
 		
 	.then(function(response) {	
 			return response;
-			console.log(response);
 	})
 }
 
@@ -791,8 +804,6 @@ function buildCostTable() {
 	})
 	
 	.then(function(jsonResponse) {	
-	
-		console.log(jsonResponse.study_period);
 		noYears = jsonResponse.study_period;
 		year = (new Date()).getFullYear();
 		
@@ -858,7 +869,6 @@ function saveCostTable() {
 		
 	.then(function(response) {	
 			return response;
-			console.log(response);
 	})	
 	
 	
@@ -869,9 +879,6 @@ function retrieveCostValues() {
 	var table = document.getElementById("product_cost");
 	var userId = getUserId();
 	noYears = parseInt(document.getElementById("study_period").value);
-	//noYears = noYears + 1;
-	
-	console.log(noYears);
 	
 	var myHeaders = new Headers();
 	myHeaders.append("Content-Type", "application/json");
@@ -891,14 +898,19 @@ function retrieveCostValues() {
 	})
 	
 	.then(function(jsonObj) {
-		for(i=0;i<noYears;i++) {
-			//jsonObj = JSON.parse(jsonObj);
-			//console.log(jsonObj[0].costs[0].license_fees);
-			document.getElementById("license_fees_y" + (i+1)).value = jsonObj[0].costs[i].license_fees;
-			document.getElementById("maintenance_y" + (i+1)).value = jsonObj[0].costs[i].maintenance;
-			document.getElementById("hardware_y" + (i+1)).value = jsonObj[0].costs[i].hardware;
-			document.getElementById("implementation_y" + (i+1)).value = jsonObj[0].costs[i].implementation;
-			document.getElementById("training_y" + (i+1)).value = jsonObj[0].costs[i].training;
+	
+		if(jsonObj[0] != undefined) {
+			for(i=0;i<noYears;i++) {
+				document.getElementById("license_fees_y" + (i+1)).value = jsonObj[0].costs[i].license_fees;
+				document.getElementById("maintenance_y" + (i+1)).value = jsonObj[0].costs[i].maintenance;
+				document.getElementById("hardware_y" + (i+1)).value = jsonObj[0].costs[i].hardware;
+				document.getElementById("implementation_y" + (i+1)).value = jsonObj[0].costs[i].implementation;
+				document.getElementById("training_y" + (i+1)).value = jsonObj[0].costs[i].training;
+			}
+		}
+
+		else {
+			
 		}
 	})
 }
@@ -925,91 +937,98 @@ function addApplicationsToDetails() {
 	.then(function(jsonResponse) {
 		
 		if(jsonResponse.application.length == 0) {
-			return "no applications";
-		}		
-
-		var details = document.getElementById("details");
-
-		for(i=1;i<details.children.length;i++) {
+			var length = document.getElementById("details").children.length;
 			
-			details.children[i].children[1].children[0].innerHTML="";
-			
-			var length = jsonResponse.application.length;
-					
-			var containers = Math.ceil(length / 5);		
-			
-			
-			if(details.children[i].style.display=="table-row-group") {
-			//console.log(details.children[i]);
-				for(x=0;x<containers;x++) {
-					var details = document.getElementById("details");
-					var newDiv = document.createElement("div");
-					newDiv.classList.add("container");
-					newDiv.style.display="flex";
-					details.children[i].children[1].children[0].appendChild(newDiv);
-					
-							
-					for(y=1 + x * 5; y < (x+1) * 5 + 1;y++ ) {
-						var details = document.getElementById("details");
-						divApp = document.createElement("div");
-						divApp.classList.add("column--1-of-5");
-						divApp.setAttribute("style","width: 20%; margin-bottom: 30px");
-						details.children[i].children[1].children[0].children[x].appendChild(divApp);
-					}
-				}					
+			for(i=1; i<length; i++) {
+				var newLength = document.getElementById("details").children[i].children[1].children[0].children.length;
+				
+				for(x=0;x<newLength; x++) {
+					document.getElementById("details").children[i].children[1].children[0].removeChild(document.getElementById("details").children[i].children[1].children[0].childNodes[x]);
+				}
 			}
-			
-			column = 0;
-			
-			for(a=1;a<length + 1;a++) {
-				container = Math.ceil(a / 5);
-				container = container - 1;
-				//console.log("container " + container + ", column " + column);
+		}		
+		
+		else {
+			var details = document.getElementById("details");
+
+			for(i=1;i<details.children.length;i++) {
 				
-				if(details.children[i].children[1].children[0].children[container].children[column].parentElement.parentElement.parentElement.parentElement.children[0].children[0].innerHTML == "<h4>Base information</h4>") {
-					details.children[i].children[1].children[0].children[container].children[column].innerHTML='<h4>' + jsonResponse.application[a-1].application_name + '</h4><br /><label for="' + jsonResponse.application[a-1].id + '_avgusers" class="label">Average number of users</label><input type="text" class="inputfield" id="' + jsonResponse.application[a-1].id +'_avgusers" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id +'_peakusers" class="label">Peak number of users</label><input type="text" class="inputfield" id="' + jsonResponse.application[a-1].id +'_peakusers" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_intext" class="label">External or internal?</label><select class="select" id="' + jsonResponse.application[a-1].id +'_intext" style="width:75%"><option value="internal" selected="selected">Internal</option><option value="external">External</option></select>';
-					
-					
+				details.children[i].children[1].children[0].innerHTML="";
+				
+				var length = jsonResponse.application.length;
+						
+				var containers = Math.ceil(length / 5);		
+				
+				
+				if(details.children[i].style.display=="table-row-group") {
+					for(x=0;x<containers;x++) {
+						var details = document.getElementById("details");
+						var newDiv = document.createElement("div");
+						newDiv.classList.add("container");
+						newDiv.style.display="flex";
+						details.children[i].children[1].children[0].appendChild(newDiv);
+						
+								
+						for(y=1 + x * 5; y < (x+1) * 5 + 1;y++ ) {
+							var details = document.getElementById("details");
+							divApp = document.createElement("div");
+							divApp.classList.add("column--1-of-5");
+							divApp.setAttribute("style","width: 20%; margin-bottom: 30px");
+							details.children[i].children[1].children[0].children[x].appendChild(divApp);
+						}
+					}					
 				}
 				
-				if(details.children[i].children[1].children[0].children[container].children[column].parentElement.parentElement.parentElement.parentElement.children[0].children[0].innerHTML == "<h4>Business impact</h4>") {
-					details.children[i].children[1].children[0].children[container].children[column].innerHTML='<h4>' + jsonResponse.application[a-1].application_name + '</h4><br /><label for="' + jsonResponse.application[a-1].id + '_downtimecost" class="label">Cost of downtime per minute (&pound;)</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_downtimecost" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_impactemployeeprod" class="label">Is there an impact to employee productivity?</label><select class="select" id="' + jsonResponse.application[a-1].id +'_impactemployeeprod" style="width:75%"><option value="yes" selected="selected">Yes</option><option value="no">No</option></select><br /><br /><label for="' + jsonResponse.application[a-1].id + '_impactcompet" class="label">Is there an impact in competitive loss?</label><select class="select" id="' + jsonResponse.application[a-1].id +'_impactcompet" style="width:75%"><option value="yes" selected="selected">Yes</option><option value="no">No</option></select>';
-				}
-
-				if(details.children[i].children[1].children[0].children[container].children[column].parentElement.parentElement.parentElement.parentElement.children[0].children[0].innerHTML == "<h4>Revenue loss</h4>") {
-					details.children[i].children[1].children[0].children[container].children[column].innerHTML='<h4>' + jsonResponse.application[a-1].application_name + '</h4><br /><label for="' + jsonResponse.application[a-1].id + '_incidentsmonth" class="label">Current incidents/month</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_incidentsmonth" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_userimpactpercent" class="label">Users impacted by an incident (%)</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_userimpactpercent" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_currentmttr" class="label">Current MTTR (mins)</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_currentmttr" style="width:75%"/><br /><br />';
-				}	
-
-				if(details.children[i].children[1].children[0].children[container].children[column].parentElement.parentElement.parentElement.parentElement.children[0].children[0].innerHTML == "<h4>User productivity</h4>") {
-					details.children[i].children[1].children[0].children[container].children[column].innerHTML='<h4>' + jsonResponse.application[a-1].application_name + '</h4><br /><label for="' + jsonResponse.application[a-1].id + '_bustranperday" class="label">Number of business transactions per user, per day</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_bustranperday" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_hourlyrevbususer" class="label">Hourly revenue of a business user (&pound;)</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_hourlyrevbususer" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_avgbustrantime" class="label">Average time of a business transaction (s)</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_avgbustrantime" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_userimpactpercentppl" class="label">Users impacted by an incident (%)</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_userimpactpercentppl" style="width:75%"/><br /><br />';
-				}	
-
-				if(details.children[i].children[1].children[0].children[container].children[column].parentElement.parentElement.parentElement.parentElement.children[0].children[0].innerHTML == "<h4>Service desk cost</h4>") {
-					details.children[i].children[1].children[0].children[container].children[column].innerHTML='<h4>' + jsonResponse.application[a-1].application_name + '</h4><br /><label for="' + jsonResponse.application[a-1].id + '_svcdeskpermonth" class="label">Number of service desk calls per month</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_svcdeskpermonth" style="width:75%"/><br /><br />';
-				}	
-
-				if(details.children[i].children[1].children[0].children[container].children[column].parentElement.parentElement.parentElement.parentElement.children[0].children[0].innerHTML == "<h4>Problem resolution</h4>") {
-					details.children[i].children[1].children[0].children[container].children[column].innerHTML='<h4>' + jsonResponse.application[a-1].application_name + '</h4><br /><label for="' + jsonResponse.application[a-1].id + '_currentincidentsmonth" class="label">Number of incidents/month</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_currentincidentsmonth" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_staffhoursincident" class="label">Staff hours spent per incident</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_staffhoursincident" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_staffissueresolve" class="label">Number of staff needed to resolve an issue</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_staffissueresolve" style="width:75%"/><br /><br />';
-				}	
-
-				if(details.children[i].children[1].children[0].children[container].children[column].parentElement.parentElement.parentElement.parentElement.children[0].children[0].innerHTML == "<h4>SLA compliance and reporting</h4>") {
-					details.children[i].children[1].children[0].children[container].children[column].innerHTML='<h4>' + jsonResponse.application[a-1].application_name + '</h4><br /><label for="' + jsonResponse.application[a-1].id + '_potentialmonthlypenalties" class="label">Potential monthly penalties (&pound;)</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_potentialmonthlypenalties" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_currentsla" class="label">Current SLA attainment (%)</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_currentsla" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_slareporthours" class="label">Hours to create SLA reports</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_slareporthours" style="width:75%"/><br /><br />';
-				}					
+				column = 0;
 				
+				for(a=1;a<length + 1;a++) {
+					container = Math.ceil(a / 5);
+					container = container - 1;
 					
-				
-				
-				
-				
-				
-				
-				
-				
-				column = column + 1;
-				if(column == 5) { column = 0;}
-			}			
+					if(details.children[i].children[1].children[0].children[container].children[column].parentElement.parentElement.parentElement.parentElement.children[0].children[0].innerHTML == "<h4>Base information</h4>") {
+						details.children[i].children[1].children[0].children[container].children[column].innerHTML='<h4>' + jsonResponse.application[a-1].application_name + '</h4><br /><label for="' + jsonResponse.application[a-1].id + '_avgusers" class="label">Average number of users</label><input type="text" class="inputfield" id="' + jsonResponse.application[a-1].id +'_avgusers" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id +'_peakusers" class="label">Peak number of users</label><input type="text" class="inputfield" id="' + jsonResponse.application[a-1].id +'_peakusers" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_intext" class="label">External or internal?</label><select class="select" id="' + jsonResponse.application[a-1].id +'_intext" style="width:75%"><option value="internal" selected="selected">Internal</option><option value="external">External</option></select>';
+						
+						
+					}
+					
+					if(details.children[i].children[1].children[0].children[container].children[column].parentElement.parentElement.parentElement.parentElement.children[0].children[0].innerHTML == "<h4>Business impact</h4>") {
+						details.children[i].children[1].children[0].children[container].children[column].innerHTML='<h4>' + jsonResponse.application[a-1].application_name + '</h4><br /><label for="' + jsonResponse.application[a-1].id + '_downtimecost" class="label">Cost of downtime per minute (&pound;)</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_downtimecost" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_impactemployeeprod" class="label">Is there an impact to employee productivity?</label><select class="select" id="' + jsonResponse.application[a-1].id +'_impactemployeeprod" style="width:75%"><option value="yes" selected="selected">Yes</option><option value="no">No</option></select><br /><br /><label for="' + jsonResponse.application[a-1].id + '_impactcompet" class="label">Is there an impact in competitive loss?</label><select class="select" id="' + jsonResponse.application[a-1].id +'_impactcompet" style="width:75%"><option value="yes" selected="selected">Yes</option><option value="no">No</option></select>';
+					}
+
+					if(details.children[i].children[1].children[0].children[container].children[column].parentElement.parentElement.parentElement.parentElement.children[0].children[0].innerHTML == "<h4>Revenue loss</h4>") {
+						details.children[i].children[1].children[0].children[container].children[column].innerHTML='<h4>' + jsonResponse.application[a-1].application_name + '</h4><br /><label for="' + jsonResponse.application[a-1].id + '_incidentsmonth" class="label">Current incidents/month</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_incidentsmonth" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_userimpactpercent" class="label">Users impacted by an incident (%)</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_userimpactpercent" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_currentmttr" class="label">Current MTTR (mins)</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_currentmttr" style="width:75%"/><br /><br />';
+					}	
+
+					if(details.children[i].children[1].children[0].children[container].children[column].parentElement.parentElement.parentElement.parentElement.children[0].children[0].innerHTML == "<h4>User productivity</h4>") {
+						details.children[i].children[1].children[0].children[container].children[column].innerHTML='<h4>' + jsonResponse.application[a-1].application_name + '</h4><br /><label for="' + jsonResponse.application[a-1].id + '_bustranperday" class="label">Number of business transactions per user, per day</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_bustranperday" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_hourlyrevbususer" class="label">Hourly revenue of a business user (&pound;)</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_hourlyrevbususer" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_avgbustrantime" class="label">Average time of a business transaction (s)</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_avgbustrantime" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_userimpactpercentppl" class="label">Users impacted by an incident (%)</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_userimpactpercentppl" style="width:75%"/><br /><br />';
+					}	
+
+					if(details.children[i].children[1].children[0].children[container].children[column].parentElement.parentElement.parentElement.parentElement.children[0].children[0].innerHTML == "<h4>Service desk cost</h4>") {
+						details.children[i].children[1].children[0].children[container].children[column].innerHTML='<h4>' + jsonResponse.application[a-1].application_name + '</h4><br /><label for="' + jsonResponse.application[a-1].id + '_svcdeskpermonth" class="label">Number of service desk calls per month</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_svcdeskpermonth" style="width:75%"/><br /><br />';
+					}	
+
+					if(details.children[i].children[1].children[0].children[container].children[column].parentElement.parentElement.parentElement.parentElement.children[0].children[0].innerHTML == "<h4>Problem resolution</h4>") {
+						details.children[i].children[1].children[0].children[container].children[column].innerHTML='<h4>' + jsonResponse.application[a-1].application_name + '</h4><br /><label for="' + jsonResponse.application[a-1].id + '_currentincidentsmonth" class="label">Number of incidents/month</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_currentincidentsmonth" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_staffhoursincident" class="label">Staff hours spent per incident</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_staffhoursincident" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_staffissueresolve" class="label">Number of staff needed to resolve an issue</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_staffissueresolve" style="width:75%"/><br /><br />';
+					}	
+
+					if(details.children[i].children[1].children[0].children[container].children[column].parentElement.parentElement.parentElement.parentElement.children[0].children[0].innerHTML == "<h4>SLA compliance and reporting</h4>") {
+						details.children[i].children[1].children[0].children[container].children[column].innerHTML='<h4>' + jsonResponse.application[a-1].application_name + '</h4><br /><label for="' + jsonResponse.application[a-1].id + '_potentialmonthlypenalties" class="label">Potential monthly penalties (&pound;)</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_potentialmonthlypenalties" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_currentsla" class="label">Current SLA attainment (%)</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_currentsla" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_slareporthours" class="label">Hours to create SLA reports</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_slareporthours" style="width:75%"/><br /><br />';
+					}					
+					
+						
+					
+					
+					
+					
+					
+					
+					
+					
+					column = column + 1;
+					if(column == 5) { column = 0;}
+				}			
+			}
 		}
-
 	})
 }
 
@@ -1077,20 +1096,18 @@ function buildDetailsTable() {
 
 			if(details.children[i].style.display=="" && colour ==1) {
 				details.children[i].children[0].setAttribute("style","background-color: #F8F8F8");
-				console.log("setting " + details.children[i].children[0].children[0].innerHTML + " to grey");
 				colour = 0;
 				continue;
 			}
 			if(details.children[i].style.display=="" && colour == 0) {
 				details.children[i].children[0].setAttribute("style","background-color: white");
-				console.log("setting " + details.children[i].children[0].children[0].innerHTML + " to white");
 				colour = 1;
 			} 
 		}
 
 
 	addApplicationsToDetails();
-	retrieveApplicationDetails()
+	retrieveApplicationDetails();
 		
 	})
 }
@@ -1124,7 +1141,6 @@ function saveApplicationDetails() {
 		}
 
 		jsonStr += "}";
-		console.log(jsonStr);
 		
 		var obj = JSON.parse(jsonStr);	
 	
@@ -1169,8 +1185,6 @@ function saveApplicationDetails() {
 
 			obj[jsonResponse.application[i].id].slareporthours=document.getElementById(jsonResponse.application[i].id + "_slareporthours").value;				
 		}
-					
-		//console.log(obj);	
 
 		var myHeaders = new Headers();
 		myHeaders.append("Content-Type", "application/json");
@@ -1229,10 +1243,14 @@ function retrieveApplicationDetails() {
 		})
 		
 		.then(function(gotApplications) {
+			if(jsonResponse[0] == undefined){
+			
+			}
+		
+			else {
+			
 			var noApps = gotApplications.application.length;
-			
-			console.log(gotApplications);
-			
+						
 			for (i=0;i<noApps;i++) {
 				document.getElementById(gotApplications.application[i].id + "_avgusers").value=jsonResponse[0][gotApplications.application[i].id].avgusers;
 				document.getElementById(gotApplications.application[i].id + "_peakusers").value=jsonResponse[0][gotApplications.application[i].id].peakusers;	
@@ -1254,7 +1272,9 @@ function retrieveApplicationDetails() {
 				document.getElementById(gotApplications.application[i].id + "_potentialmonthlypenalties").value=jsonResponse[0][gotApplications.application[i].id].potentialmonthlypenalties;	
 				document.getElementById(gotApplications.application[i].id + "_currentsla").value=jsonResponse[0][gotApplications.application[i].id].currentsla;
 				document.getElementById(gotApplications.application[i].id + "_slareporthours").value=jsonResponse[0][gotApplications.application[i].id].slareporthours;					
-			}			
+			}
+
+			}	
 		})
 	
 	})
@@ -1333,9 +1353,9 @@ function retrieveApplicationDetails() {
 			<h3>New users</h3>
 			<label class="label" style="width: 250px;">Please fill in the information below and hit the button to generate an ID that will be used to retrieve your BVA in the future.</label>
 			<br />
-			<label for="newId" class="label">Email</label><input type="text" class="inputfield" id="newId" style="width: 250px;"/>
+			<label for="newId" class="label">Email</label><input type="email" class="inputfield" id="newId" style="width: 250px;"/>
 			<br /><br />
-			<button role="button" type="button" class="btn btn--primary">Generate</button>
+			<button role="button" type="button" class="btn btn--primary" onclick="createNewUser();">Generate</button>
 	
 			</td>
 			<td style="vertical-align: top; width: 50%;">
@@ -1343,7 +1363,7 @@ function retrieveApplicationDetails() {
 			<h3>Returning users</h3>
 			<label class="label" style="width: 250px;">If you are coming back to finish a previous BVA, please enter your ID below to load up your details and continue!</label>
 			<br />
-			<label for="newId" class="label" >ID</label><input type="text" class="inputfield" id="userId" style="width: 250px;" value="hoaApJ2XUl"/>
+			<label for="newId" class="label" >ID</label><input type="text" class="inputfield" id="userId" style="width: 250px;" />
 			<br /><br />
 			<button role="button" type="button" class="btn btn--primary" onclick="retrieveOptions();">Load</button>
 			
@@ -1727,6 +1747,7 @@ function retrieveApplicationDetails() {
 				</table>
 
 			<button role="button" type="button" class="btn btn--primary" onclick="saveApplicationDetails();">Save</button>
+			<br /><br />
 			</div>
 			
 			
@@ -1736,7 +1757,7 @@ function retrieveApplicationDetails() {
 		<div id="c_fullroi_report" class="non-primary" style="position: absolute; width: 100%;" >
 		<div style="margin-left: 50px; margin-top: 0px;" id="testAdd">
 
-		<!--<div id="container" style="height: 300px; width: 550px;margin-bottom: 50px;">-->
+		<div id="container" style="height: 300px; width: 550px;margin-bottom: 50px;">
 	
 			
 

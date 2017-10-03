@@ -25,7 +25,7 @@ module.exports = function(app, db) {
 
 			var collection = db.collection('option');
 			var results = collection.find({_id:userId}).toArray(function(err, items) {
-				var resp = JSON.stringify(items[0]);
+			var resp = JSON.stringify(items[0]);
 				
 				console.log(userId + " received options");
 				res.writeHead(200, {'Access-Control-Allow-Headers':'content-type'});
@@ -421,13 +421,20 @@ module.exports = function(app, db) {
 		var newEmail = req.header('emailAddress');
 		
 		console.log(userId + " is being created");
-		MongoClient.connect(process.env.MONGOLAB_URI, function(err, db) {
-			if(err) { return console.dir(err); }
+		MongoClient.connect(process.env.MONGOLAB_URI) 
+		
+		.then(function(db) {
+			//if(err) { return console.dir(err); }
 
 			//create user
 			var collection = db.collection('user');
 			var fullJson = ({'_id':userId,'email':newEmail});			
 			collection.insert(fullJson, {w:1}, function(err, result) { if(err!=null){console.log(err);}     console.log(userId + " inserted new user table");    });
+
+			//create options
+			var collection = db.collection('option');
+			var fullJson = {'_id':userId,'it_downtime':true,'employee_productivity':true,'incident_frequency':true,'service_desk':true,'sla_compliance':true,'cloud_bill':true,'speed_market':true,'company_name':'','study_period':3,'dynatrace_cost':true,'competitive_analysis':true};
+			collection.insert(fullJson, {w:1}, function(err, result) { if(err!=null){console.log(err);}     console.log(userId + " inserted new options table");    });
 			
 			//create expected benefits
 			var collection = db.collection('expected_benefits');
@@ -439,17 +446,15 @@ module.exports = function(app, db) {
 			var fullJson = {'_id':userId,'bus_days':'','hours_day':'','avg_salary':'','svc_desk_cost':'','rev_growth':'','confidence':'70'};
 			collection.insert(fullJson, {w:1}, function(err, result) { if(err!=null){console.log(err);}     console.log(userId + " inserted new general table");    });
 			
-			//create options
-			var collection = db.collection('option');
-			var fullJson = {'_id':userId,'it_downtime':true,'employee_productivity':true,'incident_frequency':true,'service_desk':true,'sla_compliance':true,'cloud_bill':true,'speed_market':true,'company_name':'','study_period':3,'dynatrace_cost':true,'competitive_analysis':true};
-			collection.insert(fullJson, {w:1}, function(err, result) { if(err!=null){console.log(err);}     console.log(userId + " inserted new options table");    });
+		})
 			
-			
-			console.log(userId + " was created");
-				//resp=JSON.stringify(items);
+		.then(function () {
+				console.log(userId + " was created");
 				res.writeHead(200, {'Access-Control-Allow-Headers':'content-type'});
-				res.end("success!");
-			});
-		});
+				res.end(userId);				
+		})
+		
+		.catch(function (err) {})
+	});
 			
 };
