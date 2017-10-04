@@ -10,7 +10,7 @@
 function activateControls() {
 	document.getElementById("fullroi_intro").setAttribute("onclick","switchSubNav(this.id)");
 	document.getElementById("fullroi_input").setAttribute("onclick","switchSubNav(this.id)");
-	document.getElementById("fullroi_report").setAttribute("onclick","switchSubNav(this.id); drawBlank()");
+	document.getElementById("fullroi_report").setAttribute("onclick","switchSubNav(this.id)");
 }
 
 function isEmail(email) {
@@ -1529,9 +1529,9 @@ function retrieveApplicationDetails() {
 
 
 		<div class="tabs" style="width: 100%; ">
-		<button id="fullroi_input_org" class="tab is-active" onclick="switchTab(this.id)">Organisation information</button>
+		<button id="fullroi_input_org" class="tab is-active" onclick="switchTab(this.id)">General information</button>
 		<button id="fullroi_input_prod" class="tab" onclick="switchTab(this.id)">Product cost</button>
-		<button id="fullroi_input_bus" class="tab" onclick="switchTab(this.id)">Business impact</button>
+		<button id="fullroi_input_bus" class="tab" onclick="switchTab(this.id)">Application Details</button>
 		</div>
 
 			<!--organisation information-->
@@ -1750,7 +1750,7 @@ function retrieveApplicationDetails() {
 		<div id="c_fullroi_report" class="non-primary" style="position: absolute; width: 100%;" >
 		<div style="margin-left: 50px; margin-top: 0px;" id="testAdd">
 
-		<div id="container" style="height: 300px; width: 550px;margin-bottom: 50px;">
+		<!--<div id="container" style="height: 300px; width: 550px;margin-bottom: 50px;">-->
 	
 			
 
