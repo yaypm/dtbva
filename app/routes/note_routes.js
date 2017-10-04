@@ -76,21 +76,22 @@ module.exports = function(app, db) {
 	});
 	
 	app.post('/insertExpectedBenefits', (req, res) => {
-		var userId = req.body.userId;
-		var dec_rev_incidents = req.body.dec_rev_incidents;
-		var reduce_mttr = req.body.reduce_mttr;
-		var increase_employee_prod = req.body.increase_employee_prod;
-		var decrease_user_incidents = req.body.decrease_user_incidents;
-		var reduce_incident_resolve = req.body.reduce_incident_resolve;
-		var reduce_service_desk = req.body.reduce_service_desk;
-		var reduce_sla_penalties = req.body.reduce_sla_penalties;
-		var reduce_cloud_bill = req.body.reduce_cloud_bill;
-		var increase_time_market = req.body.increase_time_market;
+		if(typeof req.body.userId !== undefined) {var userId = req.body.userId;}
+		if(typeof req.body.dec_rev_incidents !== undefined) {var dec_rev_incidents = req.body.dec_rev_incidents;} else {var dec_rev_incidents = '';}
+		if(typeof req.body.reduce_downtime !== undefined) {var reduce_downtime = req.body.reduce_downtime;} else {var reduce_downtime = '';}
+		if(typeof req.body.increase_employee_prod !== undefined) {var increase_employee_prod = req.body.increase_employee_prod;} else {var increase_employee_prod = '';}
+		if(typeof req.body.decrease_user_incidents !== undefined) {var decrease_user_incidents = req.body.decrease_user_incidents;} else {var decrease_user_incidents = '';}
+		if(typeof req.body.reduce_incident_resolve !== undefined) {var reduce_incident_resolve = req.body.reduce_incident_resolve;} else {var reduce_incident_resolve = '';}
+		if(typeof req.body.reduce_service_desk !== undefined) {var reduce_service_desk = req.body.reduce_service_desk;} else {var reduce_service_desk = '';}
+		if(typeof req.body.reduce_sla_penalties !== undefined) {var reduce_sla_penalties = req.body.reduce_sla_penalties;} else {var reduce_sla_penalties = '';}
+		if(typeof req.body.reduce_sla_resources !== undefined) {var reduce_sla_resources = req.body.reduce_sla_resources;} else {var reduce_sla_resources = '';}
+		if(typeof req.body.reduce_cloud_bill !== undefined) {var reduce_cloud_bill = req.body.reduce_cloud_bill;} else {var reduce_cloud_bill = '';}
+		if(typeof req.body.increase_time_market !== undefined) {var increase_time_market = req.body.increase_time_market;} else {var increase_time_market = '';}
 		
 		console.log(userId + " is inserting expected benefits");
 		
 		//console.log('dec_rev_incidents is ' + dec_rev_incidents + '');
-		//console.log('reduce_mttr is ' + reduce_mttr + '');
+		//console.log('reduce_downtime is ' + reduce_downtime + '');
 		//console.log('increase_employee_prod is ' + increase_employee_prod + '');
 		//console.log('decrease_user_incidents is ' + decrease_user_incidents + '');
 		//console.log('reduce_incident_resolve is ' + reduce_incident_resolve + '');
@@ -104,12 +105,12 @@ module.exports = function(app, db) {
 			
 			var collection = db.collection('expected_benefits');
 			
-			var fullJson = {'_id':userId,'dec_rev_incidents':dec_rev_incidents,'reduce_mttr':reduce_mttr,'increase_employee_prod':increase_employee_prod,'decrease_user_incidents':decrease_user_incidents,'reduce_incident_resolve':reduce_incident_resolve,'reduce_service_desk':reduce_service_desk,'reduce_sla_penalties':reduce_sla_penalties,'reduce_cloud_bill':reduce_cloud_bill,'increase_time_market':increase_time_market};
+			var fullJson = {'_id':userId,'dec_rev_incidents':dec_rev_incidents,'reduce_downtime':reduce_downtime,'increase_employee_prod':increase_employee_prod,'decrease_user_incidents':decrease_user_incidents,'reduce_incident_resolve':reduce_incident_resolve,'reduce_service_desk':reduce_service_desk,'reduce_sla_penalties':reduce_sla_penalties, 'reduce_sla_resources':reduce_sla_resources, 'reduce_cloud_bill':reduce_cloud_bill,'increase_time_market':increase_time_market};
 			
 			collection.find({_id:userId}).toArray(function(err, items) { 
 		
 				if(items[0] != undefined) {
-					collection.update({'_id':userId},{$set:{'dec_rev_incidents':dec_rev_incidents,'reduce_mttr':reduce_mttr,'increase_employee_prod':increase_employee_prod,'decrease_user_incidents':decrease_user_incidents,'reduce_incident_resolve':reduce_incident_resolve,'reduce_service_desk':reduce_service_desk,'reduce_sla_penalties':reduce_sla_penalties,'reduce_cloud_bill':reduce_cloud_bill,'increase_time_market':increase_time_market}});		
+					collection.update({'_id':userId},{$set:{'dec_rev_incidents':dec_rev_incidents,'reduce_downtime':reduce_downtime,'increase_employee_prod':increase_employee_prod,'decrease_user_incidents':decrease_user_incidents,'reduce_incident_resolve':reduce_incident_resolve,'reduce_service_desk':reduce_service_desk,'reduce_sla_penalties':reduce_sla_penalties,'reduce_sla_resources':reduce_sla_resources,'reduce_cloud_bill':reduce_cloud_bill,'increase_time_market':increase_time_market}});		
 					console.log(userId + " updated expected benefits");
 				} 
 				
@@ -145,13 +146,13 @@ module.exports = function(app, db) {
 
 	app.post('/insertGeneralDetails', (req, res) => {
 		var userId = req.body.userId;
-		var bus_days = req.body.bus_days;
-		var hours_day = req.body.hours_day;
-		var avg_salary = req.body.avg_salary;
-		var svc_desk_cost = req.body.svc_desk_cost;
-		var rev_growth = req.body.rev_growth;
-		var confidence = req.body.confidence;
-		
+		if(typeof req.body.bus_days !== undefined) {var bus_days = req.body.bus_days;} else {var bus_days = '';}
+		if(typeof req.body.npv !== undefined) {var npv = req.body.npv;} else {var npv = '';}		
+		if(typeof req.body.avg_salary !== undefined) {var avg_salary = req.body.avg_salary;} else {var avg_salary = '';}
+		if(typeof req.body.svc_desk_cost !== undefined) {var svc_desk_cost = req.body.svc_desk_cost;} else {var svc_desk_cost = '';}	
+		if(typeof req.body.rev_growth !== undefined) {var rev_growth = req.body.rev_growth;} else {var rev_growth = '';}
+		if(typeof req.body.confidence !== undefined) {var confidence = req.body.confidence;} else {var confidence = '';}			
+
 		console.log(userId + " is inserting general details");
 		
 		MongoClient.connect(process.env.MONGOLAB_URI, function(err, db) {
@@ -159,12 +160,12 @@ module.exports = function(app, db) {
 			
 			var collection = db.collection('general');
 			
-			var fullJson = {'_id':userId,'bus_days':bus_days,'hours_day':hours_day,'avg_salary':avg_salary,'svc_desk_cost':svc_desk_cost,'rev_growth':rev_growth,'confidence':confidence};
+			var fullJson = {'_id':userId,'bus_days':bus_days,'npv':npv,'avg_salary':avg_salary,'svc_desk_cost':svc_desk_cost,'rev_growth':rev_growth,'confidence':confidence};
 			
 			collection.find({_id:userId}).toArray(function(err, items) { 
 		
 				if(items[0] != undefined) {
-					collection.update({'_id':userId},{$set:{'bus_days':bus_days,'hours_day':hours_day,'avg_salary':avg_salary,'svc_desk_cost':svc_desk_cost,'rev_growth':rev_growth,'confidence':confidence}});		
+					collection.update({'_id':userId},{$set:{'bus_days':bus_days,'npv':npv,'avg_salary':avg_salary,'svc_desk_cost':svc_desk_cost,'rev_growth':rev_growth,'confidence':confidence}});		
 					console.log(userId + " updated general details");		
 				} 
 				
@@ -202,7 +203,7 @@ module.exports = function(app, db) {
 		var userId = req.body.userId;
 		var application_id = req.body.application_id;
 		var application_name = req.body.application_name;
-		var application_desc = req.body.application_desc;
+		var application_users = req.body.application_users;
 		
 		console.log(userId + " is adding an application");	
 
@@ -211,7 +212,7 @@ module.exports = function(app, db) {
 			
 			var collection = db.collection('applications');
 			
-			var fullJson = {'_id':application_id,'userId':userId,'application_name':application_name, 'application_desc': application_desc};
+			var fullJson = {'_id':application_id,'userId':userId,'application_name':application_name, 'application_users': application_users};
 					
 			collection.insert(fullJson, {w:1}, function(err, result) { if(err!=null){console.log(err);}     console.log(userId + " inserted an application");    });										
 		});
@@ -253,7 +254,7 @@ module.exports = function(app, db) {
 			var results = collection.find({'userId':userId}).toArray(function(err, items) {
 				
 				for(i=0; i < items.length; i++) {
-					obj['application'].push({'id': items[i]._id, 'application_name':items[i].application_name, 'application_desc':items[i].application_desc})
+					obj['application'].push({'id': items[i]._id, 'application_name':items[i].application_name, 'application_users':items[i].application_users})
 				}
 				
 				console.log(userId + " retrieved applications");
@@ -353,28 +354,19 @@ module.exports = function(app, db) {
 					
 						
 						query[keys[i]] = {};
-						query[keys[i]].avgusers = obj[keys[i]].avgusers;
-						query[keys[i]].peakusers = obj[keys[i]].peakusers;
-						query[keys[i]].intext = obj[keys[i]].intext;
-						query[keys[i]].downtimecost = obj[keys[i]].downtimecost;
-						query[keys[i]].impactemployeeprod = obj[keys[i]].impactemployeeprod;
-						query[keys[i]].impactcompet = obj[keys[i]].impactcompet;
-						query[keys[i]].incidentsmonth = obj[keys[i]].incidentsmonth;
-						query[keys[i]].userimpactpercent = obj[keys[i]].userimpactpercent;
-						query[keys[i]].currentmttr = obj[keys[i]].currentmttr;
-						query[keys[i]].bustranperday = obj[keys[i]].bustranperday;
-						query[keys[i]].hourlyrevbususer = obj[keys[i]].hourlyrevbususer;
-						query[keys[i]].avgbustrantime = obj[keys[i]].avgbustrantime;
-						query[keys[i]].userimpactpercentppl = obj[keys[i]].userimpactpercentppl;
-						query[keys[i]].svcdeskpermonth = obj[keys[i]].svcdeskpermonth;
-						query[keys[i]].currentincidentsmonth = obj[keys[i]].currentincidentsmonth;
-						query[keys[i]].staffhoursincident = obj[keys[i]].staffhoursincident;
-						query[keys[i]].staffissueresolve = obj[keys[i]].staffissueresolve;
-						query[keys[i]].potentialmonthlypenalties = obj[keys[i]].potentialmonthlypenalties;
-						query[keys[i]].currentsla = obj[keys[i]].currentsla;
-						query[keys[i]].slareporthours = obj[keys[i]].slareporthours;
-						
-											
+						if(typeof req.body.revincidents !== undefined) { query[keys[i]].revincidents = obj[keys[i]].revincidents; }
+						if(typeof req.body.revperminute !== undefined) { query[keys[i]].revperminute = obj[keys[i]].revperminute; }
+						if(typeof req.body.mttr !== undefined) { query[keys[i]].mttr = obj[keys[i]].mttr; }
+						if(typeof req.body.numusers !== undefined) { query[keys[i]].numusers = obj[keys[i]].numusers; }
+						if(typeof req.body.bustransperday !== undefined) { query[keys[i]].bustransperday = obj[keys[i]].bustransperday; }
+						if(typeof req.body.busincidents !== undefined) { query[keys[i]].busincidents = obj[keys[i]].busincidents; }
+						if(typeof req.body.bustransavgtime !== undefined) { query[keys[i]].bustransavgtime = obj[keys[i]].bustransavgtime; }
+						if(typeof req.body.allincidents !== undefined) { query[keys[i]].allincidents = obj[keys[i]].allincidents; }
+						if(typeof req.body.itstaffhours !== undefined) { query[keys[i]].itstaffhours = obj[keys[i]].itstaffhours; }
+						if(typeof req.body.itstaffnum !== undefined) { query[keys[i]].itstaffnum = obj[keys[i]].itstaffnum; }
+						if(typeof req.body.svcdeskpermonth !== undefined) { query[keys[i]].svcdeskpermonth = obj[keys[i]].svcdeskpermonth; }
+						if(typeof req.body.currentslapenalties !== undefined) { query[keys[i]].currentslapenalties = obj[keys[i]].currentslapenalties; }
+						if(typeof req.body.currenttimeslareport !== undefined) { query[keys[i]].currenttimeslareport = obj[keys[i]].currenttimeslareport; }
 					}
 					
 					
@@ -438,12 +430,12 @@ module.exports = function(app, db) {
 			
 			//create expected benefits
 			var collection = db.collection('expected_benefits');
-			var fullJson = {'_id':userId,'dec_rev_incidents':'','reduce_mttr':'','increase_employee_prod':'','decrease_user_incidents':'','reduce_incident_resolve':'','reduce_service_desk':'','reduce_sla_penalties':'','reduce_cloud_bill':'','increase_time_market':''};
+			var fullJson = {'_id':userId,'dec_rev_incidents':'','reduce_downtime':'','increase_employee_prod':'','decrease_user_incidents':'','reduce_incident_resolve':'','reduce_service_desk':'','reduce_sla_penalties':'', 'reduce_sla_resources':'','reduce_cloud_bill':'','increase_time_market':''};
 			collection.insert(fullJson, {w:1}, function(err, result) { if(err!=null){console.log(err);}     console.log(userId + " inserted new expected benefits table");    });
 			
 			//create general
 			var collection = db.collection('general');
-			var fullJson = {'_id':userId,'bus_days':'','hours_day':'','avg_salary':'','svc_desk_cost':'','rev_growth':'','confidence':'70'};
+			var fullJson = {'_id':userId,'bus_days':'','npv':'','avg_salary':'','svc_desk_cost':'','rev_growth':'','confidence':'70'};
 			collection.insert(fullJson, {w:1}, function(err, result) { if(err!=null){console.log(err);}     console.log(userId + " inserted new general table");    });
 			
 		})
@@ -456,5 +448,5 @@ module.exports = function(app, db) {
 		
 		.catch(function (err) {})
 	});
-			
+	
 };

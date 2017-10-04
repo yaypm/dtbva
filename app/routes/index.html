@@ -7,6 +7,12 @@
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
 <style>a:hover {cursor:pointer;}</style>
 <script>
+function activateControls() {
+	document.getElementById("fullroi_intro").setAttribute("onclick","switchSubNav(this.id)");
+	document.getElementById("fullroi_input").setAttribute("onclick","switchSubNav(this.id)");
+	document.getElementById("fullroi_report").setAttribute("onclick","switchSubNav(this.id); drawBlank()");
+}
+
 function isEmail(email) {
   var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
   return regex.test(email);
@@ -241,7 +247,7 @@ $(function () {
 
 function addApplication() {
 	var application_name = document.getElementById("application_name").value;
-	var application_desc = document.getElementById("application_desc").value;
+	var application_users = document.getElementById("application_users").value;
 	var userId = getUserId();
 	var application_id = generateId();	
 	
@@ -261,7 +267,7 @@ function addApplication() {
 	
 	//Add application name and description
 	document.getElementById("application_list").children[0].children[length].getElementsByTagName("input")[0].value=application_name;
-	document.getElementById("application_list").children[0].children[length].getElementsByTagName("input")[1].value=application_desc;	
+	document.getElementById("application_list").children[0].children[length].getElementsByTagName("input")[1].value=application_users;	
 	
 	//Enable edit button
 	document.getElementById("application_list").children[0].children[length].getElementsByTagName("button")[0].addEventListener("click", function(){
@@ -284,14 +290,14 @@ function addApplication() {
 	var myInit = { method: 'POST',
         headers: myHeaders,
         cache: 'default',
-		body: JSON.stringify({"userId":userId,"application_id":application_id,"application_name":application_name, "application_desc": application_desc})
+		body: JSON.stringify({"userId":userId,"application_id":application_id,"application_name":application_name, "application_users": application_users})
 	};
 
 	fetch('/addApplication', myInit)
 		
 	.then(function(response) {	
 			document.getElementById("application_name").value="";
-			document.getElementById("application_desc").value="";
+			document.getElementById("application_users").value="";
 			addApplicationsToDetails();
 			return response;
 	})	
@@ -342,7 +348,7 @@ function retrieveApplications() {
 		
 		for(i=0; i < jsonResponse.application.length; i++) {
 			var application_name = jsonResponse.application[i].application_name;
-			var application_desc = jsonResponse.application[i].application_desc;
+			var application_users = jsonResponse.application[i].application_users;
 			var userId = getUserId();
 			var application_id = jsonResponse.application[i].id;	
 			
@@ -361,7 +367,7 @@ function retrieveApplications() {
 			
 			//Add application name and description
 			document.getElementById("application_list").children[0].children[i].getElementsByTagName("input")[0].value=application_name;
-			document.getElementById("application_list").children[0].children[i].getElementsByTagName("input")[1].value=application_desc;	
+			document.getElementById("application_list").children[0].children[i].getElementsByTagName("input")[1].value=application_users;	
 			
 			//Enable edit button
 			document.getElementById("application_list").children[0].children[i].getElementsByTagName("button")[0].addEventListener("click", function(){
@@ -437,7 +443,7 @@ function retrieveOptions() {
 		document.getElementById("competitive_analysis").checked = jsonResponse.competitive_analysis;
 				
 		buildBenefitsTable();
-		retrieveGeneralDetails();
+		//retrieveGeneralDetails();
 	})
 	
 }
@@ -470,6 +476,8 @@ function buildBenefitsTable() {
 	
 	.then(function(jsonResponse) {	
 	
+	htmlString = "<h3>General details</h3><br />";
+	
 	if(jsonResponse.it_downtime == true){
 		var table = document.getElementById("expected_benefits");
 		var row = table.insertRow();
@@ -485,12 +493,14 @@ function buildBenefitsTable() {
 		var row = table.insertRow();
 		var it_downtime_desc = row.insertCell(0); 
 		it_downtime_desc.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
-		it_downtime_desc.innerHTML="Reduced MTTR";
+		it_downtime_desc.innerHTML="Reduction in downtime";
 		
 		var it_downtime_input = row.insertCell(1); 
 		it_downtime_input.setAttribute("align","middle"); 
 		it_downtime_input.setAttribute("style","width: 125px; padding-top: 5px; padding-bottom: 5px;"); 
-		it_downtime_input.innerHTML = '<input type="number" class="inputfield" id="reduce_mttr" style="width: 75px;" placeholder="40"/>'; 
+		it_downtime_input.innerHTML = '<input type="number" class="inputfield" id="reduce_downtime" style="width: 75px;" placeholder="40"/>'; 
+		
+		
 	}
 	
 	if(jsonResponse.employee_productivity == true) {
@@ -503,7 +513,9 @@ function buildBenefitsTable() {
 		var it_downtime_input = row.insertCell(1); 
 		it_downtime_input.setAttribute("align","middle"); 
 		it_downtime_input.setAttribute("style","width: 125px; padding-top: 5px; padding-bottom: 5px;"); 
-		it_downtime_input.innerHTML = '<input type="number" class="inputfield" id="increase_employee_prod" style="width: 75px;" placeholder="15"/>'; 
+		it_downtime_input.innerHTML = '<input type="number" class="inputfield" id="increase_employee_prod" style="width: 75px;" placeholder="15"/>';
+
+		htmlString += '<label for="bus_days" class="label">How many business days does the typical IT resource work per year?</label><input style="width: 150px;" type="number" class="inputfield" placeholder="220" id="bus_days"/><br /><br />';
 	}
 	
 	if(jsonResponse.incident_frequency == true) {
@@ -511,7 +523,7 @@ function buildBenefitsTable() {
 		var row = table.insertRow();
 		var it_downtime_desc = row.insertCell(0); 
 		it_downtime_desc.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
-		it_downtime_desc.innerHTML="Decrease in incidents that affect end users";
+		it_downtime_desc.innerHTML="Decrease in incidents that affect all end users";
 		
 		var it_downtime_input = row.insertCell(1); 
 		it_downtime_input.setAttribute("align","middle"); 
@@ -522,12 +534,14 @@ function buildBenefitsTable() {
 		var row = table.insertRow();
 		var it_downtime_desc = row.insertCell(0); 
 		it_downtime_desc.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
-		it_downtime_desc.innerHTML="Reduce the time taken to resolve incidents";
+		it_downtime_desc.innerHTML="Reduce the resources taken to resolve incidents";
 		
 		var it_downtime_input = row.insertCell(1); 
 		it_downtime_input.setAttribute("align","middle"); 
 		it_downtime_input.setAttribute("style","width: 125px; padding-top: 5px; padding-bottom: 5px;"); 
-		it_downtime_input.innerHTML = '<input type="number" class="inputfield" id="reduce_incident_resolve" style="width: 75px;" placeholder="50"/>'; 		
+		it_downtime_input.innerHTML = '<input type="number" class="inputfield" id="reduce_incident_resolve" style="width: 75px;" placeholder="50"/>'; 	
+		
+		
 	}
 	
 	if(jsonResponse.service_desk == true) {
@@ -535,12 +549,14 @@ function buildBenefitsTable() {
 		var row = table.insertRow();
 		var it_downtime_desc = row.insertCell(0); 
 		it_downtime_desc.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
-		it_downtime_desc.innerHTML="Reduce service desk costs";
+		it_downtime_desc.innerHTML="Reduce the volume of service desk calls";
 		
 		var it_downtime_input = row.insertCell(1); 
 		it_downtime_input.setAttribute("align","middle"); 
 		it_downtime_input.setAttribute("style","width: 125px; padding-top: 5px; padding-bottom: 5px;"); 
-		it_downtime_input.innerHTML = '<input type="number" class="inputfield" id="reduce_service_desk" style="width: 75px;" placeholder="50"/>'; 	
+		it_downtime_input.innerHTML = '<input type="number" class="inputfield" id="reduce_service_desk" style="width: 75px;" placeholder="50"/>'; 
+
+		htmlString += '<label for="svc_desk_cost" class="label">What is the cost of a service desk call? (£)</label><input style="width: 150px;" type="number" class="inputfield" placeholder="10" id="svc_desk_cost"/><br /><br />';	
 	}
 	
 	if(jsonResponse.sla_compliance == true) {
@@ -554,6 +570,17 @@ function buildBenefitsTable() {
 		it_downtime_input.setAttribute("align","middle"); 
 		it_downtime_input.setAttribute("style","width: 125px; padding-top: 5px; padding-bottom: 5px;"); 
 		it_downtime_input.innerHTML = '<input type="number" class="inputfield" id="reduce_sla_penalties" style="width: 75px;" placeholder="25"/>'; 	
+		
+		var table = document.getElementById("expected_benefits");
+		var row = table.insertRow();
+		var it_downtime_desc = row.insertCell(0); 
+		it_downtime_desc.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+		it_downtime_desc.innerHTML="Reduce resources needed to produce SLA reports";
+		
+		var it_downtime_input = row.insertCell(1); 
+		it_downtime_input.setAttribute("align","middle"); 
+		it_downtime_input.setAttribute("style","width: 125px; padding-top: 5px; padding-bottom: 5px;"); 
+		it_downtime_input.innerHTML = '<input type="number" class="inputfield" id="reduce_sla_resources" style="width: 75px;" placeholder="25"/>'; 
 	}
 	
 	if(jsonResponse.cloud_bill == true) {
@@ -582,8 +609,20 @@ function buildBenefitsTable() {
 		it_downtime_input.innerHTML = '<input type="number" class="inputfield" id="increase_time_market" style="width: 75px;" placeholder="30"/>'; 			
 	}
 	
-	retrieveExpectedBenefits();
+	if(jsonResponse.incident_frequency == true && jsonResponse.sla_compliance == true) {
+		htmlString += '<label for="avg_salary" class="label">What is the average salary of an IT staff member? (£)</label><input style="width: 150px;" type="number" class="inputfield" placeholder="65000" id="avg_salary"/><br /><br />';
+	}
+
+	htmlString += '<label for="rev_growth" class="label">Expected revenue growth (%)</label><input style="width: 150px;"  type="text" class="inputfield" placeholder="3" id="rev_growth"/><br /><br />';
+    htmlString += '<label for="npv" class="label">Net Present Value (%)</label><input style="width: 150px;"  type="text" class="inputfield" placeholder="12" id="npv"/><br /><br />';
+	htmlString += '<label for="confidence" class="label">How confident are you in the numbers provided?</label><select style="width: 150px;"  class="select" id="confidence"><option value="10">10%</option><option value="20">20%</option><option value="30">30%</option><option value="40">40%</option><option value="50">50%</option><option value="60">60%</option><option value="70" selected = "selected">70%</option><option value="80">80%</option><option value="90">90%</option><option value="100">100%</option></select><br /><br />';
 	
+	document.getElementById("fullroi_input_org_cont").children[0].children[1].children[0].innerHTML=htmlString;
+	
+	//console.log(htmlString);
+	
+	retrieveExpectedBenefits();
+	retrieveGeneralDetails();
 	})
 	
 	
@@ -625,33 +664,40 @@ function introductionSave() {
 function expectedBenefitsSave() {
 	var userId = getUserId();
 
-	if (document.getElementById("dec_rev_incidents") == null) { var dec_rev_incidents = null; }
-	else { var dec_rev_incidents = document.getElementById("dec_rev_incidents").value; }
-
-	if (document.getElementById("reduce_mttr") == null) { var reduce_mttr = null; }
-	else { var reduce_mttr = document.getElementById("reduce_mttr").value; }
-
-	if (document.getElementById("increase_employee_prod") == null) { var increase_employee_prod = null; }
-	else { var increase_employee_prod = document.getElementById("increase_employee_prod").value; }
-
-	if (document.getElementById("decrease_user_incidents") == null) { var decrease_user_incidents = null; }
-	else { var decrease_user_incidents = document.getElementById("decrease_user_incidents").value; }
-
-	if (document.getElementById("reduce_incident_resolve") == null) { var reduce_incident_resolve = null; }
-	else { var reduce_incident_resolve = document.getElementById("reduce_incident_resolve").value; }
+	var jsonStr = '{"userId":"' + userId + '"';
 	
-	if (document.getElementById("reduce_service_desk") == null) { var reduce_service_desk = null; }
-	else { var reduce_service_desk = document.getElementById("reduce_service_desk").value; }	
-	
-	if (document.getElementById("reduce_sla_penalties") == null) { var reduce_sla_penalties = null; }
-	else { var reduce_sla_penalties = document.getElementById("reduce_sla_penalties").value; }	
+	if (document.getElementById("dec_rev_incidents") == null) {  }
+	else { jsonStr += ',"dec_rev_incidents":' + document.getElementById("dec_rev_incidents").value; }
 
-	if (document.getElementById("reduce_cloud_bill") == null) { var reduce_cloud_bill = null; }
-	else { var reduce_cloud_bill = document.getElementById("reduce_cloud_bill").value; }	
+	if (document.getElementById("reduce_downtime") == null) { }
+	else { jsonStr += ',"reduce_downtime":' + document.getElementById("reduce_downtime").value; }
 
-	if (document.getElementById("increase_time_market") == null) { var increase_time_market = null; }
-	else { var increase_time_market = document.getElementById("increase_time_market").value; }	
+	if (document.getElementById("increase_employee_prod") == null) {  }
+	else { jsonStr += ',"increase_employee_prod":' + document.getElementById("increase_employee_prod").value; }
+
+	if (document.getElementById("decrease_user_incidents") == null) { }
+	else { jsonStr += ',"decrease_user_incidents":' + document.getElementById("decrease_user_incidents").value; }
+
+	if (document.getElementById("reduce_incident_resolve") == null) { }
+	else { jsonStr += ',"reduce_incident_resolve":' + document.getElementById("reduce_incident_resolve").value; }
 	
+	if (document.getElementById("reduce_service_desk") == null) {  }
+	else { jsonStr += ',"reduce_service_desk":' + document.getElementById("reduce_service_desk").value; }
+	
+	if (document.getElementById("reduce_sla_penalties") == null) { }
+	else { jsonStr += ',"reduce_sla_penalties":' + document.getElementById("reduce_sla_penalties").value; }
+
+	if (document.getElementById("reduce_sla_resources") == null) {  }
+	else { jsonStr += ',"reduce_sla_resources":' + document.getElementById("reduce_sla_resources").value; }
+	
+	if (document.getElementById("reduce_cloud_bill") == null) { }
+	else { jsonStr += ',"reduce_cloud_bill":' + document.getElementById("reduce_cloud_bill").value; }	
+
+	if (document.getElementById("increase_time_market") == null) {  }
+	else { jsonStr += ',"increase_time_market":' + document.getElementById("increase_time_market").value; }
+	
+	jsonStr += '}';
+		
 	var myHeaders = new Headers();
 	myHeaders.append("Content-Type", "application/json");
 	myHeaders.append("Accept", "application/json");
@@ -659,36 +705,40 @@ function expectedBenefitsSave() {
 	var myInit = { method: 'POST',
         headers: myHeaders,
         cache: 'default',
-		body: JSON.stringify({"userId":userId,"dec_rev_incidents":dec_rev_incidents, "reduce_mttr": reduce_mttr, "increase_employee_prod": increase_employee_prod, "decrease_user_incidents":decrease_user_incidents, "reduce_incident_resolve": reduce_incident_resolve, "reduce_service_desk": reduce_service_desk, "reduce_sla_penalties": reduce_sla_penalties, "reduce_cloud_bill": reduce_cloud_bill, "increase_time_market": increase_time_market})
+		body: jsonStr
 	};
 
 	fetch('/insertExpectedBenefits', myInit)
 		
 	.then(function(response) {	
 			return response;
-	})	
+	})
 }
 
 function generalDetailsSave() {
 	var userId = getUserId();
 
-	if (document.getElementById("bus_days") == null) { var bus_days = null; }
-	else { var bus_days = document.getElementById("bus_days").value; }
+	var jsonStr = '{"userId":"' + userId + '"';
 
-	if (document.getElementById("hours_day") == null) { var hours_day = null; }
-	else { var hours_day = document.getElementById("hours_day").value; }
+	if (document.getElementById("bus_days") == null) {  }
+	else { jsonStr += ',"bus_days":' + document.getElementById("bus_days").value; }
 
-	if (document.getElementById("avg_salary") == null) { var avg_salary = null; }
-	else { var avg_salary = document.getElementById("avg_salary").value; }
+	if (document.getElementById("npv") == null) {  }
+	else { jsonStr += ',"npv":' + document.getElementById("npv").value; }
 
-	if (document.getElementById("svc_desk_cost") == null) { var svc_desk_cost = null; }
-	else { var svc_desk_cost = document.getElementById("svc_desk_cost").value; }
+	if (document.getElementById("avg_salary") == null) {  }
+	else { jsonStr += ',"avg_salary":' + document.getElementById("avg_salary").value; }
 
-	if (document.getElementById("rev_growth") == null) { var rev_growth = null; }
-	else { var rev_growth = document.getElementById("rev_growth").value; }
+	if (document.getElementById("svc_desk_cost") == null) {  }
+	else { jsonStr += ',"svc_desk_cost":' + document.getElementById("svc_desk_cost").value; }
+
+	if (document.getElementById("rev_growth") == null) {  }
+	else { jsonStr += ',"rev_growth":' + document.getElementById("rev_growth").value; }
 	
-	if (document.getElementById("confidence") == null) { var confidence = null; }
-	else { var confidence = document.getElementById("confidence").value; }	
+	if (document.getElementById("confidence") == null) {  }
+	else { jsonStr += ',"confidence":' + document.getElementById("confidence").value; }
+	
+	jsonStr += '}';
 	
 	var myHeaders = new Headers();
 	myHeaders.append("Content-Type", "application/json");
@@ -697,7 +747,7 @@ function generalDetailsSave() {
 	var myInit = { method: 'POST',
         headers: myHeaders,
         cache: 'default',
-		body: JSON.stringify({"userId":userId,"bus_days":bus_days, "hours_day": hours_day, "avg_salary": avg_salary, "svc_desk_cost":svc_desk_cost, "rev_growth": rev_growth, "confidence": confidence})
+		body: jsonStr
 	};
 
 	fetch('/insertGeneralDetails', myInit)
@@ -728,12 +778,13 @@ function retrieveExpectedBenefits() {
 	
 	.then(function(jsonResponse) {	
 		var dec_rev_incidents = document.getElementById("dec_rev_incidents"); if(dec_rev_incidents != null) { dec_rev_incidents.value = jsonResponse.dec_rev_incidents}
-		var reduce_mttr = document.getElementById("reduce_mttr"); if(reduce_mttr != null) { reduce_mttr.value = jsonResponse.reduce_mttr}
+		var reduce_downtime = document.getElementById("reduce_downtime"); if(reduce_downtime != null) { reduce_downtime.value = jsonResponse.reduce_downtime}
 		var increase_employee_prod = document.getElementById("increase_employee_prod"); if(increase_employee_prod != null) { increase_employee_prod.value = jsonResponse.increase_employee_prod}
 		var decrease_user_incidents = document.getElementById("decrease_user_incidents"); if(decrease_user_incidents != null) { decrease_user_incidents.value = jsonResponse.decrease_user_incidents}
 		var reduce_incident_resolve = document.getElementById("reduce_incident_resolve"); if(reduce_incident_resolve != null) { reduce_incident_resolve.value = jsonResponse.reduce_incident_resolve}
 		var reduce_service_desk = document.getElementById("reduce_service_desk"); if(reduce_service_desk != null) { reduce_service_desk.value = jsonResponse.reduce_service_desk}		
 		var reduce_sla_penalties = document.getElementById("reduce_sla_penalties"); if(reduce_sla_penalties != null) { reduce_sla_penalties.value = jsonResponse.reduce_sla_penalties}
+		var reduce_sla_resources = document.getElementById("reduce_sla_resources"); if(reduce_sla_resources != null) { reduce_sla_resources.value = jsonResponse.reduce_sla_resources}
 		var reduce_cloud_bill = document.getElementById("reduce_cloud_bill"); if(reduce_cloud_bill != null) { reduce_cloud_bill.value = jsonResponse.reduce_cloud_bill}
 		var increase_time_market = document.getElementById("increase_time_market"); if(increase_time_market != null) { increase_time_market.value = jsonResponse.increase_time_market}
 	})
@@ -761,7 +812,7 @@ function retrieveGeneralDetails() {
 	
 	.then(function(jsonResponse) {	
 		var bus_days = document.getElementById("bus_days"); if(bus_days != null) { bus_days.value = jsonResponse.bus_days}
-		var hours_day = document.getElementById("hours_day"); if(hours_day != null) { hours_day.value = jsonResponse.hours_day}
+		var npv = document.getElementById("npv"); if(npv != null) { npv.value = jsonResponse.npv}
 		var avg_salary = document.getElementById("avg_salary"); if(avg_salary != null) { avg_salary.value = jsonResponse.avg_salary}
 		var svc_desk_cost = document.getElementById("svc_desk_cost"); if(svc_desk_cost != null) { svc_desk_cost.value = jsonResponse.svc_desk_cost}
 		var rev_growth = document.getElementById("rev_growth"); if(rev_growth != null) { rev_growth.value = jsonResponse.rev_growth}
@@ -980,39 +1031,37 @@ function addApplicationsToDetails() {
 				}
 				
 				column = 0;
+				columnint = 0;
+				containerint = 0;
 				
 				for(a=1;a<length + 1;a++) {
 					container = Math.ceil(a / 5);
 					container = container - 1;
 					
-					if(details.children[i].children[1].children[0].children[container].children[column].parentElement.parentElement.parentElement.parentElement.children[0].children[0].innerHTML == "<h4>Base information</h4>") {
-						details.children[i].children[1].children[0].children[container].children[column].innerHTML='<h4>' + jsonResponse.application[a-1].application_name + '</h4><br /><label for="' + jsonResponse.application[a-1].id + '_avgusers" class="label">Average number of users</label><input type="text" class="inputfield" id="' + jsonResponse.application[a-1].id +'_avgusers" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id +'_peakusers" class="label">Peak number of users</label><input type="text" class="inputfield" id="' + jsonResponse.application[a-1].id +'_peakusers" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_intext" class="label">External or internal?</label><select class="select" id="' + jsonResponse.application[a-1].id +'_intext" style="width:75%"><option value="internal" selected="selected">Internal</option><option value="external">External</option></select>';
+					if(details.children[i].children[1].children[0].children[container].children[column].parentElement.parentElement.parentElement.parentElement.children[0].children[0].innerHTML == "<h4>Lost revenue from IT downtime</h4>") {
+						details.children[i].children[1].children[0].children[container].children[column].innerHTML='<h4>' + jsonResponse.application[a-1].application_name + '</h4><br /><label for="' + jsonResponse.application[a-1].id + '_revincidents" class="label">Revenue impacting incidents per month</label><input type="text" class="inputfield" id="' + jsonResponse.application[a-1].id +'_revincidents" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id +'_revperminute" class="label">Revenue lost per minute (£)</label><input type="text" class="inputfield" id="' + jsonResponse.application[a-1].id +'_revperminute" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id +'_mttr" class="label">MTTR (mins)</label><input type="text" class="inputfield" id="' + jsonResponse.application[a-1].id +'_mttr" style="width:75%"/><br /><br />';
 						
 						
 					}
 					
-					if(details.children[i].children[1].children[0].children[container].children[column].parentElement.parentElement.parentElement.parentElement.children[0].children[0].innerHTML == "<h4>Business impact</h4>") {
-						details.children[i].children[1].children[0].children[container].children[column].innerHTML='<h4>' + jsonResponse.application[a-1].application_name + '</h4><br /><label for="' + jsonResponse.application[a-1].id + '_downtimecost" class="label">Cost of downtime per minute (&pound;)</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_downtimecost" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_impactemployeeprod" class="label">Is there an impact to employee productivity?</label><select class="select" id="' + jsonResponse.application[a-1].id +'_impactemployeeprod" style="width:75%"><option value="yes" selected="selected">Yes</option><option value="no">No</option></select><br /><br /><label for="' + jsonResponse.application[a-1].id + '_impactcompet" class="label">Is there an impact in competitive loss?</label><select class="select" id="' + jsonResponse.application[a-1].id +'_impactcompet" style="width:75%"><option value="yes" selected="selected">Yes</option><option value="no">No</option></select>';
+					if(details.children[i].children[1].children[0].children[container].children[columnint].parentElement.parentElement.parentElement.parentElement.children[0].children[0].innerHTML == "<h4>Increase employee productivity</h4>" && jsonResponse.application[a-1].application_users == "internal") {
+											
+						details.children[i].children[1].children[0].children[container].children[columnint].innerHTML='<h4>' + jsonResponse.application[a-1].application_name + '</h4><br /><label for="' + jsonResponse.application[a-1].id + '_numusers" class="label">Average number of users</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_numusers" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_bustransperday" class="label">Number of transactions per user per day</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_bustransperday" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_busincidents" class="label">Total number of incidents per day</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_busincidents" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_bustransavgtime" class="label">Average time for a transaction (s)</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_bustransavgtime" style="width:75%"/><br /><br />';
+						
+						columnint = columnint + 1;
+						if(columnint == 5) { columnint = 0; containerint ++;}
 					}
 
-					if(details.children[i].children[1].children[0].children[container].children[column].parentElement.parentElement.parentElement.parentElement.children[0].children[0].innerHTML == "<h4>Revenue loss</h4>") {
-						details.children[i].children[1].children[0].children[container].children[column].innerHTML='<h4>' + jsonResponse.application[a-1].application_name + '</h4><br /><label for="' + jsonResponse.application[a-1].id + '_incidentsmonth" class="label">Current incidents/month</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_incidentsmonth" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_userimpactpercent" class="label">Users impacted by an incident (%)</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_userimpactpercent" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_currentmttr" class="label">Current MTTR (mins)</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_currentmttr" style="width:75%"/><br /><br />';
-					}	
-
-					if(details.children[i].children[1].children[0].children[container].children[column].parentElement.parentElement.parentElement.parentElement.children[0].children[0].innerHTML == "<h4>User productivity</h4>") {
-						details.children[i].children[1].children[0].children[container].children[column].innerHTML='<h4>' + jsonResponse.application[a-1].application_name + '</h4><br /><label for="' + jsonResponse.application[a-1].id + '_bustranperday" class="label">Number of business transactions per user, per day</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_bustranperday" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_hourlyrevbususer" class="label">Hourly revenue of a business user (&pound;)</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_hourlyrevbususer" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_avgbustrantime" class="label">Average time of a business transaction (s)</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_avgbustrantime" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_userimpactpercentppl" class="label">Users impacted by an incident (%)</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_userimpactpercentppl" style="width:75%"/><br /><br />';
+					if(details.children[i].children[1].children[0].children[container].children[column].parentElement.parentElement.parentElement.parentElement.children[0].children[0].innerHTML == "<h4>Reduce the frequency and cost of incidents</h4>") {
+						details.children[i].children[1].children[0].children[container].children[column].innerHTML='<h4>' + jsonResponse.application[a-1].application_name + '</h4><br /><label for="' + jsonResponse.application[a-1].id + '_allincidents" class="label">Total number of incidents/month</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_allincidents" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_itstaffhours" class="label">Number of staff hours spent per incident</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_itstaffhours" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_itstaffnum" class="label">Total number of staff per incident</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_itstaffnum" style="width:75%"/><br /><br />';
 					}	
 
 					if(details.children[i].children[1].children[0].children[container].children[column].parentElement.parentElement.parentElement.parentElement.children[0].children[0].innerHTML == "<h4>Service desk cost</h4>") {
 						details.children[i].children[1].children[0].children[container].children[column].innerHTML='<h4>' + jsonResponse.application[a-1].application_name + '</h4><br /><label for="' + jsonResponse.application[a-1].id + '_svcdeskpermonth" class="label">Number of service desk calls per month</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_svcdeskpermonth" style="width:75%"/><br /><br />';
 					}	
 
-					if(details.children[i].children[1].children[0].children[container].children[column].parentElement.parentElement.parentElement.parentElement.children[0].children[0].innerHTML == "<h4>Problem resolution</h4>") {
-						details.children[i].children[1].children[0].children[container].children[column].innerHTML='<h4>' + jsonResponse.application[a-1].application_name + '</h4><br /><label for="' + jsonResponse.application[a-1].id + '_currentincidentsmonth" class="label">Number of incidents/month</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_currentincidentsmonth" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_staffhoursincident" class="label">Staff hours spent per incident</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_staffhoursincident" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_staffissueresolve" class="label">Number of staff needed to resolve an issue</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_staffissueresolve" style="width:75%"/><br /><br />';
-					}	
-
 					if(details.children[i].children[1].children[0].children[container].children[column].parentElement.parentElement.parentElement.parentElement.children[0].children[0].innerHTML == "<h4>SLA compliance and reporting</h4>") {
-						details.children[i].children[1].children[0].children[container].children[column].innerHTML='<h4>' + jsonResponse.application[a-1].application_name + '</h4><br /><label for="' + jsonResponse.application[a-1].id + '_potentialmonthlypenalties" class="label">Potential monthly penalties (&pound;)</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_potentialmonthlypenalties" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_currentsla" class="label">Current SLA attainment (%)</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_currentsla" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_slareporthours" class="label">Hours to create SLA reports</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_slareporthours" style="width:75%"/><br /><br />';
+						details.children[i].children[1].children[0].children[container].children[column].innerHTML='<h4>' + jsonResponse.application[a-1].application_name + '</h4><br /><label for="' + jsonResponse.application[a-1].id + '_currentslapenalties" class="label">Current SLA penalties per month (£)</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_currentslapenalties" style="width:75%"/><br /><br /><label for="' + jsonResponse.application[a-1].id + '_currenttimeslareport" class="label">Time creating SLA reports per month</label><input type="number" class="inputfield" id="' + jsonResponse.application[a-1].id +'_currenttimeslareport" style="width:75%"/><br /><br />';
 					}					
 					
 						
@@ -1026,6 +1075,7 @@ function addApplicationsToDetails() {
 					
 					column = column + 1;
 					if(column == 5) { column = 0;}
+					
 				}			
 			}
 		}
@@ -1064,24 +1114,23 @@ function buildDetailsTable() {
 
 	var details = document.getElementById("details");
 	
-	details.children[1].style.display="table-row-group";
+	details.children[0].style.display="table-row-group";
 
 	
 		if(jsonResponse.it_downtime == true){
-			details.children[2].style.display="table-row-group";
-			details.children[3].style.display="table-row-group";
+			details.children[1].style.display="table-row-group";
 		}
 		if(jsonResponse.employee_productivity == true){
-			details.children[4].style.display="table-row-group";
+			details.children[2].style.display="table-row-group";
 		}
 		if(jsonResponse.incident_frequency == true){
-			details.children[6].style.display="table-row-group";
+			details.children[3].style.display="table-row-group";
 		}
 		if(jsonResponse.service_desk == true){
-			details.children[5].style.display="table-row-group";
+			details.children[4].style.display="table-row-group";
 		}
 		if(jsonResponse.sla_compliance == true){
-			details.children[7].style.display="table-row-group";
+			details.children[5].style.display="table-row-group";
 		}
 		if(jsonResponse.cloud_bill == true){
 		
@@ -1143,47 +1192,38 @@ function saveApplicationDetails() {
 		jsonStr += "}";
 		
 		var obj = JSON.parse(jsonStr);	
+		
+		console.log(obj);
 	
 		for(i=0;i<noApps;i++) {
-			obj[jsonResponse.application[i].id].avgusers=document.getElementById(jsonResponse.application[i].id + "_avgusers").value;
+			obj[jsonResponse.application[i].id].revincidents=document.getElementById(jsonResponse.application[i].id + "_revincidents").value;
 			
-			obj[jsonResponse.application[i].id].peakusers=document.getElementById(jsonResponse.application[i].id + "_peakusers").value;
+			obj[jsonResponse.application[i].id].revperminute=document.getElementById(jsonResponse.application[i].id + "_revperminute").value;
 			
-			obj[jsonResponse.application[i].id].intext=document.getElementById(jsonResponse.application[i].id + "_intext").value;
+			obj[jsonResponse.application[i].id].mttr=document.getElementById(jsonResponse.application[i].id + "_mttr").value;
 			
-			obj[jsonResponse.application[i].id].downtimecost=document.getElementById(jsonResponse.application[i].id + "_downtimecost").value;
+			obj[jsonResponse.application[i].id].allincidents=document.getElementById(jsonResponse.application[i].id + "_allincidents").value;
 			
-			obj[jsonResponse.application[i].id].impactemployeeprod=document.getElementById(jsonResponse.application[i].id + "_impactemployeeprod").value;
+			obj[jsonResponse.application[i].id].itstaffhours=document.getElementById(jsonResponse.application[i].id + "_itstaffhours").value;			
 			
-			obj[jsonResponse.application[i].id].impactcompet=document.getElementById(jsonResponse.application[i].id + "_impactcompet").value;
+			obj[jsonResponse.application[i].id].itstaffnum=document.getElementById(jsonResponse.application[i].id + "_itstaffnum").value;
 			
-			obj[jsonResponse.application[i].id].incidentsmonth=document.getElementById(jsonResponse.application[i].id + "_incidentsmonth").value;
+			obj[jsonResponse.application[i].id].svcdeskpermonth=document.getElementById(jsonResponse.application[i].id + "_svcdeskpermonth").value;
 			
-			obj[jsonResponse.application[i].id].userimpactpercent=document.getElementById(jsonResponse.application[i].id + "_userimpactpercent").value;
+			obj[jsonResponse.application[i].id].currentslapenalties=document.getElementById(jsonResponse.application[i].id + "_currentslapenalties").value;
 			
-			obj[jsonResponse.application[i].id].currentmttr=document.getElementById(jsonResponse.application[i].id + "_currentmttr").value;			
-			
-			obj[jsonResponse.application[i].id].bustranperday=document.getElementById(jsonResponse.application[i].id + "_bustranperday").value;
-			
-			obj[jsonResponse.application[i].id].hourlyrevbususer=document.getElementById(jsonResponse.application[i].id + "_hourlyrevbususer").value;
-			
-			obj[jsonResponse.application[i].id].avgbustrantime=document.getElementById(jsonResponse.application[i].id + "_avgbustrantime").value;
-			
-			obj[jsonResponse.application[i].id].userimpactpercentppl=document.getElementById(jsonResponse.application[i].id + "_userimpactpercentppl").value;		
+			obj[jsonResponse.application[i].id].currenttimeslareport=document.getElementById(jsonResponse.application[i].id + "_currenttimeslareport").value;	
 
-			obj[jsonResponse.application[i].id].svcdeskpermonth=document.getElementById(jsonResponse.application[i].id + "_svcdeskpermonth").value;				
 			
-			obj[jsonResponse.application[i].id].currentincidentsmonth=document.getElementById(jsonResponse.application[i].id + "_currentincidentsmonth").value;
-			
-			obj[jsonResponse.application[i].id].staffhoursincident=document.getElementById(jsonResponse.application[i].id + "_staffhoursincident").value;		
-
-			obj[jsonResponse.application[i].id].staffissueresolve=document.getElementById(jsonResponse.application[i].id + "_staffissueresolve").value;		
-
-			obj[jsonResponse.application[i].id].potentialmonthlypenalties=document.getElementById(jsonResponse.application[i].id + "_potentialmonthlypenalties").value;
-			
-			obj[jsonResponse.application[i].id].currentsla=document.getElementById(jsonResponse.application[i].id + "_currentsla").value;		
-
-			obj[jsonResponse.application[i].id].slareporthours=document.getElementById(jsonResponse.application[i].id + "_slareporthours").value;				
+			if (jsonResponse.application[i].application_users == "internal") {
+				obj[jsonResponse.application[i].id].numusers=document.getElementById(jsonResponse.application[i].id + "_numusers").value;
+				
+				obj[jsonResponse.application[i].id].bustransperday=document.getElementById(jsonResponse.application[i].id + "_bustransperday").value;
+				
+				obj[jsonResponse.application[i].id].busincidents=document.getElementById(jsonResponse.application[i].id + "_busincidents").value;
+				
+				obj[jsonResponse.application[i].id].bustransavgtime=document.getElementById(jsonResponse.application[i].id + "_bustransavgtime").value;		
+			}
 		}
 
 		var myHeaders = new Headers();
@@ -1200,7 +1240,10 @@ function saveApplicationDetails() {
 		
 		.then(function(response) {	
 			return response;
-		})			
+		})
+
+
+		
 	})
 }
 
@@ -1252,26 +1295,22 @@ function retrieveApplicationDetails() {
 			var noApps = gotApplications.application.length;
 						
 			for (i=0;i<noApps;i++) {
-				document.getElementById(gotApplications.application[i].id + "_avgusers").value=jsonResponse[0][gotApplications.application[i].id].avgusers;
-				document.getElementById(gotApplications.application[i].id + "_peakusers").value=jsonResponse[0][gotApplications.application[i].id].peakusers;	
-				document.getElementById(gotApplications.application[i].id + "_intext").value=jsonResponse[0][gotApplications.application[i].id].intext;
-				document.getElementById(gotApplications.application[i].id + "_downtimecost").value=jsonResponse[0][gotApplications.application[i].id].downtimecost;	
-				document.getElementById(gotApplications.application[i].id + "_impactemployeeprod").value=jsonResponse[0][gotApplications.application[i].id].impactemployeeprod;
-				document.getElementById(gotApplications.application[i].id + "_impactcompet").value=jsonResponse[0][gotApplications.application[i].id].impactcompet;	
-				document.getElementById(gotApplications.application[i].id + "_incidentsmonth").value=jsonResponse[0][gotApplications.application[i].id].incidentsmonth;
-				document.getElementById(gotApplications.application[i].id + "_userimpactpercent").value=jsonResponse[0][gotApplications.application[i].id].userimpactpercent;	
-				document.getElementById(gotApplications.application[i].id + "_currentmttr").value=jsonResponse[0][gotApplications.application[i].id].currentmttr;
-				document.getElementById(gotApplications.application[i].id + "_bustranperday").value=jsonResponse[0][gotApplications.application[i].id].bustranperday;
-				document.getElementById(gotApplications.application[i].id + "_hourlyrevbususer").value=jsonResponse[0][gotApplications.application[i].id].hourlyrevbususer;	
-				document.getElementById(gotApplications.application[i].id + "_avgbustrantime").value=jsonResponse[0][gotApplications.application[i].id].avgbustrantime;
-				document.getElementById(gotApplications.application[i].id + "_userimpactpercentppl").value=jsonResponse[0][gotApplications.application[i].id].userimpactpercentppl;	
-				document.getElementById(gotApplications.application[i].id + "_svcdeskpermonth").value=jsonResponse[0][gotApplications.application[i].id].svcdeskpermonth;					
-				document.getElementById(gotApplications.application[i].id + "_currentincidentsmonth").value=jsonResponse[0][gotApplications.application[i].id].currentincidentsmonth;
-				document.getElementById(gotApplications.application[i].id + "_staffhoursincident").value=jsonResponse[0][gotApplications.application[i].id].staffhoursincident;		
-				document.getElementById(gotApplications.application[i].id + "_staffissueresolve").value=jsonResponse[0][gotApplications.application[i].id].staffissueresolve;
-				document.getElementById(gotApplications.application[i].id + "_potentialmonthlypenalties").value=jsonResponse[0][gotApplications.application[i].id].potentialmonthlypenalties;	
-				document.getElementById(gotApplications.application[i].id + "_currentsla").value=jsonResponse[0][gotApplications.application[i].id].currentsla;
-				document.getElementById(gotApplications.application[i].id + "_slareporthours").value=jsonResponse[0][gotApplications.application[i].id].slareporthours;					
+				document.getElementById(gotApplications.application[i].id + "_revincidents").value=jsonResponse[0][gotApplications.application[i].id].revincidents;
+				document.getElementById(gotApplications.application[i].id + "_revperminute").value=jsonResponse[0][gotApplications.application[i].id].revperminute;	
+				document.getElementById(gotApplications.application[i].id + "_mttr").value=jsonResponse[0][gotApplications.application[i].id].mttr;
+				document.getElementById(gotApplications.application[i].id + "_allincidents").value=jsonResponse[0][gotApplications.application[i].id].allincidents;	
+				document.getElementById(gotApplications.application[i].id + "_itstaffhours").value=jsonResponse[0][gotApplications.application[i].id].itstaffhours;
+				document.getElementById(gotApplications.application[i].id + "_itstaffnum").value=jsonResponse[0][gotApplications.application[i].id].itstaffnum;	
+				document.getElementById(gotApplications.application[i].id + "_svcdeskpermonth").value=jsonResponse[0][gotApplications.application[i].id].svcdeskpermonth;
+				document.getElementById(gotApplications.application[i].id + "_currentslapenalties").value=jsonResponse[0][gotApplications.application[i].id].currentslapenalties;	
+				document.getElementById(gotApplications.application[i].id + "_currenttimeslareport").value=jsonResponse[0][gotApplications.application[i].id].currenttimeslareport;
+				
+				if(gotApplications.application[i].application_users == "internal") {
+					document.getElementById(gotApplications.application[i].id + "_numusers").value=jsonResponse[0][gotApplications.application[i].id].numusers;
+					document.getElementById(gotApplications.application[i].id + "_bustransperday").value=jsonResponse[0][gotApplications.application[i].id].bustransperday;	
+					document.getElementById(gotApplications.application[i].id + "_busincidents").value=jsonResponse[0][gotApplications.application[i].id].busincidents;
+					document.getElementById(gotApplications.application[i].id + "_bustransavgtime").value=jsonResponse[0][gotApplications.application[i].id].bustransavgtime;	
+				}			
 			}
 
 			}	
@@ -1304,13 +1343,13 @@ function retrieveApplicationDetails() {
       <li class="nav__item expandable expandable--nav is-current">
         <a class="nav__link expandable__trigger"  >Business Value Analysis</a>
         <ul id="fullroi" class="nav__list nav__list--secondary expandable__content">
-          <li id="fullroi_intro" class="nav__item is-current" onclick="switchSubNav(this.id)">
+          <li id="fullroi_intro" class="nav__item is-current" >
             <a class="nav__link" >Introduction</a>
           </li>
-          <li id="fullroi_input" class="nav__item" onclick="switchSubNav(this.id)">
+          <li id="fullroi_input" class="nav__item">
             <a class="nav__link" >Data input</a>
           </li>
-          <li id="fullroi_report" class="nav__item" onclick="switchSubNav(this.id); drawBlank();">
+          <li id="fullroi_report" class="nav__item" >
             <a class="nav__link" >Report overview</a>
           </li>
         </ul>
@@ -1355,7 +1394,7 @@ function retrieveApplicationDetails() {
 			<br />
 			<label for="newId" class="label">Email</label><input type="email" class="inputfield" id="newId" style="width: 250px;"/>
 			<br /><br />
-			<button role="button" type="button" class="btn btn--primary" onclick="createNewUser();">Generate</button>
+			<button role="button" type="button" class="btn btn--primary" onclick="createNewUser(); activateControls()">Generate</button>
 	
 			</td>
 			<td style="vertical-align: top; width: 50%;">
@@ -1363,9 +1402,9 @@ function retrieveApplicationDetails() {
 			<h3>Returning users</h3>
 			<label class="label" style="width: 250px;">If you are coming back to finish a previous BVA, please enter your ID below to load up your details and continue!</label>
 			<br />
-			<label for="newId" class="label" >ID</label><input type="text" class="inputfield" id="userId" style="width: 250px;" />
+			<label for="newId" class="label" >ID</label><input type="text" class="inputfield" id="userId" style="width: 250px;" value="hoaApJ2XUl"/>
 			<br /><br />
-			<button role="button" type="button" class="btn btn--primary" onclick="retrieveOptions();">Load</button>
+			<button role="button" type="button" class="btn btn--primary" onclick="retrieveOptions(); activateControls()">Load</button>
 			
 			</td>
 			</tr>
@@ -1518,6 +1557,7 @@ function retrieveApplicationDetails() {
 				
 				</table>
 				
+				<button role="button" type="button" class="btn btn--primary" onclick="expectedBenefitsSave();">Save</button>	
 			</div>
 
 
@@ -1531,31 +1571,7 @@ function retrieveApplicationDetails() {
 				<h3>General details</h3>
 				<br />
 				
-				<label for="bus_days" class="label">How many business days does the typical IT resource work per year?</label><input style="width: 150px;" type="number" class="inputfield" placeholder="220" id="bus_days"/>
-				<br /><br />
-				<label for="hours_day" class="label">How many hours per day does the average IT resource work?</label><input style="width: 150px;" type="number" class="inputfield" placeholder="7.5" id="hours_day"/>
-				<br /><br />
-				<label for="avg_salary" class="label">What is the average salary of an IT staff member? (£)</label><input style="width: 150px;" type="number" class="inputfield" placeholder="65000" id="avg_salary"/>
-				<br /><br />
-					  <label for="svc_desk_cost" class="label">What is the cost of a service desk call? (£)</label><input style="width: 150px;" type="number" class="inputfield" placeholder="10" id="svc_desk_cost"/>
-					<br /><br />
-					<label for="rev_growth" class="label">Expected revenue growth (%)</label><input style="width: 150px;"  type="text" class="inputfield" placeholder="3" id="rev_growth"/>
-					<br /><br />	
 
-					<label for="confidence" class="label">How confident are you in the numbers provided?</label>
-						<select style="width: 150px;"  class="select" id="confidence">			
-						  <option value="10">10%</option>
-						  <option value="20">20%</option>
-						  <option value="30">30%</option>
-						  <option value="40">40%</option>
-						  <option value="50">50%</option>
-						  <option value="60">60%</option>
-						  <option value="70" selected = "selected">70%</option>
-						  <option value="80">80%</option>
-						  <option value="90">90%</option>
-						  <option value="100">100%</option>					  
-						</select>
-					<br /><br />
 				
 				</div>
 			  
@@ -1578,7 +1594,7 @@ function retrieveApplicationDetails() {
 				<input type="text" class="inputfield" id="application_name"  />
 				</td>
 			    <td>
-				<input type="text" class="inputfield" id="application_desc" />
+				<select class="select" id="application_users" ><option value="internal" selected="selected">Internal  </option><option value="external">External  </option></select>
 				</td>
 				<td>
 				<button role="button" type="button" class="btn btn--primary" onclick="addApplication(); " >Add</button>
@@ -1611,7 +1627,7 @@ function retrieveApplicationDetails() {
 		  
 		</div>			
 			
-		<button role="button" type="button" class="btn btn--primary" onclick="">Save</button>	
+		
 			
 			
 			</div>
@@ -1662,8 +1678,8 @@ function retrieveApplicationDetails() {
 					</thead>
 				  <tbody class="expandable">
 					<tr >
-					  <td style="width: 15%"><h4>Base information</h4></td>
-					  <td style="width: 73%">How busy are the target applications and who are the users.</td>
+					  <td style="width: 25%"><h4>Lost revenue from IT downtime</h4></td>
+					  <td style="width: 63%">How frequently do issues occur that affect revenue and how much is at risk.</td>
 					  <td style="width: 12%"><a href="#" class="expandable__trigger">more</a></td>
 					</tr>
 					<tr class="expandable__content">
@@ -1674,8 +1690,8 @@ function retrieveApplicationDetails() {
 				  </tbody>
 				  <tbody class="expandable">
 					<tr>
-					  <td><h4>Business impact</h4></td>
-					  <td>What happens when the application goes down, how much does it cost?</td>
+					  <td><h4>Increase employee productivity</h4></td>
+					  <td>How much time is taken away from employees through performance isssues and how much does it cost.</td>
 					  <td><a href="#" class="expandable__trigger">more</a></td>
 					</tr>
 					<tr class="expandable__content">
@@ -1686,32 +1702,8 @@ function retrieveApplicationDetails() {
 				  </tbody>
 				  <tbody class="expandable">
 					<tr>
-					  <td><h4>Revenue loss</h4></td>
-					  <td>How frequently do issues occur and how long do they take to resolve.</td>
-					  <td><a href="#" class="expandable__trigger">more</a></td>
-					</tr>
-					<tr class="expandable__content">
-					  <td colspan="5">
-						
-					  </td>
-					</tr>
-				  </tbody>
-				  <tbody class="expandable">
-					<tr>
-					  <td><h4>User productivity</h4></td>
-					  <td>How much users access the application and what is their associated benefit.</td>
-					  <td><a href="#" class="expandable__trigger">more</a></td>
-					</tr>
-					<tr class="expandable__content">
-					  <td colspan="5">
-						
-					  </td>
-					</tr>
-				  </tbody>	
-				  <tbody class="expandable">
-					<tr>
-					  <td><h4>Service desk cost</h4></td>
-					  <td>What is the cost to handle a ticket by tier 1/2 support?</td>
+					  <td><h4>Reduce the frequency and cost of incidents</h4></td>
+					  <td>How frequently do issues occur and how many resources are consumed resolving them.</td>
 					  <td><a href="#" class="expandable__trigger">more</a></td>
 					</tr>
 					<tr class="expandable__content">
@@ -1722,28 +1714,29 @@ function retrieveApplicationDetails() {
 				  </tbody>					  
 				  <tbody class="expandable">
 					<tr>
-					  <td><h4>Problem resolution</h4></td>
-					  <td>When an incident escalates beyond the service desk, how many resources are needed to resolve it?</td>
+					  <td><h4>Service desk cost</h4></td>
+					  <td>What are the costs associated to handling tickets by tier 1/2 support.</td>
 					  <td><a href="#" class="expandable__trigger">more</a></td>
 					</tr>
 					<tr class="expandable__content">
 					  <td colspan="5">
-					
+						
 					  </td>
 					</tr>
-				  </tbody>
+				  </tbody>	
 				  <tbody class="expandable">
 					<tr>
 					  <td><h4>SLA compliance and reporting</h4></td>
-					  <td>How much revenue is lost through SLA penalties and how long does it take to produce reports for this?</td>
+					  <td>How much revenue is lost through SLA penalties and how long does it take to produce standard reports.</td>
 					  <td><a href="#" class="expandable__trigger">more</a></td>
 					</tr>
 					<tr class="expandable__content">
 					  <td colspan="5">
-					
+						
 					  </td>
 					</tr>
 				  </tbody>				  
+
 				</table>
 
 			<button role="button" type="button" class="btn btn--primary" onclick="saveApplicationDetails();">Save</button>
