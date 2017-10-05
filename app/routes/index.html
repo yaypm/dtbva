@@ -1320,16 +1320,23 @@ function retrieveApplicationDetails() {
 }
 
 function buildResults() {
+	
 	resultHeader();
 	resultDownTimeBenefit();
+	
 }
 
 function resultHeader() {
+	document.getElementById("resultLoader").style.display="block";
+	
 	var userId = getUserId();
 
 	var result_header = document.getElementById("result_header");
 	var result_assumptions = document.getElementById("result_assumptions");
 
+	//result_header.innerHTML="";
+	//result_assumptions.innerHTML="";
+	
 	var headers = new Headers();
 	headers.append("Content-Type", "application/json");
 	headers.append("Accept", "application/json");
@@ -1509,6 +1516,9 @@ function resultDownTimeBenefit() {
 
 	var result_header = document.getElementById("result_header");
 	var result_assumptions = document.getElementById("result_assumptions");
+	var result_itdowntime = document.getElementById("result_itdowntime");
+	
+	//result_itdowntime.innerHTML="";
 
 	var headers = new Headers();
 	headers.append("Content-Type", "application/json");
@@ -1589,7 +1599,8 @@ function resultDownTimeBenefit() {
 			lowrange.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
 			lowrange.innerHTML='£';				
 		}
-	
+		
+		document.getElementById("resultLoader").style.display="none";
 	})
 }
 
@@ -2024,6 +2035,14 @@ function resultDownTimeBenefit() {
 		<div id="c_fullroi_report" class="non-primary" style="position: absolute; width: 100%;" >
 		<div style="margin-left: 50px; margin-top: 0px;" id="testAdd">
 
+		<div class="loading" id="resultLoader" style="display: none; position: fixed; top:50%; left: 50%; transform: translate(-50%, -50%);">
+			<svg class="loading__distractor" width="30px" height="30px" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
+				<circle class="loading__path" cx="15" cy="15" r="12"></circle>
+			</svg>
+			<p class="loading__text">Loading...</p>
+		</div>
+
+		
 		<!--<div id="container" style="height: 300px; width: 550px;margin-bottom: 50px;">-->
 	
 		<div id="result_header"></div>
