@@ -18,44 +18,7 @@ function isEmail(email) {
   return regex.test(email);
 }
 
-function createNewUser() {
-	var userId = generateId().toString();
-	var newEmail = document.getElementById("newId").value;
-	
-	if(isEmail(newEmail) == false) {
-		alert("Please enter a valid email address!");
-	}
-	
-	else {
-		var myHeaders = new Headers();
-		myHeaders.append("Content-Type", "application/json");
-		myHeaders.append("Accept", "application/json");
-		myHeaders.append("userId", userId);
-		myHeaders.append("emailAddress", newEmail);
-		
-		var myInit = { method: 'GET',
-			headers: myHeaders,
-			cache: 'default'
-		};
-		
-		fetch('/createUser', myInit)
 
-		.then(function(response) {	
-			return response.text();
-		})
-		
-		.then(function(textResponse) {
-			userId = textResponse;
-			document.getElementById("displayBvaId").innerHTML=userId;
-			document.cookie='application=' + userId;
-			document.getElementById("userId").value = userId;		
-		})
-		
-		.then(function() {
-			retrieveOptions();	
-		})
-	}	
-}
 
 function switchSubNav(divId) {
 
@@ -1679,7 +1642,7 @@ function resultDownTimeBenefit() {
 			<br />
 			<label for="newId" class="label">Email</label><input type="email" class="inputfield" id="newId" style="width: 250px;"/>
 			<br /><br />
-			<button role="button" type="button" class="btn btn--primary" onclick="createNewUser(); activateControls()">Generate</button>
+			<button role="button" type="button" class="btn btn--primary"  activateControls()">Generate</button>
 	
 			</td>
 			<td style="vertical-align: top; width: 50%;">
