@@ -1286,6 +1286,8 @@ function buildResults() {
 	
 	resultHeader();
 	resultDownTimeBenefit();
+	resultEmployeeProdBenefit();
+	resultIncidentFreqBenefit();
 	
 }
 
@@ -1298,7 +1300,7 @@ function resultHeader() {
 	var result_assumptions = document.getElementById("result_assumptions");
 
 	//result_header.innerHTML="";
-	//result_assumptions.innerHTML="";
+	result_assumptions.innerHTML='<table class="table" id="assumptions_table"><tr><th>Assumptions used in calculations</th><th>Figures used</th><th>Dynatrace customer averages</th></tr></table>';
 	
 	var headers = new Headers();
 	headers.append("Content-Type", "application/json");
@@ -1481,7 +1483,7 @@ function resultDownTimeBenefit() {
 	var result_assumptions = document.getElementById("result_assumptions");
 	var result_itdowntime = document.getElementById("result_itdowntime");
 	
-	//result_itdowntime.innerHTML="";
+	result_itdowntime.innerHTML='<table class="table" id="result_itdowntime_benefit"><tr><th>Application</th><th>Monthly benefit</th><th>High range</th><th>Low range</th></tr></table>';
 
 	var headers = new Headers();
 	headers.append("Content-Type", "application/json");
@@ -1525,13 +1527,8 @@ function resultDownTimeBenefit() {
 		var keys = Object.keys(obj.applicationDetails[0]);
 		
 		for(i=0; i<obj.applications.application.length;i++) {
-		
-			//((incidents per month * percent affecting)* MTTR * rev per min)
-			
-			console.log(obj);
 			
 			for(x=1; x<keys.length; x++) {
-				console.log(keys[x] + " and " + obj.applications.application[i].id);
 				
 				if(keys[x].toString() == obj.applications.application[i].id) {
 					var thisApp = keys[x];
@@ -1539,11 +1536,16 @@ function resultDownTimeBenefit() {
 				}
 			}
 			
-			console.log("this app is " + thisApp);
-			
 			var preDyna = obj.applicationDetails[0][thisApp].revincidents * obj.applicationDetails[0][thisApp].mttr * obj.applicationDetails[0][thisApp].revperminute;
+			
+			var revFactor = 1 - (obj.expectedBenefits.dec_rev_incidents / 100);
+			var downtimeFactor = 1 - (obj.expectedBenefits.reduce_downtime / 100);
+			
+			var postDyna = (obj.applicationDetails[0][thisApp].revincidents * revFactor) * (obj.applicationDetails[0][thisApp].mttr) * downtimeFactor * obj.applicationDetails[0][thisApp].revperminute;
 		
-			console.log("preDyna is " + preDyna);
+			var monthly = preDyna - postDyna;
+			var monthlyLow = monthly * (obj.general.confidence/100);
+			var monthlyHigh = monthly * (1-obj.general.confidence/100) + monthly;
 		
 			var row = table.insertRow();
 			var appname = row.insertCell(0); 
@@ -1552,21 +1554,204 @@ function resultDownTimeBenefit() {
 			
 			var monthlybenefit = row.insertCell(1); 
 			monthlybenefit.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
-			monthlybenefit.innerHTML='£' + preDyna;		
+			monthlybenefit.innerHTML='£' + parseInt(postDyna);		
 
 			var highrange = row.insertCell(2); 
 			highrange.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
-			highrange.innerHTML='£';	
+			highrange.innerHTML='£' + parseInt(monthlyHigh);	
 
 			var lowrange = row.insertCell(3); 
 			lowrange.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
-			lowrange.innerHTML='£';				
+			lowrange.innerHTML='£' + parseInt(monthlyLow);				
 		}
 		
 		document.getElementById("resultLoader").style.display="none";
 	})
 }
 
+function resultEmployeeProdBenefit() {
+	var userId = getUserId();
+
+	var result_employeeprod = document.getElementById("result_employeeprod");
+	
+	
+	result_employeeprod.innerHTML='<table class="table" id="result_employeeprod_benefit"><tr><th>Application</th><th>Monthly benefit</th><th>High range</th><th>Low range</th></tr></table>';
+
+	var headers = new Headers();
+	headers.append("Content-Type", "application/json");
+	headers.append("Accept", "application/json");
+	headers.append("userId", userId);
+	
+	var init = { method: 'GET',
+        headers: headers,
+        cache: 'default'
+	};	
+	
+	var general = fetch('/getGeneralDetails', init).then(function(response){ 
+			 return response.json()
+	});
+	
+	var expectedBenefits = fetch('/getExpectedBenefits', init).then(function(response){
+			 return response.json()
+	});
+
+	var applications = fetch('/getApplications', init).then(function(response){
+			 return response.json()
+	});
+
+	var applicationDetails = fetch('/getApplicationDetails', init).then(function(response){
+			 return response.json()
+	});
+	
+	var combinedData = {"general":{},"expectedBenefits":{},"applications":{},"applicationDetails":{}};
+	Promise.all([general,expectedBenefits, applications, applicationDetails]).then(function(values){
+		combinedData["general"] = values[0];
+		combinedData["expectedBenefits"] = values[1];
+		combinedData["applications"] = values[2];
+		combinedData["applicationDetails"] = values[3];
+		
+		return combinedData;
+	})
+	
+	.then(function(obj) {
+		var table = document.getElementById("result_employeeprod_benefit");
+		
+		var keys = Object.keys(obj.applicationDetails[0]);
+		
+		for(i=0; i<obj.applications.application.length;i++) {
+			
+			for(x=1; x<keys.length; x++) {
+				
+				if(keys[x].toString() == obj.applications.application[i].id) {
+					var thisApp = keys[x];
+					break;
+				}
+			}
+			
+			if(obj.applications.application[i].application_users == "internal") {
+			//console.log(obj);
+				var  baseline = obj.applicationDetails[0][thisApp].bustransperday * (obj.applicationDetails[0][thisApp].bustransavgtime /60) * obj.applicationDetails[0][thisApp].busincidents;
+				var improvement = baseline * (obj.expectedBenefits.increase_employee_prod/100);
+				var hoursGain = (improvement/60) * (obj.general.bus_days/12);
+				var monthly = hoursGain * (obj.general.avg_salary / obj.general.bus_days / 7.5);
+			
+				var monthlyLow = monthly * (obj.general.confidence/100);
+				var monthlyHigh = monthly * (1-obj.general.confidence/100) + monthly;
+			
+				var row = table.insertRow();
+				var appname = row.insertCell(0); 
+				appname.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+				appname.innerHTML=obj.applications.application[i].application_name;			
+				
+				var monthlybenefit = row.insertCell(1); 
+				monthlybenefit.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+				monthlybenefit.innerHTML='£' + parseInt(monthly);		
+
+				var highrange = row.insertCell(2); 
+				highrange.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+				highrange.innerHTML='£' + parseInt(monthlyHigh);	
+
+				var lowrange = row.insertCell(3); 
+				lowrange.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+				lowrange.innerHTML='£' + parseInt(monthlyLow);	
+			}
+		}
+		
+		document.getElementById("resultLoader").style.display="none";
+	})
+}
+
+function resultIncidentFreqBenefit() {
+	var userId = getUserId();
+
+	var result_incidentfreq = document.getElementById("result_incidentfreq");
+	
+	
+	result_incidentfreq.innerHTML='<table class="table" id="result_incidentfreq_benefit"><tr><th>Application</th><th>Monthly benefit</th><th>High range</th><th>Low range</th></tr></table>';
+
+	var headers = new Headers();
+	headers.append("Content-Type", "application/json");
+	headers.append("Accept", "application/json");
+	headers.append("userId", userId);
+	
+	var init = { method: 'GET',
+        headers: headers,
+        cache: 'default'
+	};	
+	
+	var general = fetch('/getGeneralDetails', init).then(function(response){ 
+			 return response.json()
+	});
+	
+	var expectedBenefits = fetch('/getExpectedBenefits', init).then(function(response){
+			 return response.json()
+	});
+
+	var applications = fetch('/getApplications', init).then(function(response){
+			 return response.json()
+	});
+
+	var applicationDetails = fetch('/getApplicationDetails', init).then(function(response){
+			 return response.json()
+	});
+	
+	var combinedData = {"general":{},"expectedBenefits":{},"applications":{},"applicationDetails":{}};
+	Promise.all([general,expectedBenefits, applications, applicationDetails]).then(function(values){
+		combinedData["general"] = values[0];
+		combinedData["expectedBenefits"] = values[1];
+		combinedData["applications"] = values[2];
+		combinedData["applicationDetails"] = values[3];
+		
+		return combinedData;
+	})
+	
+	.then(function(obj) {
+		var table = document.getElementById("result_incidentfreq_benefit");
+		
+		var keys = Object.keys(obj.applicationDetails[0]);
+		
+		for(i=0; i<obj.applications.application.length;i++) {
+			
+			for(x=1; x<keys.length; x++) {
+				
+				if(keys[x].toString() == obj.applications.application[i].id) {
+					var thisApp = keys[x];
+					break;
+				}
+			}
+		
+				var preDyna = obj.applicationDetails[0][thisApp].allincidents * (obj.applicationDetails[0][thisApp].itstaffhours * obj.applicationDetails[0][thisApp].itstaffnum) * (obj.general.avg_salary / obj.general.bus_days / 7.5);
+				
+				
+				var postDyna = (obj.applicationDetails[0][thisApp].allincidents * (1 - obj.expectedBenefits.decrease_user_incidents/100)) * ((obj.applicationDetails[0][thisApp].itstaffhours * (1 - obj.expectedBenefits.reduce_incident_resolve/100)) * (obj.applicationDetails[0][thisApp].itstaffnum * (1 - obj.expectedBenefits.reduce_incident_resolve/100))) * (obj.general.avg_salary / obj.general.bus_days / 7.5);
+				var monthly = preDyna - postDyna;
+			
+				var monthlyLow = monthly * (obj.general.confidence/100);
+				var monthlyHigh = monthly * (1-obj.general.confidence/100) + monthly;
+			
+			
+				var row = table.insertRow();
+				var appname = row.insertCell(0); 
+				appname.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+				appname.innerHTML=obj.applications.application[i].application_name;			
+				
+				var monthlybenefit = row.insertCell(1); 
+				monthlybenefit.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+				monthlybenefit.innerHTML='£' + parseInt(monthly);		
+
+				var highrange = row.insertCell(2); 
+				highrange.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+				highrange.innerHTML='£' + parseInt(monthlyHigh);	
+
+				var lowrange = row.insertCell(3); 
+				lowrange.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+				lowrange.innerHTML='£' + parseInt(monthlyLow);	
+			
+		}
+		
+		document.getElementById("resultLoader").style.display="none";
+	})
+}
 </script>
 
 
@@ -2033,9 +2218,27 @@ function resultDownTimeBenefit() {
 			</table>
 		</div>
 		
-		<div id="result_employeeprod"></div>
+		<div id="result_employeeprod">
+			<table class="table" id="result_employeeprod_benefit">
+				<tr>
+					<th>Application</th>
+					<th>Monthly benefit</th>
+					<th>High range</th>
+					<th>Low range</th>
+				</tr>
+			</table>
+		</div>
 		
-		<div id="result_incidentfreq"></div>
+		<div id="result_incidentfreq">
+			<table class="table" id="result_incidentfreq_benefit">
+				<tr>
+					<th>Application</th>
+					<th>Monthly benefit</th>
+					<th>High range</th>
+					<th>Low range</th>
+				</tr>
+			</table>		
+		</div>
 		
 		<div id="result_svcdesk"></div>
 		
