@@ -18,7 +18,9 @@ function isEmail(email) {
   return regex.test(email);
 }
 
-
+function addCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
 
 function switchSubNav(divId) {
 
@@ -1301,7 +1303,6 @@ function resultHeader() {
 	var result_header = document.getElementById("result_header");
 	var result_assumptions = document.getElementById("result_assumptions");
 
-	//result_header.innerHTML="";
 	result_assumptions.innerHTML='<table class="table" id="assumptions_table"><tr><th>Assumptions used in calculations</th><th>Figures used</th><th>Dynatrace customer averages</th></tr></table>';
 	
 	var headers = new Headers();
@@ -1485,8 +1486,9 @@ function resultDownTimeBenefit() {
 	var result_assumptions = document.getElementById("result_assumptions");
 	var result_itdowntime = document.getElementById("result_itdowntime");
 	
-	result_itdowntime.innerHTML='<table class="table" id="result_itdowntime_benefit"><tr><th>Application</th><th>Monthly benefit</th><th>High range</th><th>Low range</th></tr></table>';
-
+	result_itdowntime.innerHTML='<h4>Results</h4><table class="table" id="result_itdowntime_benefit"><tr><th>Application</th><th>Monthly benefit</th><th>High range</th><th>Low range</th></tr></table>';
+	result_itdowntime_sec.innerHTML='<h4>Assumptions</h4><table class="table" id="result_itdowntime_assumptions"><th>Application</th><th>Incidents/month</th><th>Revenue lost/minute (£)</th><th>Mean-time-to-repair (mins)</th><th>Reduction in incidents (%)</th><th>Reduction in MTTR (%)</th></table>';
+	
 	var headers = new Headers();
 	headers.append("Content-Type", "application/json");
 	headers.append("Accept", "application/json");
@@ -1525,10 +1527,13 @@ function resultDownTimeBenefit() {
 	
 	.then(function(obj) {
 		var table = document.getElementById("result_itdowntime_benefit");
+		var table2 = document.getElementById("result_itdowntime_assumptions");
 		
 		var keys = Object.keys(obj.applicationDetails[0]);
 		
 		var downTimeTotal = 0;
+		var downTimeLow = 0;
+		var downTimeHigh = 0;
 		
 		for(i=0; i<obj.applications.application.length;i++) {
 			
@@ -1548,11 +1553,12 @@ function resultDownTimeBenefit() {
 			var postDyna = (obj.applicationDetails[0][thisApp].revincidents * revFactor) * (obj.applicationDetails[0][thisApp].mttr) * downtimeFactor * obj.applicationDetails[0][thisApp].revperminute;
 		
 			var monthly = preDyna - postDyna;
-			
-			var downTimeTotal = downTimeTotal + monthly;
-			
 			var monthlyLow = monthly * (obj.general.confidence/100);
 			var monthlyHigh = monthly * (1-obj.general.confidence/100) + monthly;
+			
+			var downTimeTotal = downTimeTotal + monthly;
+			var downTimeLow = downTimeLow + monthlyLow;
+			var downTimeHigh = downTimeHigh + monthlyHigh;		
 		
 			var row = table.insertRow();
 			var appname = row.insertCell(0); 
@@ -1561,16 +1567,57 @@ function resultDownTimeBenefit() {
 			
 			var monthlybenefit = row.insertCell(1); 
 			monthlybenefit.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
-			monthlybenefit.innerHTML='£' + parseInt(monthly);		
+			monthlybenefit.innerHTML='£' + addCommas(parseInt(monthly));		
 
 			var highrange = row.insertCell(2); 
 			highrange.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
-			highrange.innerHTML='£' + parseInt(monthlyHigh);	
+			highrange.innerHTML='£' + addCommas(parseInt(monthlyHigh));	
 
 			var lowrange = row.insertCell(3); 
 			lowrange.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
-			lowrange.innerHTML='£' + parseInt(monthlyLow);	
+			lowrange.innerHTML='£' + addCommas(parseInt(monthlyLow));	
+			
+			
+			
+			var row = table2.insertRow();
+			var applicationName = row.insertCell(0);
+			applicationName.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+			applicationName.innerHTML=obj.applications.application[i].application_name;	
+			
+			var incidents = row.insertCell(1);
+			incidents.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+			incidents.innerHTML=obj.applicationDetails[0][thisApp].revincidents;	
+			
+			var revenue = row.insertCell(2);
+			revenue.setAttribute("style","padding-top: 5px; padding-bottom: 5px");
+			revenue.innerHTML=obj.applicationDetails[0][thisApp].revperminute;				
+			
+			var mttr = row.insertCell(3);
+			mttr.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+			mttr.innerHTML=obj.applicationDetails[0][thisApp].mttr;	
+			
+			var reductionNum = row.insertCell(4);
+			reductionNum.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+			reductionNum.innerHTML=obj.expectedBenefits.dec_rev_incidents;	
+			
+			var reductionResource = row.insertCell(5);
+			reductionResource.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+			reductionResource.innerHTML=obj.expectedBenefits.reduce_downtime;				
 		}
+		
+		var totals = table.insertRow();
+		var blank = totals.insertCell(0);
+		var monthlyTotal = totals.insertCell(1);
+		monthlyTotal.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+		monthlyTotal.innerHTML='<b>£' + addCommas(parseInt(downTimeTotal)) + '</b>';
+		
+		var monthlyHigh = totals.insertCell(2);
+		monthlyHigh.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+		monthlyHigh.innerHTML='<b>£' + addCommas(parseInt(downTimeHigh)) + '</b>';		
+		
+		var monthlyLow = totals.insertCell(3);
+		monthlyLow.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+		monthlyLow.innerHTML='<b>£' + addCommas(parseInt(downTimeLow)) + '</b>';
 		
 		document.getElementById("resultLoader").style.display="none";
 	})
@@ -1580,10 +1627,11 @@ function resultEmployeeProdBenefit() {
 	var userId = getUserId();
 
 	var result_employeeprod = document.getElementById("result_employeeprod");
+	var result_employeeprod_sec = document.getElementById("result_employeeprod_sec");
 	
+	result_employeeprod.innerHTML='<h4>Results</h4><table class="table" id="result_employeeprod_benefit"><tr><th>Application</th><th>Monthly benefit</th><th>High range</th><th>Low range</th></tr></table>';
+	result_employeeprod_sec.innerHTML='<h4>Assumptions</h4><table class="table" id="result_employeeprod_assumptions"><th>Application</th><th>Average users</th><th>Transactions executed/day</th><th>Incidents/day</th><th>Average transaction time (s)</th><th>Productivity increase (%)</th></table>';
 	
-	result_employeeprod.innerHTML='<table class="table" id="result_employeeprod_benefit"><tr><th>Application</th><th>Monthly benefit</th><th>High range</th><th>Low range</th></tr></table>';
-
 	var headers = new Headers();
 	headers.append("Content-Type", "application/json");
 	headers.append("Accept", "application/json");
@@ -1622,8 +1670,13 @@ function resultEmployeeProdBenefit() {
 	
 	.then(function(obj) {
 		var table = document.getElementById("result_employeeprod_benefit");
+		var table2 = document.getElementById("result_employeeprod_assumptions");
 		
 		var keys = Object.keys(obj.applicationDetails[0]);
+		
+		var downTimeTotal = 0;
+		var downTimeLow = 0;
+		var downTimeHigh = 0;
 		
 		for(i=0; i<obj.applications.application.length;i++) {
 			
@@ -1636,14 +1689,18 @@ function resultEmployeeProdBenefit() {
 			}
 			
 			if(obj.applications.application[i].application_users == "internal") {
-			//console.log(obj);
-				var  baseline = obj.applicationDetails[0][thisApp].bustransperday * (obj.applicationDetails[0][thisApp].bustransavgtime /60) * obj.applicationDetails[0][thisApp].busincidents;
+			
+				var baseline = obj.applicationDetails[0][thisApp].bustransperday * (obj.applicationDetails[0][thisApp].bustransavgtime /60) * obj.applicationDetails[0][thisApp].busincidents;
 				var improvement = baseline * (obj.expectedBenefits.increase_employee_prod/100);
 				var hoursGain = (improvement/60) * (obj.general.bus_days/12);
+				
 				var monthly = hoursGain * (obj.general.avg_salary / obj.general.bus_days / 7.5);
-			
 				var monthlyLow = monthly * (obj.general.confidence/100);
 				var monthlyHigh = monthly * (1-obj.general.confidence/100) + monthly;
+			
+				var downTimeTotal = downTimeTotal + monthly;
+				var downTimeLow = downTimeLow + monthlyLow;
+				var downTimeHigh = downTimeHigh + monthlyHigh;				
 			
 				var row = table.insertRow();
 				var appname = row.insertCell(0); 
@@ -1652,17 +1709,58 @@ function resultEmployeeProdBenefit() {
 				
 				var monthlybenefit = row.insertCell(1); 
 				monthlybenefit.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
-				monthlybenefit.innerHTML='£' + parseInt(monthly);		
+				monthlybenefit.innerHTML='£' + addCommas(parseInt(monthly));		
 
 				var highrange = row.insertCell(2); 
 				highrange.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
-				highrange.innerHTML='£' + parseInt(monthlyHigh);	
+				highrange.innerHTML='£' + addCommas(parseInt(monthlyHigh));	
 
 				var lowrange = row.insertCell(3); 
 				lowrange.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
-				lowrange.innerHTML='£' + parseInt(monthlyLow);	
+				lowrange.innerHTML='£' + addCommas(parseInt(monthlyLow));	
+				
+				
+				
+				var row = table2.insertRow();
+				var applicationName = row.insertCell(0);
+				applicationName.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+				applicationName.innerHTML=obj.applications.application[i].application_name;	
+				
+				var numusers = row.insertCell(1);
+				numusers.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+				numusers.innerHTML=obj.applicationDetails[0][thisApp].numusers;	
+				
+				var bustransperday = row.insertCell(2);
+				bustransperday.setAttribute("style","padding-top: 5px; padding-bottom: 5px");
+				bustransperday.innerHTML=obj.applicationDetails[0][thisApp].bustransperday;				
+				
+				var busincidents = row.insertCell(3);
+				busincidents.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+				busincidents.innerHTML=obj.applicationDetails[0][thisApp].busincidents;	
+				
+				var bustransavgtime = row.insertCell(4);
+				bustransavgtime.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+				bustransavgtime.innerHTML=obj.applicationDetails[0][thisApp].bustransavgtime;	
+				
+				var increase_employee_prod = row.insertCell(5);
+				increase_employee_prod.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+				increase_employee_prod.innerHTML=obj.expectedBenefits.increase_employee_prod;					
 			}
 		}
+		
+		var totals = table.insertRow();
+		var blank = totals.insertCell(0);
+		var monthlyTotal = totals.insertCell(1);
+		monthlyTotal.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+		monthlyTotal.innerHTML='<b>£' + addCommas(parseInt(downTimeTotal)) + '</b>';
+		
+		var monthlyHigh = totals.insertCell(2);
+		monthlyHigh.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+		monthlyHigh.innerHTML='<b>£' + addCommas(parseInt(downTimeHigh)) + '</b>';
+
+		var monthlyLow = totals.insertCell(3);
+		monthlyLow.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+		monthlyLow.innerHTML='<b>£' + addCommas(parseInt(downTimeLow)) + '</b>';		
 		
 		document.getElementById("resultLoader").style.display="none";
 	})
@@ -1672,10 +1770,11 @@ function resultIncidentFreqBenefit() {
 	var userId = getUserId();
 
 	var result_incidentfreq = document.getElementById("result_incidentfreq");
+	var result_incidentfreq_assumptions = document.getElementById("result_incidentfreq_sec");
 	
+	result_incidentfreq.innerHTML='<h4>Results</h4><table class="table" id="result_incidentfreq_benefit"><tr><th>Application</th><th>Monthly benefit</th><th>High range</th><th>Low range</th></tr></table>';
+	result_incidentfreq_assumptions.innerHTML='<h4>Assumptions</h4><table class="table" id="result_incidentfreq_assumptions"><th>Application</th><th>Incidents/month</th><th>IT staff hours/incident</th><th>IT staff/incident</th><th>Incident reduction (%)</th><th>IT resource reduction (%)</th></table>';
 	
-	result_incidentfreq.innerHTML='<table class="table" id="result_incidentfreq_benefit"><tr><th>Application</th><th>Monthly benefit</th><th>High range</th><th>Low range</th></tr></table>';
-
 	var headers = new Headers();
 	headers.append("Content-Type", "application/json");
 	headers.append("Accept", "application/json");
@@ -1714,8 +1813,13 @@ function resultIncidentFreqBenefit() {
 	
 	.then(function(obj) {
 		var table = document.getElementById("result_incidentfreq_benefit");
+		var table2 = document.getElementById("result_incidentfreq_assumptions");
 		
 		var keys = Object.keys(obj.applicationDetails[0]);
+		
+		var downTimeTotal = 0;
+		var downTimeLow = 0;
+		var downTimeHigh = 0;		
 		
 		for(i=0; i<obj.applications.application.length;i++) {
 			
@@ -1731,11 +1835,14 @@ function resultIncidentFreqBenefit() {
 				
 				
 				var postDyna = (obj.applicationDetails[0][thisApp].allincidents * (1 - obj.expectedBenefits.decrease_user_incidents/100)) * ((obj.applicationDetails[0][thisApp].itstaffhours * (1 - obj.expectedBenefits.reduce_incident_resolve/100)) * (obj.applicationDetails[0][thisApp].itstaffnum * (1 - obj.expectedBenefits.reduce_incident_resolve/100))) * (obj.general.avg_salary / obj.general.bus_days / 7.5);
+				
 				var monthly = preDyna - postDyna;
-			
 				var monthlyLow = monthly * (obj.general.confidence/100);
 				var monthlyHigh = monthly * (1-obj.general.confidence/100) + monthly;
 			
+				var downTimeTotal = downTimeTotal + monthly;
+				var downTimeLow = downTimeLow + monthlyLow;
+				var downTimeHigh = downTimeHigh + monthlyHigh;			
 			
 				var row = table.insertRow();
 				var appname = row.insertCell(0); 
@@ -1744,17 +1851,58 @@ function resultIncidentFreqBenefit() {
 				
 				var monthlybenefit = row.insertCell(1); 
 				monthlybenefit.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
-				monthlybenefit.innerHTML='£' + parseInt(monthly);		
+				monthlybenefit.innerHTML='£' + addCommas(parseInt(monthly));		
 
 				var highrange = row.insertCell(2); 
 				highrange.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
-				highrange.innerHTML='£' + parseInt(monthlyHigh);	
+				highrange.innerHTML='£' + addCommas(parseInt(monthlyHigh));	
 
 				var lowrange = row.insertCell(3); 
 				lowrange.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
-				lowrange.innerHTML='£' + parseInt(monthlyLow);	
+				lowrange.innerHTML='£' + addCommas(parseInt(monthlyLow));
+				
+				
+				
+				var row = table2.insertRow();
+				var applicationName = row.insertCell(0);
+				applicationName.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+				applicationName.innerHTML=obj.applications.application[i].application_name;	
+				
+				var allincidents = row.insertCell(1);
+				allincidents.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+				allincidents.innerHTML=obj.applicationDetails[0][thisApp].allincidents;	
+				
+				var itstaffhours = row.insertCell(2);
+				itstaffhours.setAttribute("style","padding-top: 5px; padding-bottom: 5px");
+				itstaffhours.innerHTML=obj.applicationDetails[0][thisApp].itstaffhours;				
+				
+				var itstaffnum = row.insertCell(3);
+				itstaffnum.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+				itstaffnum.innerHTML=obj.applicationDetails[0][thisApp].itstaffnum;	
+				
+				var decrease_user_incidents = row.insertCell(4);
+				decrease_user_incidents.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+				decrease_user_incidents.innerHTML=obj.expectedBenefits.decrease_user_incidents;		
+
+				var reduce_incident_resolve = row.insertCell(5);
+				reduce_incident_resolve.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+				reduce_incident_resolve.innerHTML=obj.expectedBenefits.reduce_incident_resolve;						
 			
 		}
+
+		var totals = table.insertRow();
+		var blank = totals.insertCell(0);
+		var monthlyTotal = totals.insertCell(1);
+		monthlyTotal.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+		monthlyTotal.innerHTML='<b>£' + addCommas(parseInt(downTimeTotal)) + '</b>';
+		
+		var monthlyHigh = totals.insertCell(2);
+		monthlyHigh.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+		monthlyHigh.innerHTML='<b>£' + addCommas(parseInt(downTimeHigh)) + '</b>';
+
+		var monthlyLow = totals.insertCell(3);
+		monthlyLow.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+		monthlyLow.innerHTML='<b>£' + addCommas(parseInt(downTimeLow)) + '</b>';
 		
 		document.getElementById("resultLoader").style.display="none";
 	})
@@ -1764,10 +1912,11 @@ function resultSvcDeskBenefit() {
 	var userId = getUserId();
 
 	var result_svcdesk = document.getElementById("result_svcdesk");
+	var result_svcdesk_sec = document.getElementById("result_svcdesk_sec");
 	
+	result_svcdesk.innerHTML='<h4>Results</h4><table class="table" id="result_svcdesk_benefit"><tr><th>Application</th><th>Monthly benefit</th><th>High range</th><th>Low range</th></tr></table>';
+	result_svcdesk_sec.innerHTML='<h4>Assumptions</h4><table class="table" id="result_svcdesk_assumptions"><th>Application</th><th>Service desk calls/month</th><th>Reduction in service desk calls (%)</th></table>';
 	
-	result_svcdesk.innerHTML='<table class="table" id="result_svcdesk_benefit"><tr><th>Application</th><th>Monthly benefit</th><th>High range</th><th>Low range</th></tr></table>';
-
 	var headers = new Headers();
 	headers.append("Content-Type", "application/json");
 	headers.append("Accept", "application/json");
@@ -1806,8 +1955,13 @@ function resultSvcDeskBenefit() {
 	
 	.then(function(obj) {
 		var table = document.getElementById("result_svcdesk_benefit");
+		var table2 = document.getElementById("result_svcdesk_assumptions");
 		
 		var keys = Object.keys(obj.applicationDetails[0]);
+
+		var downTimeTotal = 0;
+		var downTimeLow = 0;
+		var downTimeHigh = 0;	
 		
 		for(i=0; i<obj.applications.application.length;i++) {
 			
@@ -1824,10 +1978,12 @@ function resultSvcDeskBenefit() {
 				var postDyna = (1 - obj.expectedBenefits.reduce_service_desk/100) * obj.applicationDetails[0][thisApp].svcdeskpermonth;
 				
 				var monthly = preDyna - postDyna;
-			
 				var monthlyLow = monthly * (obj.general.confidence/100);
 				var monthlyHigh = monthly * (1-obj.general.confidence/100) + monthly;
 			
+				var downTimeTotal = downTimeTotal + monthly;
+				var downTimeLow = downTimeLow + monthlyLow;
+				var downTimeHigh = downTimeHigh + monthlyHigh;				
 			
 				var row = table.insertRow();
 				var appname = row.insertCell(0); 
@@ -1836,17 +1992,47 @@ function resultSvcDeskBenefit() {
 				
 				var monthlybenefit = row.insertCell(1); 
 				monthlybenefit.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
-				monthlybenefit.innerHTML='£' + parseInt(monthly);		
+				monthlybenefit.innerHTML='£' + addCommas(parseInt(monthly));		
 
 				var highrange = row.insertCell(2); 
 				highrange.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
-				highrange.innerHTML='£' + parseInt(monthlyHigh);	
+				highrange.innerHTML='£' + addCommas(parseInt(monthlyHigh));	
 
 				var lowrange = row.insertCell(3); 
 				lowrange.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
-				lowrange.innerHTML='£' + parseInt(monthlyLow);	
+				lowrange.innerHTML='£' + addCommas(parseInt(monthlyLow));
+				
+				
+				
+				
+				var row = table2.insertRow();
+				var applicationName = row.insertCell(0);
+				applicationName.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+				applicationName.innerHTML=obj.applications.application[i].application_name;	
+				
+				var svcdeskpermonth = row.insertCell(1);
+				svcdeskpermonth.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+				svcdeskpermonth.innerHTML=obj.applicationDetails[0][thisApp].svcdeskpermonth;	
+
+				var reduce_service_desk = row.insertCell(2);
+				reduce_service_desk.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+				reduce_service_desk.innerHTML=obj.expectedBenefits.reduce_service_desk;					
 			
 		}
+		
+		var totals = table.insertRow();
+		var blank = totals.insertCell(0);
+		var monthlyTotal = totals.insertCell(1);
+		monthlyTotal.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+		monthlyTotal.innerHTML='<b>£' + addCommas(parseInt(downTimeTotal)) + '</b>';
+		
+		var monthlyHigh = totals.insertCell(2);
+		monthlyHigh.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+		monthlyHigh.innerHTML='<b>£' + addCommas(parseInt(downTimeHigh)) + '</b>';
+
+		var monthlyLow = totals.insertCell(3);
+		monthlyLow.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+		monthlyLow.innerHTML='<b>£' + addCommas(parseInt(downTimeLow)) + '</b>';		
 		
 		document.getElementById("resultLoader").style.display="none";
 	})
@@ -1856,10 +2042,11 @@ function resultSlaBenefit() {
 	var userId = getUserId();
 
 	var result_sla = document.getElementById("result_sla");
+	var result_sla_sec = document.getElementById("result_sla_sec");
 	
+	result_sla.innerHTML='<h4>Results</h4><table class="table" id="result_sla_benefit"><tr><th>Application</th><th>Monthly benefit</th><th>High range</th><th>Low range</th></tr></table>';
+	result_sla_sec.innerHTML='<h4>Assumptions</h4><table class="table" id="result_sla_assumptions"><th>Application</th><th>Current SLA penalties (£)</th><th>IT staff hours to produce SLA reports</th><th>Reduction in SLA penalties (%)</th><th>Reduction in time creating SLA reports (%)</th></table>';
 	
-	result_sla.innerHTML='<table class="table" id="result_sla_benefit"><tr><th>Application</th><th>Monthly benefit</th><th>High range</th><th>Low range</th></tr></table>';
-
 	var headers = new Headers();
 	headers.append("Content-Type", "application/json");
 	headers.append("Accept", "application/json");
@@ -1898,8 +2085,13 @@ function resultSlaBenefit() {
 	
 	.then(function(obj) {
 		var table = document.getElementById("result_sla_benefit");
+		var table2 = document.getElementById("result_sla_assumptions");
 		
 		var keys = Object.keys(obj.applicationDetails[0]);
+		
+		var downTimeTotal = 0;
+		var downTimeLow = 0;
+		var downTimeHigh = 0;			
 		
 		for(i=0; i<obj.applications.application.length;i++) {
 			
@@ -1921,10 +2113,12 @@ function resultSlaBenefit() {
 				
 				
 				var monthly = (penaltiesPreDyna - penaltiesPostDyna) + (reportPreDyna - reportPostDyna);
-			
 				var monthlyLow = monthly * (obj.general.confidence/100);
 				var monthlyHigh = monthly * (1-obj.general.confidence/100) + monthly;
 			
+				var downTimeTotal = downTimeTotal + monthly;
+				var downTimeLow = downTimeLow + monthlyLow;
+				var downTimeHigh = downTimeHigh + monthlyHigh;						
 			
 				var row = table.insertRow();
 				var appname = row.insertCell(0); 
@@ -1933,17 +2127,52 @@ function resultSlaBenefit() {
 				
 				var monthlybenefit = row.insertCell(1); 
 				monthlybenefit.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
-				monthlybenefit.innerHTML='£' + parseInt(monthly);		
+				monthlybenefit.innerHTML='£' + addCommas(parseInt(monthly));		
 
 				var highrange = row.insertCell(2); 
 				highrange.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
-				highrange.innerHTML='£' + parseInt(monthlyHigh);	
+				highrange.innerHTML='£' + addCommas(parseInt(monthlyHigh));	
 
 				var lowrange = row.insertCell(3); 
 				lowrange.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
-				lowrange.innerHTML='£' + parseInt(monthlyLow);	
+				lowrange.innerHTML='£' + addCommas(parseInt(monthlyLow));
+				
+				
+				var row = table2.insertRow();
+				var applicationName = row.insertCell(0);
+				applicationName.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+				applicationName.innerHTML=obj.applications.application[i].application_name;	
+				
+				var currentslapenalties = row.insertCell(1);
+				currentslapenalties.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+				currentslapenalties.innerHTML=addCommas(obj.applicationDetails[0][thisApp].currentslapenalties);	
+
+				var currenttimeslareport = row.insertCell(2);
+				currenttimeslareport.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+				currenttimeslareport.innerHTML=obj.applicationDetails[0][thisApp].currenttimeslareport;	
+				
+				var reduce_sla_penalties = row.insertCell(3);
+				reduce_sla_penalties.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+				reduce_sla_penalties.innerHTML=obj.expectedBenefits.reduce_sla_penalties;						
 			
+				var reduce_sla_resources = row.insertCell(4);
+				reduce_sla_resources.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+				reduce_sla_resources.innerHTML=obj.expectedBenefits.reduce_sla_resources;			
 		}
+
+		var totals = table.insertRow();
+		var blank = totals.insertCell(0);
+		var monthlyTotal = totals.insertCell(1);
+		monthlyTotal.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+		monthlyTotal.innerHTML='<b>£' + addCommas(parseInt(downTimeTotal)) + '</b>';
+		
+		var monthlyHigh = totals.insertCell(2);
+		monthlyHigh.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+		monthlyHigh.innerHTML='<b>£' + addCommas(parseInt(downTimeHigh)) + '</b>';
+
+		var monthlyLow = totals.insertCell(3);
+		monthlyLow.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
+		monthlyLow.innerHTML='<b>£' + addCommas(parseInt(downTimeLow)) + '</b>';	
 		
 		document.getElementById("resultLoader").style.display="none";
 	})
@@ -2403,29 +2632,76 @@ function resultSlaBenefit() {
 			</table>
 		</div>
 
-		<div id="result_itdowntime">
-			<table class="table" id="result_itdowntime_benefit">
-				<tr>
+	
+		<h3>Revenue lost from IT downtime</h3>
+		<div class="section">
+		
+			<div class="column--1-of-3">
+			<div id="result_itdowntime">
+			<h4>Results</h4>
+				<table class="table" id="result_itdowntime_benefit">
+					<tr>
+						<th>Application</th>
+						<th>Monthly benefit</th>
+						<th>High range</th>
+						<th>Low range</th>
+					</tr>
+				</table>
+			</div>
+			</div>
+			<div class="column--2-of-3">
+			<div id="result_itdowntime_sec">
+			<h4>Assumptions</h4>
+				<table class="table" id="result_itdowntime_assumptions">
 					<th>Application</th>
-					<th>Monthly benefit</th>
-					<th>High range</th>
-					<th>Low range</th>
-				</tr>
-			</table>
+					<th>Incidents/month</th>
+					<th>Revenue lost/minute (£)</th>
+					<th>Mean-time-to-repair (mins)</th>
+					<th>Reduction in incidents (%)</th>
+					<th>Reduction in MTTR (%)</th>
+				</table>
+			</div>	
+			</div>
 		</div>
 		
-		<div id="result_employeeprod">
-			<table class="table" id="result_employeeprod_benefit">
-				<tr>
-					<th>Application</th>
-					<th>Monthly benefit</th>
-					<th>High range</th>
-					<th>Low range</th>
-				</tr>
-			</table>
+		<h3>Increased employee productivity</h3>
+		<div class="section">
+		
+		<div class="column--1-of-3">
+			<div id="result_employeeprod">
+			<h4>Results</h4>
+				<table class="table" id="result_employeeprod_benefit">
+					<tr>
+						<th>Application</th>
+						<th>Monthly benefit</th>
+						<th>High range</th>
+						<th>Low range</th>
+					</tr>
+				</table>
+			</div>
 		</div>
 		
-		<div id="result_incidentfreq">
+		<div class="column--2-of-3">
+		<div id="result_employeeprod_sec">
+			<h4>Assumptions</h4>
+				<table class="table" id="result_employeeprod_assumptions">
+					<th>Application</th>
+					<th>Average users</th>
+					<th>Transactions executed/day</th>
+					<th>Incidents/day</th>
+					<th>Average transaction time (s)</th>
+					<th>Productivity increase (%)</th>
+				</table>
+		</div>		
+		</div>		
+		
+		</div>
+		
+		<h3>Reduce the frequency and cost of incidents</h3>
+		<div class="section">
+		<div class="column--1-of-3">
+			<div id="result_incidentfreq">
+			<h4>Results</h4>
 			<table class="table" id="result_incidentfreq_benefit">
 				<tr>
 					<th>Application</th>
@@ -2434,9 +2710,31 @@ function resultSlaBenefit() {
 					<th>Low range</th>
 				</tr>
 			</table>		
+			</div>
+		
+		</div>
+		<div class="column--2-of-3">
+		<div id="result_incidentfreq_sec">
+			<h4>Assumptions</h4>
+				<table class="table" id="result_incidentfreq_assumptions">
+					<th>Application</th>
+					<th>Incidents/month</th>
+					<th>IT staff hours/incident</th>
+					<th>IT staff/incident</th>
+					<th>Incident reduction (%)</th>
+					<th>IT resource reduction (%)</th>
+				</table>
+		</div>			
+		</div>
 		</div>
 		
+		
+		<h3>Reduce service desk costs</h3>
+		<div class="section">
+		
+		<div class="column--1-of-3">
 		<div id="result_svcdesk">
+			<h4>Results</h4>
 			<table class="table" id="result_svcdesk_benefit">
 				<tr>
 					<th>Application</th>
@@ -2446,15 +2744,59 @@ function resultSlaBenefit() {
 				</tr>
 			</table>		
 		</div>
+		</div>
 		
-		<div id="result_sla"></div>
-
+		<div class="column--2-of-3">
+		<div id="result_svcdesk_sec">
+			<h4>Assumptions</h4>
+				<table class="table" id="result_svcdesk_assumptions">
+					<th>Application</th>
+					<th>Service desk calls/month</th>
+					<th>Reduction in service desk calls (%)</th>
+				</table>
+		</div>		
+		</div>
 		
+		</div>
+		
+		
+		
+		
+		<h3>Improve SLA compliance and reporting</h3>
+		<div class="section">
+		
+		<div class="column--1-of-3">
+		<div id="result_sla">
+			<table class="table" id="result_sla_benefit">
+				<tr>
+					<th>Application</th>
+					<th>Monthly benefit</th>
+					<th>High range</th>
+					<th>Low range</th>
+				</tr>
+			</table>		
+		</div>
+		</div>
+		
+		<div class="column--2-of-3">
+		<div id="result_sla_sec">
+			<h4>Assumptions</h4>
+				<table class="table" id="result_sla_assumptions">
+					<th>Application</th>
+					<th>Current SLA penalties (£)</th>
+					<th>IT staff hours to produce SLA reports</th>
+					<th>Reduction in SLA penalties (%)</th>
+					<th>Reduction in time creating SLA reports (%)</th>
+				</table>
+		</div>			
+		</div>
+		
+		</div>
 		
 		</div>
 		</div>
 
-</div>
+<!--</div>-->
 <!--end of content-->
 
 
