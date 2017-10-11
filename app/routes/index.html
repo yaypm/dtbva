@@ -5,6 +5,7 @@
 <link rel="icon" href="https://dt-cdn.net/assets/images/brand/favicon-63e287af7c.ico">
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="/static/finance.js"></script>
 <style>a:hover {cursor:pointer;}</style>
 <script>
 function activateControls() {
@@ -1303,6 +1304,7 @@ function buildResults() {
 	buildResultSummary("cost_savings_norm", 1);
 	buildResultSummary("cost_savings_high", 2);
 	buildResultSummary("cost_savings_low", 3);
+	financialAnalysis();
 	
 }
 
@@ -1790,9 +1792,6 @@ function resultEmployeeProdBenefit() {
 		var monthlyLow = totals.insertCell(3);
 		//monthlyLow.setAttribute("style","padding-top: 5px; padding-bottom: 5px"); 
 		monthlyLow.innerHTML='<b>£' + addCommas(parseInt(downTimeLow)) + '</b>';
-
-		console.log(preDynaTotal);
-		console.log(postDynaTotal);
 		
 		var comparison = document.getElementById("cost_comparison_table");
 		var downTimeRow = comparison.insertRow();
@@ -2289,8 +2288,6 @@ function buildResultSummary(table, range) {
 	.then(function(obj) {
 		var tableVar = obj.table;
 		var rangeVar = obj.range;
-		console.log("table is " + obj.table);
-		//console.log(table + "_table");
 		years = obj.options.study_period;
 		growth = obj.general.rev_growth;
 		year = (new Date()).getFullYear();
@@ -2421,6 +2418,183 @@ function buildResultSummary(table, range) {
 		
 		var finalTotal = totals.insertCell(i);
 		finalTotal.innerHTML='<b>£' + addCommas(parseInt(grandTotal));
+	})
+}
+
+function financialAnalysis() {
+	var userId = getUserId();
+
+	var cost_benefit = document.getElementById("cost_benefit");
+	var expected_analysis = document.getElementById("expected_analysis");
+	var high_analysis = document.getElementById("high_analysis");
+	var low_analysis = document.getElementById("low_analysis");
+	
+	cost_benefit.innerHTML='<table class="table" id="cost_benefit_table"><tr><th></th></tr></table>';
+	expected_analysis.innerHTML='<table class="table" id="expected_analysis_table"><tr><th></th><th></th></tr></table>';
+	high_analysis.innerHTML='<table class="table" id="high_analysis_table"><tr><th></th><th></th></tr></table>';
+	low_analysis.innerHTML='<table class="table" id="low_analysist_table"><tr><th></th><th></th></tr></table>';
+	
+	
+	var headers = new Headers();
+	headers.append("Content-Type", "application/json");
+	headers.append("Accept", "application/json");
+	headers.append("userId", userId);
+	
+	var init = { method: 'GET',
+        headers: headers,
+        cache: 'default'
+	};	
+	
+	var general = fetch('/getGeneralDetails', init).then(function(response){ 
+			 return response.json()
+	});
+	
+	var productCosts = fetch('/getProductCosts', init).then(function(response){
+			 return response.json()
+	});
+
+	var options = fetch('/getOptions', init).then(function(response){
+			 return response.json()
+	});
+	
+	var combinedData = {"general":{},"productCosts":{},"options":{}};
+	Promise.all([general,productCosts, options]).then(function(values){
+		combinedData["general"] = values[0];
+		combinedData["productCosts"] = values[1];
+		combinedData["options"] = values[2];
+		
+		return combinedData;
+	})
+	
+	.then(function(obj) {
+		var cost_benefit_table = document.getElementById("cost_benefit_table");
+		var expected_analysis_table = document.getElementById("expected_analysis_table");
+		var high_analysis_table = document.getElementById("high_analysis_table");
+		var low_analysist_table = document.getElementById("low_analysist_table");
+		
+		var years = obj.options.study_period;
+		year = (new Date()).getFullYear();
+		
+		var downTimeTotal = 0;
+		var downTimeLow = 0;
+		var downTimeHigh = 0;			
+		var preDynaTotal = 0;
+		var postDynaTotal = 0;
+
+
+		for(i=0;i<years;i++) {
+			th = document.createElement('th');
+			th.innerHTML = year+i;
+			cost_benefit_table.children[0].children[0].appendChild(th);		
+		}
+			
+		th = document.createElement('th');
+		th.innerHTML = 'Total';
+		cost_benefit_table.children[0].children[0].appendChild(th);
+		
+		
+		totals = document.getElementById("cost_savings_norm_table").rows[document.getElementById("cost_savings_norm_table").rows.length-1];
+		benefitsRow = document.getElementById("cost_benefit_table").insertRow();
+		var labelBenefit = benefitsRow.insertCell(0);
+		labelBenefit.innerHTML='Benefits';
+		
+		benefitsForNpv = [];
+		
+		for(i=1;i<parseInt(years)+1;i++) {
+			var value = getNumbers(totals.children[i].innerHTML);
+			var cell = benefitsRow.insertCell(i);
+			benefitsForNpv[i-1] = parseInt(getNumbers(totals.children[i].innerHTML));
+			cell.innerHTML='£' + addCommas(value);
+		}
+		
+		var value = getNumbers(totals.children[i].innerHTML);
+		var cell = benefitsRow.insertCell(i);
+		cell.innerHTML='<b>£' + addCommas(value) + '</b>';
+		
+		overallBenefitTotal = parseInt(getNumbers(totals.children[i].innerHTML));
+		
+		costRow = document.getElementById("cost_benefit_table").insertRow();
+		var labelCost = costRow.insertCell(0);
+		labelCost.innerHTML='Cost';
+		
+		runningTotal = 0;
+		overallTotal = 0;
+		
+		for(i=1;i<parseInt(years)+1;i++) {
+			if(isNaN(parseInt(obj.productCosts[0].costs[i-1].license_fees)) == false) { runningTotal = runningTotal + parseInt(obj.productCosts[0].costs[i-1].license_fees) } 
+			if(isNaN(parseInt(obj.productCosts[0].costs[i-1].maintenance)) == false) { runningTotal = runningTotal + parseInt(obj.productCosts[0].costs[i-1].maintenance) } 
+			if(isNaN(parseInt(obj.productCosts[0].costs[i-1].hardware)) == false) { runningTotal = runningTotal + parseInt(obj.productCosts[0].costs[i-1].hardware) } 
+			if(isNaN(parseInt(obj.productCosts[0].costs[i-1].implementation)) == false) { runningTotal = runningTotal + parseInt(obj.productCosts[0].costs[i-1].implementation) } 
+			if(isNaN(parseInt(obj.productCosts[0].costs[i-1].training)) == false) { runningTotal = runningTotal + parseInt(obj.productCosts[0].costs[i-1].training) } 
+			var cell = costRow.insertCell(i);
+			
+			cell.innerHTML='£' + addCommas(runningTotal);
+			overallTotal=overallTotal + runningTotal;
+			
+			
+			
+			runningTotal=0;
+		}		
+
+		var labelCost = costRow.insertCell(i);
+		labelCost.innerHTML='<b>£' + addCommas(overallTotal) + '</b>';
+		
+		
+		var normRoiRow = document.getElementById("expected_analysis_table").insertRow();
+		var normRoiLabel = normRoiRow.insertCell(0);
+		normRoiLabel.innerHTML='ROI over the study period';
+		var normRoi = normRoiRow.insertCell(1);
+		normRoi.innerHTML=(((overallBenefitTotal - overallTotal)/overallTotal)*100).toFixed(2) + '%';
+		
+		var finance = new Finance();
+		
+		var npvRow = document.getElementById("expected_analysis_table").insertRow();
+		var npvLabel = npvRow.insertCell(0);
+		npvLabel.innerHTML='Net present value (NPV)';
+		
+		var npvValue = npvRow.insertCell(1);
+		
+		if(obj.options.study_period == "1") {
+			npvValue.innerHTML='£' + addCommas(parseInt(finance.NPV(obj.general.npv, overallTotal*-1, benefitsForNpv[0])));
+		}
+		
+		if(obj.options.study_period == "2") {
+			npvValue.innerHTML='£' + addCommas(parseInt(finance.NPV(obj.general.npv, overallTotal*-1, benefitsForNpv[0] ,benefitsForNpv[1])));
+		}
+
+		if(obj.options.study_period == "3") {
+			npvValue.innerHTML='£' + addCommas(parseInt(finance.NPV(obj.general.npv, overallTotal*-1, benefitsForNpv[0], benefitsForNpv[1], benefitsForNpv[2])));
+		}
+
+		if(obj.options.study_period == "4") {
+			npvValue.innerHTML='£' + addCommas(parseInt(finance.NPV(obj.general.npv, overallTotal*-1, benefitsForNpv[0], benefitsForNpv[1], benefitsForNpv[2], benefitsForNpv[3])));
+		}
+
+		if(obj.options.study_period == "5") {
+			npvValue.innerHTML='£' + addCommas(parseInt(finance.NPV(obj.general.npv, overallTotal*-1, benefitsForNpv[0], benefitsForNpv[1], benefitsForNpv[2], benefitsForNpv[3], benefitsForNpv[4])));
+		}		
+	
+		var y1costs = parseInt(getNumbers(document.getElementById("cost_benefit_table").children[0].children[document.getElementById("cost_benefit_table").rows.length-1].children[1].innerHTML));
+	
+		var payBackRow = document.getElementById("expected_analysis_table").insertRow();
+		var labelBenefit = payBackRow.insertCell(0);
+		labelBenefit.innerHTML='Year 1 payback period (months)';		
+		
+		var y1benefits = parseInt(getNumbers(document.getElementById("cost_benefit_table").children[0].children[document.getElementById("cost_benefit_table").rows.length-2].children[1].innerHTML));
+		
+		var labelBenefit = payBackRow.insertCell(1);
+		labelBenefit.innerHTML=(y1costs / (y1benefits/12)).toFixed(1);		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		document.getElementById("resultLoader").style.display="none";
 	})
 }
 
@@ -3092,7 +3266,48 @@ function buildResultSummary(table, range) {
 			</tr>	
 			</table>
 		</div>
-		
+
+		<h3>Financial analysis</h3>
+		<h4>Cost/benefit</h4>
+		<div id="cost_benefit">
+			<table class="table" id="cost_benefit_table">
+			<tr><th></th></tr>
+			
+			</table>
+		</div>	
+
+		<h4>Expected range</h4>
+		<div id="expected_analysis">
+			<table class="table" id="expected_analysis_table">
+			<tr>
+			<th></th>
+			<th></th>
+			</tr>
+			
+			</table>
+		</div>	
+
+		<h4>High range</h4>
+		<div id="high_analysis">
+			<table class="table" id="high_analysis_table">
+			<tr>
+			<th></th>
+			<th></th>
+			</tr>
+			
+			</table>
+		</div>	
+
+		<h4>Low range</h4>
+		<div id="low_analysis">
+			<table class="table" id="low_analysis_table">
+			<tr>
+			<th></th>
+			<th></th>
+			</tr>
+			
+			</table>
+		</div>			
 		
 		</div>
 		</div>
