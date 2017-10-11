@@ -1294,22 +1294,52 @@ function retrieveApplicationDetails() {
 
 function buildResults() {
 	
-	document.getElementById("cost_comparison").innerHTML='<table class="table" id="cost_comparison_table"><tr><th>Benefit area</th><th>Pre Dynatrace</th><th>Post Dynatrace</th><th>Improvement (%)</th></tr></table>';
-	resultHeader();
-	resultDownTimeBenefit();
-	resultEmployeeProdBenefit();
-	resultIncidentFreqBenefit();
-	resultSvcDeskBenefit();
-	resultSlaBenefit();
-	buildResultSummary("cost_savings_norm", 1);
-	buildResultSummary("cost_savings_high", 2);
-	buildResultSummary("cost_savings_low", 3);
-	financialAnalysis();
+	document.getElementById("reportContent").style.display="none";
+	document.getElementById("resultLoader").style.display="block";
 	
+	var userId = getUserId();
+
+	var headers = new Headers();
+	headers.append("Content-Type", "application/json");
+	headers.append("Accept", "application/json");
+	headers.append("userId", userId);
+	
+	var init = { method: 'GET',
+        headers: headers,
+        cache: 'default'
+	};	
+
+	var options = fetch('/getOptions', init).then(function(response){
+			
+			 return response.json()
+	})
+	
+	.then(function(obj) {
+		document.getElementById("cost_comparison").innerHTML='<table class="table" id="cost_comparison_table"><tr><th>Benefit area</th><th>Pre Dynatrace</th><th>Post Dynatrace</th><th>Improvement (%)</th></tr></table><br />';
+		resultHeader();
+		
+		if(obj.it_downtime == true) {resultDownTimeBenefit()}
+		if(obj.employee_productivity == true) {resultEmployeeProdBenefit()}
+		if(obj.incident_frequency == true) {resultIncidentFreqBenefit()}
+		if(obj.service_desk == true) {resultSvcDeskBenefit()}
+		if(obj.sla_compliance == true) {resultSlaBenefit()}
+		buildResultSummary("cost_savings_norm", 1);
+		buildResultSummary("cost_savings_high", 2);
+		buildResultSummary("cost_savings_low", 3);
+		
+	})
+	
+	.then(function() {
+		financialAnalysis();
+	})
+	
+	.then(function() {
+		$('#reportContent').hide().fadeIn(500);
+		document.getElementById("resultLoader").style.display="none";
+	})
 }
 
 function resultHeader() {
-	document.getElementById("resultLoader").style.display="block";
 	
 	var userId = getUserId();
 
@@ -1490,7 +1520,7 @@ function resultHeader() {
 		
 		}	
 		
-		intro.innerHTML='In order to provide the ROI values in this report, several assumptions were provided so that a £ value could be assigned against the benefits that you can attain from working with Dynatrace. <ul class="list"><li>A typical IT resource works <b>' + obj.generalDetails.bus_days + ' days</b> per year.</li><li>During a working day, an IT resource works <b>7.5 hours</b>.</li><li>The average loaded salary of an IT resource is <b>£' + addCommas(obj.generalDetails.avg_salary) + '</b></li><li>The cost to handle a service desk call is <b>£' + obj.generalDetails.svc_desk_cost + '</b></li><li>The discount rate for Net Present Value is <b>' + obj.generalDetails.npv + '%</b></li></ul> Because the expected benefits can not be fully proven yet, a confidence factor of <b>' + obj.generalDetails.confidence + '%</b> has been chosen to show how benefits may vary.';
+		intro.innerHTML='In order to provide the ROI values in this report, several assumptions were provided so that a £ value could be assigned against the benefits that you can attain from working with Dynatrace. <br /><br /><ul class="list"><li>A typical IT resource works <b>' + obj.generalDetails.bus_days + ' days</b> per year.</li><li>During a working day, an IT resource works <b>7.5 hours</b>.</li><li>The average loaded salary of an IT resource is <b>£' + addCommas(obj.generalDetails.avg_salary) + '</b></li><li>The cost to handle a service desk call is <b>£' + obj.generalDetails.svc_desk_cost + '</b></li><li>The discount rate for Net Present Value is <b>' + obj.generalDetails.npv + '%</b></li></ul><br /> Because the expected benefits can not be fully proven yet, a confidence factor of <b>' + obj.generalDetails.confidence + '%</b> has been chosen to show how benefits may vary. <br /><br />';
 		 
 	})
 }
@@ -1502,7 +1532,8 @@ function resultDownTimeBenefit() {
 	var result_assumptions = document.getElementById("result_assumptions");
 	var result_itdowntime = document.getElementById("result_itdowntime");
 	
-	result_itdowntime.innerHTML='<h4>Results</h4><table class="table" id="result_itdowntime_benefit"><tr><th>Application</th><th>Monthly benefit</th><th>High range</th><th>Low range</th></tr></table>';
+	itdowntime_header.innerHTML='<h3>Revenue lost from IT downtime</h3><p>When an application is not available to users, revenue is directly impacted. Whether this is direct impact of the user being able to purchase or a critical system that supports users making revenue generating transactions. Dynatrace enables you to firstly decrease the number of incidents that affect end-users, and secondly reduce the time taken to solve those issues.</p>';
+	result_itdowntime.innerHTML='<h4>Results</h4><table class="table" id="result_itdowntime_benefit"><tr><th>Application</th><th>Monthly benefit</th><th>High range</th><th>Low range</th></tr></table><br /><br />';
 	result_itdowntime_sec.innerHTML='<h4>Assumptions</h4><table class="table" id="result_itdowntime_assumptions"><th>Application</th><th>Incidents/month</th><th>Revenue lost/minute (£)</th><th>Mean-time-to-repair (mins)</th></table>';
 	
 	var headers = new Headers();
@@ -1646,7 +1677,7 @@ function resultDownTimeBenefit() {
 		var percent = downTimeRow.insertCell(3);
 		percent.innerHTML = parseInt((1 - postDynaTotal/preDynaTotal) * 100) + "%";
 		
-		document.getElementById("resultLoader").style.display="none";
+		
 	})
 }
 
@@ -1656,7 +1687,8 @@ function resultEmployeeProdBenefit() {
 	var result_employeeprod = document.getElementById("result_employeeprod");
 	var result_employeeprod_sec = document.getElementById("result_employeeprod_sec");
 	
-	result_employeeprod.innerHTML='<h4>Results</h4><table class="table" id="result_employeeprod_benefit"><tr><th>Application</th><th>Monthly benefit</th><th>High range</th><th>Low range</th></tr></table>';
+	employeeprod_header.innerHTML="<h3>Increased employee productivity</h3><p>Slow performance doesn't just have an impact on revenue, it also means that internal employees cannot be fully productive. If they have to wait long period of time just to do day-to-day transactions, then £s are being lost in un-productive time. By using insight from Dynatrace to make performance improvements, employees can physically get more transactions done during their working day.</p>";
+	result_employeeprod.innerHTML='<h4>Results</h4><table class="table" id="result_employeeprod_benefit"><tr><th>Application</th><th>Monthly benefit</th><th>High range</th><th>Low range</th></tr></table><br /><br />';
 	result_employeeprod_sec.innerHTML='<h4>Assumptions</h4><table class="table" id="result_employeeprod_assumptions"><th>Application</th><th>Average users</th><th>Transactions executed/day</th><th>Incidents/day</th><th>Average transaction time (s)</th></table>';
 	
 	var headers = new Headers();
@@ -1804,7 +1836,7 @@ function resultEmployeeProdBenefit() {
 		var percent = downTimeRow.insertCell(3);
 		percent.innerHTML = parseInt((postDynaTotal/preDynaTotal) * 100) + "%";		
 		
-		document.getElementById("resultLoader").style.display="none";
+	
 	})
 }
 
@@ -1814,7 +1846,8 @@ function resultIncidentFreqBenefit() {
 	var result_incidentfreq = document.getElementById("result_incidentfreq");
 	var result_incidentfreq_assumptions = document.getElementById("result_incidentfreq_sec");
 	
-	result_incidentfreq.innerHTML='<h4>Results</h4><table class="table" id="result_incidentfreq_benefit"><tr><th>Application</th><th>Monthly benefit</th><th>High range</th><th>Low range</th></tr></table>';
+	incidentfreq_header.innerHTML="<h3>Reduce the frequency and cost of incidents</h3><p>Modern applicatios are big, and more importantly they're complex. When an incident occurs multiple different IT resources can spend multiple hours, this costs money. When an incident happens Dynatrace automatically provides insights on how many users are impacted, what they were doing and what caused the incident - in order to reduce the amount of IT resources required.</p>";
+	result_incidentfreq.innerHTML='<h4>Results</h4><table class="table" id="result_incidentfreq_benefit"><tr><th>Application</th><th>Monthly benefit</th><th>High range</th><th>Low range</th></tr></table><br /><br />';
 	result_incidentfreq_assumptions.innerHTML='<h4>Assumptions</h4><table class="table" id="result_incidentfreq_assumptions"><th>Application</th><th>Incidents/month</th><th>IT staff hours/incident</th><th>IT staff/incident</th></table>';
 	
 	var headers = new Headers();
@@ -1955,7 +1988,7 @@ function resultIncidentFreqBenefit() {
 		var percent = downTimeRow.insertCell(3);
 		percent.innerHTML = parseInt((1 - postDynaTotal/preDynaTotal) * 100) + "%";		
 		
-		document.getElementById("resultLoader").style.display="none";
+		
 	})
 }
 
@@ -1965,7 +1998,8 @@ function resultSvcDeskBenefit() {
 	var result_svcdesk = document.getElementById("result_svcdesk");
 	var result_svcdesk_sec = document.getElementById("result_svcdesk_sec");
 	
-	result_svcdesk.innerHTML='<h4>Results</h4><table class="table" id="result_svcdesk_benefit"><tr><th>Application</th><th>Monthly benefit</th><th>High range</th><th>Low range</th></tr></table>';
+	svcdesk_header.innerHTML="<h3>Reduce service desk costs</h3><p>Users will call a service desk whenever they have an issue, each call handled has a cost implication even if a resolution cannot be provided. By using Dynatrace to improve user experience, issues are less likely to be encountered and so will decrease the amount of incidents reported by users.</p>";
+	result_svcdesk.innerHTML='<h4>Results</h4><table class="table" id="result_svcdesk_benefit"><tr><th>Application</th><th>Monthly benefit</th><th>High range</th><th>Low range</th></tr></table><br /><br />';
 	result_svcdesk_sec.innerHTML='<h4>Assumptions</h4><table class="table" id="result_svcdesk_assumptions"><th>Application</th><th>Service desk calls/month</th></table>';
 	
 	var headers = new Headers();
@@ -2097,7 +2131,7 @@ function resultSvcDeskBenefit() {
 		var percent = downTimeRow.insertCell(3);
 		percent.innerHTML = parseInt((1 - postDynaTotal/preDynaTotal) * 100) + "%";		
 		
-		document.getElementById("resultLoader").style.display="none";
+		
 	})
 }
 
@@ -2107,7 +2141,8 @@ function resultSlaBenefit() {
 	var result_sla = document.getElementById("result_sla");
 	var result_sla_sec = document.getElementById("result_sla_sec");
 	
-	result_sla.innerHTML='<h4>Results</h4><table class="table" id="result_sla_benefit"><tr><th>Application</th><th>Monthly benefit</th><th>High range</th><th>Low range</th></tr></table>';
+	sla_header.innerHTML="<h3>Improve SLA compliance and reporting</h3><p>Service level agreements can be internal/external, as well as formal/informal. When SLAs are formal, penalties are usually incurred through unavailability of systems or poor performance. Reporting on the data to backup how these levels have been met can be time consuming and often manual. Dynatrace can not only provide the insight that helps improve response times and availability, but also produce automatic reports for individual SLAs.</p>";
+	result_sla.innerHTML='<h4>Results</h4><table class="table" id="result_sla_benefit"><tr><th>Application</th><th>Monthly benefit</th><th>High range</th><th>Low range</th></tr></table><br /><br />';
 	result_sla_sec.innerHTML='<h4>Assumptions</h4><table class="table" id="result_sla_assumptions"><th>Application</th><th>Current SLA penalties (£)</th><th>IT staff hours to produce SLA reports</th></table>';
 	
 	var headers = new Headers();
@@ -2241,7 +2276,7 @@ function resultSlaBenefit() {
 		var percent = downTimeRow.insertCell(3);
 		percent.innerHTML = parseInt((1 - postDynaTotal/preDynaTotal) * 100) + "%";		
 		
-		document.getElementById("resultLoader").style.display="none";
+		
 	})
 }
 
@@ -2374,7 +2409,7 @@ function buildResultSummary(table, range) {
 			
 			var row = table.insertRow();
 			var svcdesk = row.insertCell(0); 
-			svcdesk.innerHTML="Improved SLA compliance and reporting";	
+			svcdesk.innerHTML="Reduced cost of service desk calls";	
 			
 			for(i=0;i<years;i++) {
 				var svcdesk = row.insertCell(i+1); 
@@ -2392,7 +2427,7 @@ function buildResultSummary(table, range) {
 			
 			var row = table.insertRow();
 			var sla = row.insertCell(0); 
-			sla.innerHTML="Reduced cost of service desk calls";	
+			sla.innerHTML="Improved SLA reporting and compliance";	
 			
 			for(i=0;i<years;i++) {
 				var sla = row.insertCell(i+1); 
@@ -2432,7 +2467,7 @@ function financialAnalysis() {
 	cost_benefit.innerHTML='<table class="table" id="cost_benefit_table"><tr><th></th></tr></table>';
 	expected_analysis.innerHTML='<table class="table" id="expected_analysis_table"><tr><th></th><th></th></tr></table>';
 	high_analysis.innerHTML='<table class="table" id="high_analysis_table"><tr><th></th><th></th></tr></table>';
-	low_analysis.innerHTML='<table class="table" id="low_analysist_table"><tr><th></th><th></th></tr></table>';
+	low_analysis.innerHTML='<table class="table" id="low_analysis_table"><tr><th></th><th></th></tr></table>';
 	
 	
 	var headers = new Headers();
@@ -2586,15 +2621,114 @@ function financialAnalysis() {
 		labelBenefit.innerHTML=(y1costs / (y1benefits/12)).toFixed(1);		
 		
 		
+		//High range
+		highBenefitsForNpv = [];
+		totalsHigh = document.getElementById("cost_savings_high_table").rows[document.getElementById("cost_savings_high_table").rows.length-1];
+		var highBenefitTotal = parseInt(getNumbers(totalsHigh.children[i].innerHTML));
+		
+		for(i=1;i<parseInt(years)+1;i++) {
+			highBenefitsForNpv[i-1] = parseInt(getNumbers(totalsHigh.children[i].innerHTML));
+		}	
+		
+		var highRoiRow = document.getElementById("high_analysis_table").insertRow();
+		var highRoiLabel = highRoiRow.insertCell(0);
+		highRoiLabel.innerHTML='ROI over the study period';
+		var highRoi = highRoiRow.insertCell(1);
+		highRoi.innerHTML=(((highBenefitTotal - overallTotal)/overallTotal)*100).toFixed(2) + '%';
+		
+		var finance = new Finance();
+		
+		var npvRow = document.getElementById("high_analysis_table").insertRow();
+		var npvLabel = npvRow.insertCell(0);
+		npvLabel.innerHTML='Net present value (NPV)';
+		
+		var npvValue = npvRow.insertCell(1);
+		
+		if(obj.options.study_period == "1") {
+			npvValue.innerHTML='£' + addCommas(parseInt(finance.NPV(obj.general.npv, overallTotal*-1, highBenefitsForNpv[0])));
+		}
+		
+		if(obj.options.study_period == "2") {
+			npvValue.innerHTML='£' + addCommas(parseInt(finance.NPV(obj.general.npv, overallTotal*-1, highBenefitsForNpv[0] ,highBenefitsForNpv[1])));
+		}
+
+		if(obj.options.study_period == "3") {
+			npvValue.innerHTML='£' + addCommas(parseInt(finance.NPV(obj.general.npv, overallTotal*-1, highBenefitsForNpv[0], highBenefitsForNpv[1], highBenefitsForNpv[2])));
+		}
+
+		if(obj.options.study_period == "4") {
+			npvValue.innerHTML='£' + addCommas(parseInt(finance.NPV(obj.general.npv, overallTotal*-1, highBenefitsForNpv[0], highBenefitsForNpv[1], highBenefitsForNpv[2], highBenefitsForNpv[3])));
+		}
+
+		if(obj.options.study_period == "5") {
+			npvValue.innerHTML='£' + addCommas(parseInt(finance.NPV(obj.general.npv, overallTotal*-1, highBenefitsForNpv[0], highBenefitsForNpv[1], highBenefitsForNpv[2], highBenefitsForNpv[3], highBenefitsForNpv[4])));
+		}		
+	
+		var highPayBackRow = document.getElementById("high_analysis_table").insertRow();
+		var labelHighBenefit = highPayBackRow.insertCell(0);
+		labelHighBenefit.innerHTML='Year 1 payback period (months)';		
+		
+		var y1Highbenefits = parseInt(getNumbers(document.getElementById("cost_savings_high_table").children[0].children[document.getElementById("cost_savings_high_table").rows.length-1].children[1].innerHTML));
+		
+		var labelHighBenefit = highPayBackRow.insertCell(1);
+		labelHighBenefit.innerHTML=(y1costs / (y1Highbenefits/12)).toFixed(1);			
+		
+		//Low range
+		
+		lowBenefitsForNpv = [];
+		totalsLow = document.getElementById("cost_savings_low_table").rows[document.getElementById("cost_savings_low_table").rows.length-1];
+		var lowBenefitTotal = parseInt(getNumbers(totalsLow.children[i].innerHTML));
+		
+		for(i=1;i<parseInt(years)+1;i++) {
+			lowBenefitsForNpv[i-1] = parseInt(getNumbers(totalsLow.children[i].innerHTML));
+		}	
+		
+		var lowRoiRow = document.getElementById("low_analysis_table").insertRow();
+		var lowRoiLabel = lowRoiRow.insertCell(0);
+		lowRoiLabel.innerHTML='ROI over the study period';
+		var lowRoi = lowRoiRow.insertCell(1);
+		lowRoi.innerHTML=(((lowBenefitTotal - overallTotal)/overallTotal)*100).toFixed(2) + '%';
+		
+		var finance = new Finance();
+		
+		var npvRow = document.getElementById("low_analysis_table").insertRow();
+		var npvLabel = npvRow.insertCell(0);
+		npvLabel.innerHTML='Net present value (NPV)';
+		
+		var npvValue = npvRow.insertCell(1);
+		
+		if(obj.options.study_period == "1") {
+			npvValue.innerHTML='£' + addCommas(parseInt(finance.NPV(obj.general.npv, overallTotal*-1, lowBenefitsForNpv[0])));
+		}
+		
+		if(obj.options.study_period == "2") {
+			npvValue.innerHTML='£' + addCommas(parseInt(finance.NPV(obj.general.npv, overallTotal*-1, lowBenefitsForNpv[0] ,lowBenefitsForNpv[1])));
+		}
+
+		if(obj.options.study_period == "3") {
+			npvValue.innerHTML='£' + addCommas(parseInt(finance.NPV(obj.general.npv, overallTotal*-1, lowBenefitsForNpv[0], lowBenefitsForNpv[1], lowBenefitsForNpv[2])));
+		}
+
+		if(obj.options.study_period == "4") {
+			npvValue.innerHTML='£' + addCommas(parseInt(finance.NPV(obj.general.npv, overallTotal*-1, lowBenefitsForNpv[0], lowBenefitsForNpv[1], lowBenefitsForNpv[2], lowBenefitsForNpv[3])));
+		}
+
+		if(obj.options.study_period == "5") {
+			npvValue.innerHTML='£' + addCommas(parseInt(finance.NPV(obj.general.npv, overallTotal*-1, lowBenefitsForNpv[0], lowBenefitsForNpv[1], lowBenefitsForNpv[2], lowBenefitsForNpv[3], lowBenefitsForNpv[4])));
+		}		
+	
+		var lowPayBackRow = document.getElementById("low_analysis_table").insertRow();
+		var labelLowBenefit = lowPayBackRow.insertCell(0);
+		labelLowBenefit.innerHTML='Year 1 payback period (months)';		
+		
+		var y1Lowbenefits = parseInt(getNumbers(document.getElementById("cost_savings_low_table").children[0].children[document.getElementById("cost_savings_low_table").rows.length-1].children[1].innerHTML));
+		
+		var labelLowBenefit = lowPayBackRow.insertCell(1);
+		labelLowBenefit.innerHTML=(y1costs / (y1Lowbenefits/12)).toFixed(1);		
 		
 		
 		
 		
-		
-		
-		
-		
-		document.getElementById("resultLoader").style.display="none";
 	})
 }
 
@@ -3027,14 +3161,19 @@ function financialAnalysis() {
 
 		<!--report-->
 		<div id="c_fullroi_report" class="non-primary" style="position: absolute; width: 100%;" >
-		<div style="margin-left: 50px; margin-top: 0px;" id="testAdd">
-
+		
+		
 		<div class="loading" id="resultLoader" style="display: none; position: fixed; top:50%; left: 50%; transform: translate(-50%, -50%);">
 			<svg class="loading__distractor" width="30px" height="30px" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
 				<circle class="loading__path" cx="15" cy="15" r="12"></circle>
 			</svg>
 			<p class="loading__text">Loading...</p>
 		</div>
+		
+		
+		<div style="margin-left: 50px; margin-top: 0px;" id="reportContent">
+
+
 
 		
 		<!--<div id="container" style="height: 300px; width: 550px;margin-bottom: 50px;">-->
@@ -3063,168 +3202,7 @@ function financialAnalysis() {
 		</div>
 
 		<br />
-	
-		<h3>Revenue lost from IT downtime</h3>
-		<p>When an application is not available to users, revenue is directly impacted. Whether this is direct impact of the user being able to purchase or a critical system that supports users making revenue generating transactions. Dynatrace enables you to firstly decrease the number of incidents that affect end-users, and secondly reduce the time taken to solve those issues.</p>
-		<div class="section">
-		
-		
-			<div class="column--1-of-2">
-			<div id="result_itdowntime">
-			<h4>Results</h4>
-				<table class="table" id="result_itdowntime_benefit">
-					<tr>
-						<th>Application</th>
-						<th>Monthly benefit</th>
-						<th>High range</th>
-						<th>Low range</th>
-					</tr>
-				</table>
-			</div>
-			</div>
-			<div class="column--1-of-2">
-			<div id="result_itdowntime_sec">
-			<h4>Assumptions</h4>
-				<table class="table" id="result_itdowntime_assumptions">
-					<th>Application</th>
-					<th>Incidents/month</th>
-					<th>Revenue lost/minute (£)</th>
-					<th>Mean-time-to-repair (mins)</th>
-				</table>
-			</div>	
-			</div>
-			
 
-			
-		</div>
-		
-		<h3>Increased employee productivity</h3>
-		<p>Slow performance doesn't just have an impact on revenue, it also means that internal employees cannot be fully productive. If they have to wait long period of time just to do day-to-day transactions, then £s are being lost in un-productive time. By using insight from Dynatrace to make performance improvements, employees can physically get more transactions done during their working day.</p>
-		<div class="section">
-		
-		<div class="column--1-of-2">
-			<div id="result_employeeprod">
-			<h4>Results</h4>
-				<table class="table" id="result_employeeprod_benefit">
-					<tr>
-						<th>Application</th>
-						<th>Monthly benefit</th>
-						<th>High range</th>
-						<th>Low range</th>
-					</tr>
-				</table>
-			</div>
-		</div>
-		
-		<div class="column--1-of-2">
-		<div id="result_employeeprod_sec">
-			<h4>Assumptions</h4>
-				<table class="table" id="result_employeeprod_assumptions">
-					<th>Application</th>
-					<th>Average users</th>
-					<th>Transactions executed/day</th>
-					<th>Incidents/day</th>
-					<th>Average transaction time (s)</th>
-				</table>
-		</div>		
-		</div>		
-		
-		</div>
-		
-		<h3>Reduce the frequency and cost of incidents</h3>
-		<p>Modern applicatios are big, and more importantly they're complex. When an incident occurs multiple different IT resources can spend multiple hours, this costs money. When an incident happens Dynatrace automatically provides insights on how many users are impacted, what they were doing and what caused the incident - in order to reduce the amount of IT resources required.</p>
-		<div class="section">
-		<div class="column--1-of-2">
-			<div id="result_incidentfreq">
-			<h4>Results</h4>
-			<table class="table" id="result_incidentfreq_benefit">
-				<tr>
-					<th>Application</th>
-					<th>Monthly benefit</th>
-					<th>High range</th>
-					<th>Low range</th>
-				</tr>
-			</table>		
-			</div>
-		
-		</div>
-		<div class="column--1-of-2">
-		<div id="result_incidentfreq_sec">
-			<h4>Assumptions</h4>
-				<table class="table" id="result_incidentfreq_assumptions">
-					<th>Application</th>
-					<th>Incidents/month</th>
-					<th>IT staff hours/incident</th>
-					<th>IT staff/incident</th>
-				</table>
-		</div>			
-		</div>
-		</div>
-		
-		
-		<h3>Reduce service desk costs</h3>
-		<p>Users will call a service desk whenever they have an issue, each call handled has a cost implication even if a resolution cannot be provided. By using Dynatrace to improve user experience, issues are less likely to be encountered and so will decrease the amount of incidents reported by users.</p>
-		<div class="section">
-		
-		<div class="column--1-of-2">
-		<div id="result_svcdesk">
-			<h4>Results</h4>
-			<table class="table" id="result_svcdesk_benefit">
-				<tr>
-					<th>Application</th>
-					<th>Monthly benefit</th>
-					<th>High range</th>
-					<th>Low range</th>
-				</tr>
-			</table>		
-		</div>
-		</div>
-		
-		<div class="column--1-of-2">
-		<div id="result_svcdesk_sec">
-			<h4>Assumptions</h4>
-				<table class="table" id="result_svcdesk_assumptions">
-					<th>Application</th>
-					<th>Service desk calls/month</th>
-				</table>
-		</div>		
-		</div>
-		
-		</div>
-		
-		
-		
-		
-		<h3>Improve SLA compliance and reporting</h3>
-		<p>Service level agreements can be internal/external, as well as formal/informal. When SLAs are formal, penalties are usually incurred through unavailability of systems or poor performance. Reporting on the data to backup how these levels have been met can be time consuming and often manual. Dynatrace can not only provide the insight that helps improve response times and availability, but also produce automatic reports for individual SLAs.</p>
-		<div class="section">
-		
-		<div class="column--1-of-2">
-		<div id="result_sla">
-			<table class="table" id="result_sla_benefit">
-				<tr>
-					<th>Application</th>
-					<th>Monthly benefit</th>
-					<th>High range</th>
-					<th>Low range</th>
-				</tr>
-			</table>		
-		</div>
-		</div>
-		
-		<div class="column--1-of-2">
-		<div id="result_sla_sec">
-			<h4>Assumptions</h4>
-				<table class="table" id="result_sla_assumptions">
-					<th>Application</th>
-					<th>Current SLA penalties (£)</th>
-					<th>IT staff hours to produce SLA reports</th>
-				</table>
-		</div>			
-		</div>
-		
-		</div>
-		
 		<h3>Total cost savings</h3>
 		
 		<h4>Expected outcome</h4>
@@ -3276,6 +3254,10 @@ function financialAnalysis() {
 			</table>
 		</div>	
 
+		<!--beginning of tables-->
+		<div class="section">
+		
+		<div class="column--1-of-3">
 		<h4>Expected range</h4>
 		<div id="expected_analysis">
 			<table class="table" id="expected_analysis_table">
@@ -3286,7 +3268,9 @@ function financialAnalysis() {
 			
 			</table>
 		</div>	
-
+		</div>
+		
+		<div class="column--1-of-3">
 		<h4>High range</h4>
 		<div id="high_analysis">
 			<table class="table" id="high_analysis_table">
@@ -3297,7 +3281,9 @@ function financialAnalysis() {
 			
 			</table>
 		</div>	
-
+		</div>
+		
+		<div class="column--1-of-3">
 		<h4>Low range</h4>
 		<div id="low_analysis">
 			<table class="table" id="low_analysis_table">
@@ -3308,6 +3294,131 @@ function financialAnalysis() {
 			
 			</table>
 		</div>			
+		</div>
+		
+		</div>
+		
+		<br /><br />
+		<!--end of tables-->
+		
+		<div id="itdowntime_header">
+		
+		</div>
+		<div class="section">
+		
+		
+			<div class="column--1-of-2">
+			<div id="result_itdowntime">
+
+			
+			
+			
+			
+			
+			
+			</div>
+			</div>
+			<div class="column--1-of-2">
+			<div id="result_itdowntime_sec">
+
+			</div>	
+			</div>
+			
+
+			
+		</div>
+		
+		<div id="employeeprod_header">
+		
+		</div>
+		
+		<div class="section">
+		
+		<div class="column--1-of-2">
+			<div id="result_employeeprod">
+
+			
+			
+			</div>
+		</div>
+		
+		<div class="column--1-of-2">
+		<div id="result_employeeprod_sec">
+
+		</div>		
+		</div>		
+		
+		</div>
+		
+		<div id="incidentfreq_header">
+		
+		</div>
+		
+		<div class="section">
+		<div class="column--1-of-2">
+			<div id="result_incidentfreq">
+
+
+			
+			</div>
+		
+		</div>
+		<div class="column--1-of-2">
+		<div id="result_incidentfreq_sec">
+
+		
+		
+		</div>			
+		</div>
+		</div>
+		
+		<div id="svcdesk_header">
+		
+		</div>
+		
+		<div class="section">
+		
+		<div class="column--1-of-2">
+		<div id="result_svcdesk">
+
+
+		
+		</div>
+		</div>
+		
+		<div class="column--1-of-2">
+		<div id="result_svcdesk_sec">
+
+		
+		
+		</div>		
+		</div>
+		
+		</div>
+		
+		
+		
+		<div id="sla_header">
+		
+		</div>
+		
+		<div class="section">
+		
+		<div class="column--1-of-2">
+		<div id="result_sla">
+		
+		</div>
+		</div>
+		
+		<div class="column--1-of-2">
+		<div id="result_sla_sec">
+
+		</div>			
+		</div>
+		
+		</div>
+		
+
 		
 		</div>
 		</div>
