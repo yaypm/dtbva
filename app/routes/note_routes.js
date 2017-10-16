@@ -30,6 +30,7 @@ module.exports = function(app, db) {
 				console.log(userId + " received options");
 				res.writeHead(200, {'Access-Control-Allow-Headers':'content-type'});
 				res.end(resp);
+				db.close();
 			});
 		});
 	});
@@ -51,18 +52,6 @@ module.exports = function(app, db) {
 		
 		console.log(userId + " is inserting options");
 		
-		//console.log('it_downtime is ' + it_downtime + '');
-		//console.log('employee_productivity is ' + employee_productivity + '');
-		//console.log('incident_frequency is ' + incident_frequency + '');
-		//console.log('service_desk is ' + service_desk + '');
-		//console.log('sla_compliance is ' + sla_compliance + '');
-		//console.log('cloud_bill is ' + cloud_bill + '');
-		//console.log('speed_market is ' + speed_market + '');
-		//console.log('company_name is ' + company_name + '');
-		//console.log('study_period is ' + study_period + '');
-		//console.log('dynatrace_cost is ' + dynatrace_cost + '');
-		//console.log('competitive_analysis is ' + competitive_analysis + '');
-		
 		MongoClient.connect(process.env.MONGOLAB_URI, function(err, db) {
 			if(err) { return console.dir(err); }
 
@@ -73,6 +62,7 @@ module.exports = function(app, db) {
 		console.log(userId + " inserted options");
 		res.writeHead(200, {'Access-Control-Allow-Headers':'content-type'});
 		res.end("success!");
+		db.close();
 	});
 	
 	app.post('/insertExpectedBenefits', (req, res) => {
@@ -89,17 +79,7 @@ module.exports = function(app, db) {
 		if(typeof req.body.increase_time_market !== undefined) {var increase_time_market = req.body.increase_time_market;} else {var increase_time_market = '';}
 		
 		console.log(userId + " is inserting expected benefits");
-		
-		//console.log('dec_rev_incidents is ' + dec_rev_incidents + '');
-		//console.log('reduce_downtime is ' + reduce_downtime + '');
-		//console.log('increase_employee_prod is ' + increase_employee_prod + '');
-		//console.log('decrease_user_incidents is ' + decrease_user_incidents + '');
-		//console.log('reduce_incident_resolve is ' + reduce_incident_resolve + '');
-		//console.log('reduce_service_desk is ' + reduce_service_desk + '');
-		//console.log('reduce_sla_penalties is ' + reduce_sla_penalties + '');
-		//console.log('reduce_cloud_bill is ' + reduce_cloud_bill + '');
-		//console.log('increase_time_market is ' + increase_time_market + '');
-		
+			
 		MongoClient.connect(process.env.MONGOLAB_URI, function(err, db) {
 			if(err) { return console.dir(err); }
 			
@@ -123,6 +103,7 @@ module.exports = function(app, db) {
 		
 		res.writeHead(200, {'Access-Control-Allow-Headers':'content-type'});
 		res.end("success!");
+		db.close();
 	});
 
 	app.get('/getExpectedBenefits', (req, res) => {	
@@ -140,6 +121,7 @@ module.exports = function(app, db) {
 				console.log(userId + " retrieved expected benefits");
 				res.writeHead(200, {'Access-Control-Allow-Headers':'content-type'});
 				res.end(resp);
+				db.close();
 			});
 		});
 	});	
@@ -178,6 +160,7 @@ module.exports = function(app, db) {
 		
 		res.writeHead(200, {'Access-Control-Allow-Headers':'content-type'});
 		res.end("success!");
+		db.close();
 	});	
 	
 	app.get('/getGeneralDetails', (req, res) => {	
@@ -195,6 +178,7 @@ module.exports = function(app, db) {
 				console.log(userId + " retrieved general details");
 				res.writeHead(200, {'Access-Control-Allow-Headers':'content-type'});
 				res.end(resp);
+				db.close();
 			});
 		});
 	});		
@@ -219,6 +203,7 @@ module.exports = function(app, db) {
 		
 		res.writeHead(200, {'Access-Control-Allow-Headers':'content-type'});
 		res.end("success!");
+		db.close();
 	});	
 	
 	app.post('/deleteApplication', (req, res) => {
@@ -238,6 +223,7 @@ module.exports = function(app, db) {
 		
 		res.writeHead(200, {'Access-Control-Allow-Headers':'content-type'});
 		res.end("success!");
+		db.close();
 	});	
 
 	app.get('/getApplications', (req, res) => {	
@@ -262,6 +248,7 @@ module.exports = function(app, db) {
 				
 				res.writeHead(200, {'Access-Control-Allow-Headers':'content-type'});
 				res.end(resp);
+				db.close();
 			});
 		});
 	});	
@@ -305,6 +292,7 @@ module.exports = function(app, db) {
 		
 		res.writeHead(200, {'Access-Control-Allow-Headers':'content-type'});
 		res.end("success!");
+		db.close();
 	});	
 	
 	app.get('/getProductCosts', (req, res) => {	
@@ -325,6 +313,7 @@ module.exports = function(app, db) {
 				
 				res.writeHead(200, {'Access-Control-Allow-Headers':'content-type'});
 				res.end(resp);
+				db.close();
 			});
 		});
 	});	
@@ -387,6 +376,7 @@ module.exports = function(app, db) {
 		
 		res.writeHead(200, {'Access-Control-Allow-Headers':'content-type'});
 		res.end("success!");
+		db.close();
 	});	
 
 	app.get('/getApplicationDetails', (req, res) => {	
@@ -404,6 +394,7 @@ module.exports = function(app, db) {
 				resp=JSON.stringify(items);
 				res.writeHead(200, {'Access-Control-Allow-Headers':'content-type'});
 				res.end(resp);
+				db.close();
 			});
 		});
 	});	
@@ -443,7 +434,8 @@ module.exports = function(app, db) {
 		.then(function () {
 				console.log(userId + " was created");
 				res.writeHead(200, {'Access-Control-Allow-Headers':'content-type'});
-				res.end(userId);				
+				res.end(userId);
+				db.close();				
 		})
 		
 		.catch(function (err) {})
