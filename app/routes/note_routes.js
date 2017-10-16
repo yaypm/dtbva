@@ -224,7 +224,7 @@ module.exports = function(app, db) {
 	app.post('/deleteApplication', (req, res) => {
 		var application_id = req.body.application_id;
 		
-		console.log(userId + " is deleting an application");
+		//console.log(userId + " is deleting an application");
 		
 		MongoClient.connect(process.env.MONGOLAB_URI, function(err, db) {
 			if(err) { return console.dir(err); }
@@ -233,7 +233,7 @@ module.exports = function(app, db) {
 			
 			collection.deleteOne( { _id: application_id } );
 				
-			console.log(userId + " deleted an application");	
+			//console.log(userId + " deleted an application");	
 		});
 		
 		res.writeHead(200, {'Access-Control-Allow-Headers':'content-type'});
