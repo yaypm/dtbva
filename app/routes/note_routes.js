@@ -429,6 +429,10 @@ module.exports = function(app, db) {
 			var fullJson = {'_id':userId,'bus_days':'','npv':'','avg_salary':'','svc_desk_cost':'','rev_growth':'','confidence':'70'};
 			collection.insert(fullJson, {w:1}, function(err, result) { if(err!=null){console.log(err);}     console.log(userId + " inserted new general table");    });
 			
+			//create empty product costs
+			var collection = db.collection('product_cost');
+			var fullJson = {"_id": userId,"costs": [{"license_fees": "","maintenance": "","hardware": "","implementation": "","training": ""},{"license_fees": "","maintenance": "","hardware": "","implementation": "","training": ""},{"license_fees": "","maintenance": "","hardware": "","implementation": "","training": ""},{"license_fees": "","maintenance": "","hardware": "","implementation": "","training": ""},{"license_fees": "","maintenance": "","hardware": "","implementation": "","training": ""}]};
+			collection.insert(fullJson, {w:1}, function(err, result) { if(err!=null){console.log(err);}     console.log(userId + " inserted new product cost table");    });
 		})
 			
 		.then(function () {
