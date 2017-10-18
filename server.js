@@ -1,12 +1,3 @@
-try {
-    require('@dynatrace/oneagent')({
-        environmentid: 'qae93742',
-        apitoken: 'tQ1Ypv_WSUOdm_Nmz8pT3',
-    });
-} catch(err) {
-    console.log(err.toString());
-}
-
 var http = require('http');
 var https = require('https');
 var request = require('request-promise');
