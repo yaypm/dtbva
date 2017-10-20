@@ -975,7 +975,15 @@ function addApplicationsToDetails() {
 		else {
 			var details = document.getElementById("details");
 
-			for(i=1;i<details.children.length;i++) {
+			r = 0;
+			
+			for(i=0;i<details.children.length;i++) {
+				if(details.children[i].style.display == "table-row-group") {
+					r++;
+				}
+			}			
+			
+			for(i=1;i<r;i++) {
 				
 				details.children[i].children[1].children[0].innerHTML="";
 				
