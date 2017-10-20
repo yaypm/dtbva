@@ -1289,7 +1289,7 @@ function retrieveApplicationDetails() {
 					document.getElementById(gotApplications.application[i].id + "_currenttimeslareport").value=jsonResponse[0][gotApplications.application[i].id].currenttimeslareport;
 				}
 				
-				if(document.getElementById("employee_productivity") == true) {
+				if(document.getElementById("employee_productivity").checked == true) {
 					if(gotApplications.application[i].application_users == "internal") {
 						document.getElementById(gotApplications.application[i].id + "_numusers").value=jsonResponse[0][gotApplications.application[i].id].numusers;
 						document.getElementById(gotApplications.application[i].id + "_bustransperday").value=jsonResponse[0][gotApplications.application[i].id].bustransperday;	
