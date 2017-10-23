@@ -1,7 +1,7 @@
 try {
     require('@dynatrace/oneagent')({
-        environmentid: 'qae93742',
-        apitoken: 'tQ1Ypv_WSUOdm_Nmz8pT3',
+        environmentid: process.env.TENANT_ID,
+        apitoken: process.env.API_KEY,
     });
 } catch(err) {
     console.log(err.toString());
