@@ -7,6 +7,8 @@ try {
     console.log(err.toString());
 }
 
+var Promise = require('es6-promise').Promise;
+
 var http = require('http');
 var https = require('https');
 var request = require('request-promise');
