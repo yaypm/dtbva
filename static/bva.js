@@ -1167,24 +1167,41 @@ function saveApplicationDetails() {
 		console.log(obj);
 	
 		for(i=0;i<noApps;i++) {
-			obj[jsonResponse.application[i].id].revincidents=document.getElementById(jsonResponse.application[i].id + "_revincidents").value;
+			if(document.getElementById(jsonResponse.application[i].id + "_revincidents").value != null) {
+				obj[jsonResponse.application[i].id].revincidents=document.getElementById(jsonResponse.application[i].id + "_revincidents").value;
+			}	
 			
-			obj[jsonResponse.application[i].id].revperminute=document.getElementById(jsonResponse.application[i].id + "_revperminute").value;
+			if(document.getElementById(jsonResponse.application[i].id + "_revperminute").value != null) {
+				obj[jsonResponse.application[i].id].revperminute=document.getElementById(jsonResponse.application[i].id + "_revperminute").value;
+			}
 			
-			obj[jsonResponse.application[i].id].mttr=document.getElementById(jsonResponse.application[i].id + "_mttr").value;
+			if(document.getElementById(jsonResponse.application[i].id + "_mttr").value != null) {
+				obj[jsonResponse.application[i].id].mttr=document.getElementById(jsonResponse.application[i].id + "_mttr").value;
+			}
 			
-			obj[jsonResponse.application[i].id].allincidents=document.getElementById(jsonResponse.application[i].id + "_allincidents").value;
+			if(document.getElementById(jsonResponse.application[i].id + "_allincidents").value != null) {
+				obj[jsonResponse.application[i].id].allincidents=document.getElementById(jsonResponse.application[i].id + "_allincidents").value;
+			}
 			
-			obj[jsonResponse.application[i].id].itstaffhours=document.getElementById(jsonResponse.application[i].id + "_itstaffhours").value;			
+			if(document.getElementById(jsonResponse.application[i].id + "_itstaffhours").value != null) {
+				obj[jsonResponse.application[i].id].itstaffhours=document.getElementById(jsonResponse.application[i].id + "_itstaffhours").value;			
+			}
 			
-			obj[jsonResponse.application[i].id].itstaffnum=document.getElementById(jsonResponse.application[i].id + "_itstaffnum").value;
+			if(document.getElementById(jsonResponse.application[i].id + "_itstaffnum").value != null) {	
+				obj[jsonResponse.application[i].id].itstaffnum=document.getElementById(jsonResponse.application[i].id + "_itstaffnum").value;
+			}
 			
-			obj[jsonResponse.application[i].id].svcdeskpermonth=document.getElementById(jsonResponse.application[i].id + "_svcdeskpermonth").value;
+			if(document.getElementById(jsonResponse.application[i].id + "_svcdeskpermonth").value != null) {	
+				obj[jsonResponse.application[i].id].svcdeskpermonth=document.getElementById(jsonResponse.application[i].id + "_svcdeskpermonth").value;
+			}
 			
-			obj[jsonResponse.application[i].id].currentslapenalties=document.getElementById(jsonResponse.application[i].id + "_currentslapenalties").value;
+			if(document.getElementById(jsonResponse.application[i].id + "_currentslapenalties").value != null) {	
+				obj[jsonResponse.application[i].id].currentslapenalties=document.getElementById(jsonResponse.application[i].id + "_currentslapenalties").value;
+			}
 			
-			obj[jsonResponse.application[i].id].currenttimeslareport=document.getElementById(jsonResponse.application[i].id + "_currenttimeslareport").value;	
-
+			if(document.getElementById(jsonResponse.application[i].id + "_currenttimeslareport").value != null) {	
+				obj[jsonResponse.application[i].id].currenttimeslareport=document.getElementById(jsonResponse.application[i].id + "_currenttimeslareport").value;	
+			}
 			
 			if (jsonResponse.application[i].application_users == "internal") {
 				obj[jsonResponse.application[i].id].numusers=document.getElementById(jsonResponse.application[i].id + "_numusers").value;
