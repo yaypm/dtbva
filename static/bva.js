@@ -578,7 +578,7 @@ function buildBenefitsTable() {
 		it_downtime_input.innerHTML = '<input type="number" class="inputfield" id="increase_time_market" style="width: 75px;" placeholder="30"/>'; 			
 	}
 	
-	if(jsonResponse.incident_frequency == true && jsonResponse.sla_compliance == true) {
+	if(jsonResponse.incident_frequency == true || jsonResponse.sla_compliance == true) {
 		htmlString += '<label for="avg_salary" class="label">What is the average salary of an IT staff member? (£)</label><input style="width: 150px;" type="number" class="inputfield" placeholder="65000" id="avg_salary"/><br /><br />';
 	}
 
