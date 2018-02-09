@@ -1167,39 +1167,39 @@ function saveApplicationDetails() {
 		console.log(obj);
 	
 		for(i=0;i<noApps;i++) {
-			if(document.getElementById(jsonResponse.application[i].id + "_revincidents").value != null) {
+			if(document.getElementById(jsonResponse.application[i].id + "_revincidents") != null) {
 				obj[jsonResponse.application[i].id].revincidents=document.getElementById(jsonResponse.application[i].id + "_revincidents").value;
 			}	
 			
-			if(document.getElementById(jsonResponse.application[i].id + "_revperminute").value != null) {
+			if(document.getElementById(jsonResponse.application[i].id + "_revperminute") != null) {
 				obj[jsonResponse.application[i].id].revperminute=document.getElementById(jsonResponse.application[i].id + "_revperminute").value;
 			}
 			
-			if(document.getElementById(jsonResponse.application[i].id + "_mttr").value != null) {
+			if(document.getElementById(jsonResponse.application[i].id + "_mttr") != null) {
 				obj[jsonResponse.application[i].id].mttr=document.getElementById(jsonResponse.application[i].id + "_mttr").value;
 			}
 			
-			if(document.getElementById(jsonResponse.application[i].id + "_allincidents").value != null) {
+			if(document.getElementById(jsonResponse.application[i].id + "_allincidents") != null) {
 				obj[jsonResponse.application[i].id].allincidents=document.getElementById(jsonResponse.application[i].id + "_allincidents").value;
 			}
 			
-			if(document.getElementById(jsonResponse.application[i].id + "_itstaffhours").value != null) {
+			if(document.getElementById(jsonResponse.application[i].id + "_itstaffhours") != null) {
 				obj[jsonResponse.application[i].id].itstaffhours=document.getElementById(jsonResponse.application[i].id + "_itstaffhours").value;			
 			}
 			
-			if(document.getElementById(jsonResponse.application[i].id + "_itstaffnum").value != null) {	
+			if(document.getElementById(jsonResponse.application[i].id + "_itstaffnum") != null) {	
 				obj[jsonResponse.application[i].id].itstaffnum=document.getElementById(jsonResponse.application[i].id + "_itstaffnum").value;
 			}
 			
-			if(document.getElementById(jsonResponse.application[i].id + "_svcdeskpermonth").value != null) {	
+			if(document.getElementById(jsonResponse.application[i].id + "_svcdeskpermonth") != null) {	
 				obj[jsonResponse.application[i].id].svcdeskpermonth=document.getElementById(jsonResponse.application[i].id + "_svcdeskpermonth").value;
 			}
 			
-			if(document.getElementById(jsonResponse.application[i].id + "_currentslapenalties").value != null) {	
+			if(document.getElementById(jsonResponse.application[i].id + "_currentslapenalties") != null) {	
 				obj[jsonResponse.application[i].id].currentslapenalties=document.getElementById(jsonResponse.application[i].id + "_currentslapenalties").value;
 			}
 			
-			if(document.getElementById(jsonResponse.application[i].id + "_currenttimeslareport").value != null) {	
+			if(document.getElementById(jsonResponse.application[i].id + "_currenttimeslareport") != null) {	
 				obj[jsonResponse.application[i].id].currenttimeslareport=document.getElementById(jsonResponse.application[i].id + "_currenttimeslareport").value;	
 			}
 			
