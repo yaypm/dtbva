@@ -363,17 +363,21 @@ module.exports = function(app, db) {
 						
 						
 					console.log(userId + " updated application details");
+					res.writeHead(200, {'Access-Control-Allow-Headers':'content-type'});
+					res.end("success!");
+					db.close();	
 					
 				} 
 				
 				else {
 					
-					collection.insert(req.body, {w:1}, function(err, result) { if(err!=null){console.log(err);}     console.log(userId + " inserted new application details");    });								
+					collection.insert(req.body, {w:1}, function(err, result) { if(err!=null){console.log(err);}     console.log(userId + " inserted new application details");    });
+					res.writeHead(200, {'Access-Control-Allow-Headers':'content-type'});
+					res.end("success!");
+					db.close();	
 				}
 			});			
-		res.writeHead(200, {'Access-Control-Allow-Headers':'content-type'});
-		res.end("success!");
-		db.close();											
+												
 		});
 		
 
